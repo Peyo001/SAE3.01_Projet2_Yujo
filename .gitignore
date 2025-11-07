@@ -416,3 +416,13 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Base de données
+.slq
+.sqlite
+
+# Dépendance
+/vendor/
+
+# Fichiers de configuration 
+
