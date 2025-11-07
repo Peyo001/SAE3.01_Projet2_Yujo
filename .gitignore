@@ -425,4 +425,4 @@ FodyWeavers.xsd
 /vendor/
 
 # Fichiers de configuration 
-
+/config/
