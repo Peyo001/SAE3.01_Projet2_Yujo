@@ -3,12 +3,8 @@
 class PostDao {
 
     private PDO $pdo;
-    private array $parametresBd;
-
     public function __construct(?PDO $pdo)
     {
-        global $config; // chargement de la variable globale $config
-        $this->parametresBd = $config['database'];
         $this->setPdo($pdo);
     }
 
@@ -22,15 +18,26 @@ class PostDao {
         $this->pdo = $pdo;
     }
 
-    public function getParametresBd(): array
+    public function find(int $id): ?Post
     {
-        return $this->parametresBd;
+        $sql = "SELECT * FROM post WHERE idPost = :id";
+        $pdoStatement = $this->pdo->prepare($sql);
+        $pdoStatement->execute(array(":id" => $id));
+        $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $post = $pdoStatement->fetch();
+        return $post;
     }
 
-    public function setParametresBd(array $parametresBd): void
+    public function findAll(): array
     {
-        $this->parametresBd = $parametresBd;
+        $sql = "SELECT * FROM post";
+        $pdoStatement = $this->pdo->prepare($sql);
+        $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $pdoStatement->execute();
+        $post = $pdoStatement->fetchAll();
+        return $post;
     }
+
 
 }
 
