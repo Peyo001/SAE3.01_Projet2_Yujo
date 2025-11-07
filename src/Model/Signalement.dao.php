@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . 'include.php';
 class SignalementDao
 {
     private ?PDO $pdo;
@@ -42,5 +42,19 @@ class SignalementDao
         return null;
     }
 
+    public function insert(Signalement $signalement): bool
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO signalements (id, raison) VALUES (:id, :raison)");
+        $stmt->bindParam(':id', $signalement->getId(), PDO::PARAM_INT);
+        $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
+        return $stmt->execute();
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM signalements WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 ?>
