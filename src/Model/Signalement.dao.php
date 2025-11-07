@@ -19,7 +19,7 @@ class SignalementDao
         $this->pdo = $pdo;
     }
 
-    public function getAllSignalements(): array
+    public function findAll(): array
     {
         $signalements = [];
         $stmt = $this->pdo->query("SELECT id, raison FROM signalements");
@@ -30,7 +30,7 @@ class SignalementDao
         return $signalements;
     }
 
-    public function getSignalementById(int $id): ?Signalement
+    public function find(int $id): ?Signalement
     {
         $stmt = $this->pdo->prepare("SELECT id, raison FROM signalements WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
