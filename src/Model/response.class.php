@@ -2,8 +2,8 @@
 
 class Reponse
 {
-    private int $idReponse;
-    private ?DateTime $dateReponse;
+    private ?int $idReponse;
+    private ?string $dateReponse;
     private ?string $contenu;
     private ?int $idAuteur;
     private ?int $idPost;
@@ -16,11 +16,11 @@ class Reponse
         $this->idReponse = $id;
     }
 
-    public function getDateReponse(): ?DateTime {
+    public function getDateReponse(): ?string {
         return $this->dateReponse;
     }
 
-    public function setDateReponse(?DateTime $dateReponse): void {
+    public function setDateReponse(?string $dateReponse): void {
         $this->dateReponse = $dateReponse;
     }
 
@@ -48,7 +48,7 @@ class Reponse
         $this->idPost = $idPost;
     }
 
-    public function __construct(?int $idReponse = null, ?DateTime $dateReponse = null, ?string $contenu = null, ?int $idAuteur = null, ?int $idPost = null)
+    public function __construct(?int $idReponse = null, ?string $dateReponse = null, ?string $contenu = null, ?int $idAuteur = null, ?int $idPost = null)
     {
         $this->setId($idReponse);
         $this->setDateReponse($dateReponse);
@@ -66,3 +66,5 @@ class Reponse
         echo "ID du post : " . $this->getIdPost() . "<br/>";
     }
 }
+
+?>
