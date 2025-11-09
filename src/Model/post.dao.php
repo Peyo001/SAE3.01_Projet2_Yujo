@@ -20,7 +20,7 @@ class PostDao {
 
     public function find(int $id): ?Post
     {
-        $sql = "SELECT * FROM post WHERE idPost = :id";
+        $sql = "SELECT * FROM POST WHERE idPost = :id";
         $pdoStatement = $this->pdo->prepare($sql);
         $pdoStatement->execute(array(":id" => $id));
         $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
@@ -30,7 +30,7 @@ class PostDao {
 
     public function findAll(): array
     {
-        $sql = "SELECT * FROM post";
+        $sql = "SELECT * FROM POST";
         $pdoStatement = $this->pdo->prepare($sql);
         $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         $pdoStatement->execute();
