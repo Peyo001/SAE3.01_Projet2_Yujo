@@ -5,6 +5,7 @@ class Database
     private static ?Database $instance = null; // Singleton
     private PDO $conn;                          // Connexion PDO
 
+    
     // Constructeur privé
     private function __construct()
     {
@@ -24,6 +25,14 @@ class Database
         echo "Connexion à la base de données réussie.";
     }
 
+
+    //destructeur
+    public function __destruct()
+    {
+        // Fermer la connexion PDO
+        $this->conn = null;
+    }   
+    
     // Récupérer l'instance unique
     public static function getInstance(): Database
     {
@@ -43,5 +52,4 @@ class Database
     private function __clone() {}
     private function __wakeup() {}
 }
-
-$data = Database::getInstance();
+?>
