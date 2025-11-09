@@ -1,29 +1,53 @@
 <?php
 require_once __DIR__ . '/../include.php';
 
-
-// Récupérer la connexion PDO
 $pdo = Database::getInstance()->getConnection();
 
-// Créer le DAO
 $postDao = new PostDao($pdo);
 
-// Récupérer tous les posts existants
-$allPosts = $postDao->findAll();;
+$newPost = new Post();
+$newPost->setContenu("Post de test manuel");
+$newPost->setTypePost("texte");
+$newPost->setDatePublication(date('Y-m-d H:i:s'));
+$newPost->setIdAuteur(1);
+$newPost->setIdRoom(10);
 
+try {
+    if ($postDao->createPost($newPost)) {
+        echo "Post créé avec succès, ID : " . $newPost->getIdPost() . "<br>\n";
+    } else {
+        echo "Échec de la création du post<br>\n";
+    }
+} catch (PDOException $e) {
+    echo "Erreur PDO : " . $e->getMessage() . "<br>\n";
+}
+
+echo "<h3>Posts après création :</h3>";
+$allPosts = $postDao->findAll();
 if (empty($allPosts)) {
     echo "Aucun post trouvé.<br>";
 } else {
-    echo "Nombre total de posts : " . count($allPosts) . "<br>\n";
     foreach ($allPosts as $post) {
         echo "- " . $post->getContenu() . " (ID: " . $post->getIdPost() . ")<br>\n";
     }
 }
 
-// Exemple de récupération d’un post par ID (ici ID = 1)
-$retrievedPost = $postDao->find(101);
-if ($retrievedPost) {
-    echo "\nPost ID 101 : " . $retrievedPost->getContenu() . "<br>\n";
+try {
+    if ($postDao->deletePost($newPost->getIdPost())) {
+        echo "<br>Post supprimé avec succès<br>\n";
+    } else {
+        echo "<br>Échec de la suppression<br>\n";
+    }
+} catch (PDOException $e) {
+    echo "<br>Erreur PDO lors de la suppression : " . $e->getMessage() . "<br>\n";
+}
+
+echo "<h3>Posts après suppression :</h3>";
+$allPostsAfter = $postDao->findAll();
+if (empty($allPostsAfter)) {
+    echo "Aucun post trouvé.<br>";
 } else {
-    echo "\nAucun post trouvé avec l’ID 101.<br>\n";
+    foreach ($allPostsAfter as $post) {
+        echo "- " . $post->getContenu() . " (ID: " . $post->getIdPost() . ")<br>\n";
+    }
 }
