@@ -29,10 +29,9 @@ class Database
     //destructeur
     public function __destruct()
     {
-        // Fermer la connexion PDO
-        $this->conn = null;
+        
     }   
-    
+
     // Récupérer l'instance unique
     public static function getInstance(): Database
     {
