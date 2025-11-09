@@ -1,5 +1,5 @@
 <?php
-class User
+class Utilisateur
 {
     // ATTRIBUTS
     private int $idUtilisateur;
