@@ -8,6 +8,10 @@ class SignalementDao
         $this->conn = Database::getInstance()->getConnection();
     }
 
+    public function __destruct()
+    {
+        Database::getInstance()->__destruct();
+    }
     public function getConn(): ?PDO
     {
         return $this->conn;
