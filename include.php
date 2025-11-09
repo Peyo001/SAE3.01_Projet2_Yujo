@@ -3,4 +3,5 @@
 require_once __DIR__ . '/config/configDatabase.php';
 require_once __DIR__ . '/src/Database/DataBase.php';
 require_once __DIR__ . '/src/Model/response.class.php';
+require_once __DIR__ . '/src/Model/response.dao.php';
 ?>
