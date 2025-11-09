@@ -1,24 +1,33 @@
 <?php
 
 class Signalement {
-    private $id;
-    private $raison;
+    private int $id;
+    private ?string $raison;
 
-    public function __construct($id, $raison) {
+    public function __construct(int $id, ?string $raison) {
         $this->id = $id;
         $this->raison = $raison;
     }
 
+    public function __destruct()
+    {
+        // Rien à nettoyer ici
+    }
+
     // Getters and Setters
-    public function getId() {
+    public function getId(): int {
         return $this->id;
     }
 
-    public function getRaison() {
+    public function setId(int $id): void {
+        $this->id = $id;
+    }
+
+    public function getRaison(): ?string {
         return $this->raison    ;
     }
 
-    public function setRaison($raison) {
+    public function setRaison(?string $raison): void {
         $this->raison = $raison;
     }
 }
