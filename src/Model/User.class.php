@@ -1,55 +1,52 @@
 <?php
 class User
 {
-    //ATTRIBUTS
-    private int $id;
-    private string $username;
+    // ATTRIBUTS
+    private int $idUtilisateur;
+    private string $pseudo;
     private string $email;
-    private string $password;
+    private string $motDePasse;
     private string $typeCompte;
-    private bool $isPremium;
+    private bool $estPremium;
     private ?string $dateInscription;
-    private int $yupoints;
+    private int $yuPoints;
 
-    //CONSTRUCTEUR
-
+    // CONSTRUCTEUR
     public function __construct(
-        int $id,
-        string $username,
+        int $idUtilisateur,
+        string $pseudo,
         string $email,
-        string $password,
+        string $motDePasse,
         string $typeCompte,
-        bool $isPremium,
-        string $dateInscription,
-        int $yupoints
+        bool $estPremium,
+        ?string $dateInscription,
+        int $yuPoints
     ) {
-        $this->setId($id);
-        $this->setUsername($username);
+        $this->setIdUtilisateur($idUtilisateur);
+        $this->setPseudo($pseudo);
         $this->setEmail($email);
-        $this->setPassword($password);
+        $this->setMotDePasse($motDePasse);
         $this->setTypeCompte($typeCompte);
-        $this->setIsPremium($isPremium);
+        $this->setEstPremium($estPremium);
         $this->setDateInscription($dateInscription);
-        $this->setYupoints($yupoints);
+        $this->setYuPoints($yuPoints);
     }
 
-    //DESTRUCTEUR
-    
+    // DESTRUCTEUR
     public function __destruct()
     {
-        
+        // Rien à nettoyer ici
     }
-    //ENCAPSULATION
+
     //GETTERS
-
-    public function getId(): int
+    public function getIdUtilisateur(): int
     {
-        return $this->id;
+        return $this->idUtilisateur;
     }
 
-    public function getUsername(): string
+    public function getPseudo(): string
     {
-        return $this->username;
+        return $this->pseudo;
     }
 
     public function getEmail(): string
@@ -57,9 +54,9 @@ class User
         return $this->email;
     }
 
-    public function getPassword(): string
+    public function getMotDePasse(): string
     {
-        return $this->password;
+        return $this->motDePasse;
     }
 
     public function getTypeCompte(): string
@@ -67,31 +64,30 @@ class User
         return $this->typeCompte;
     }
 
-    public function getIsPremium(): bool
+    public function getEstPremium(): bool
     {
-        return $this->isPremium;
+        return $this->estPremium;
     }
 
-    public function getDateInscription(): string
+    public function getDateInscription(): ?string
     {
         return $this->dateInscription;
     }
 
-    public function getYupoints(): int
+    public function getYuPoints(): int
     {
-        return $this->yupoints;
+        return $this->yuPoints;
     }
 
-    //SETTERS
-
-    public function setId(int $id): void
+    //SETTERS 
+    public function setIdUtilisateur(int $idUtilisateur): void
     {
-        $this->id = $id;
+        $this->idUtilisateur = $idUtilisateur;
     }
 
-    public function setUsername(string $username): void
+    public function setPseudo(string $pseudo): void
     {
-        $this->username = $username;
+        $this->pseudo = $pseudo;
     }
 
     public function setEmail(string $email): void
@@ -99,9 +95,9 @@ class User
         $this->email = $email;
     }
 
-    public function setPassword(string $password): void
+    public function setMotDePasse(string $motDePasse): void
     {
-        $this->password = $password;
+        $this->motDePasse = $motDePasse;
     }
 
     public function setTypeCompte(string $typeCompte): void
@@ -109,19 +105,31 @@ class User
         $this->typeCompte = $typeCompte;
     }
 
-    public function setIsPremium(bool $isPremium): void
+    public function setEstPremium(bool $estPremium): void
     {
-        $this->isPremium = $isPremium;
+        $this->estPremium = $estPremium;
     }
 
-    public function setDateInscription(string $dateInscription): void
+    public function setDateInscription(?string $dateInscription): void
     {
         $this->dateInscription = $dateInscription;
     }
 
-    public function setYupoints(int $yupoints): void
+    public function setYuPoints(int $yuPoints): void
     {
-        $this->yupoints = $yupoints;
+        $this->yuPoints = $yuPoints;
+    }
+
+    
+    public function __toString(): string
+    {
+        return "Utilisateur #{$this->idUtilisateur}\n"
+            . "Pseudo : {$this->pseudo}\n"
+            . "Email : {$this->email}\n"
+            . "Type de compte : {$this->typeCompte}\n"
+            . "Premium : " . ($this->estPremium ? "Oui" : "Non") . "\n"
+            . "Date d’inscription : " . ($this->dateInscription ?? "Non renseignée") . "\n"
+            . "YuPoints : {$this->yuPoints}\n";
     }
 }
 ?>
