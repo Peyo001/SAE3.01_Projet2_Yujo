@@ -2,26 +2,15 @@
 class Post
 {
     private int $idPost;
-    private string|null $contenu;
-    private string|null $typePost;
-    private string|null $datePublication;
+    private ?string $contenu;
+    private ?string $typePost;
+    private ?string $datePublication;
     private int $idAuteur;
     private int $idRoom;
 
-    public function __construct(
-        int $idPost,
-        ?string $contenu = null,
-        ?string $typePost = null,
-        ?string $datePublication = null,
-        int $idAuteur,
-        int $idRoom
-    ) {
-        $this->setIdPost($idPost);
-        $this->setContenu($contenu);
-        $this->setTypePost($typePost);
-        $this->setDatePublication($datePublication);
-        $this->setIdAuteur($idAuteur);
-        $this->setIdRoom($idRoom);
+    public function __construct()
+    {
+        // vide pour PDO::FETCH_CLASS
     }
 
     // Getters
