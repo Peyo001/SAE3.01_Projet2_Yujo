@@ -19,6 +19,17 @@ $signalements = $signalement->findAll();
 $utilisateur = new UtilisateurDao();
 $utilisateurs = $utilisateur->findAll();
 
+$Sanction = new SanctionDao();
+$sanctions = $Sanction->findAll();
+
+foreach ($sanctions as $sanction) {
+    echo "ID Signalement: " . $sanction->getIdSignalement() . "<br>";
+    echo "ID Utilisateur: " . $sanction->getIdUtilisateur() . "<br>";
+    echo "ID Post: " . $sanction->getIdPost() . "<br>";
+    echo "Date Signalement: " . $sanction->getDateSignalement() . "<br>";
+    echo "Status: " . $sanction->getStatus() . "<br><hr>";
+}
+
 foreach ($utilisateurs as $user) {
     echo "ID: " . $user->getIdUtilisateur() . "<br>";
     echo "Pseudo: " . $user->getPseudo() . "<br>";
