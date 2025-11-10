@@ -5,11 +5,11 @@
         private ?int $idRoom;
         private ?string $nom;
         private ?string $visibilite;
-        private ?datetime $dateCreation;
+        private ?string $dateCreation;
         private ?int $nbVisit;
         private ?int $idCreateur;
 
-        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?datetime $dateCreation, ?int $nbVisit, ?int $idCreateur) {
+        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur) {
             $this->setIdRoom($idRoom);
             $this->setNom($nom);
             $this->setVisibilite($visibilite);
@@ -32,7 +32,7 @@
             return $this->visibilite;
         }
 
-        public function getDateCreation(): ?datetime {
+        public function getDateCreation(): ?string {
             return $this->dateCreation;
         }
 
@@ -58,11 +58,11 @@
             $this->visibilite = $visibilite;
         }
 
-        public function setDateCreation(?datetime $dateCreation): void {
+        public function setDateCreation(?string $dateCreation): void {
             $this->dateCreation = $dateCreation;
         }
 
-        public function setnbVisit(?int $nbVisit): void {
+        public function setNbVisit(?int $nbVisit): void {
             $this->nbVisit = $nbVisit;
         }
 
