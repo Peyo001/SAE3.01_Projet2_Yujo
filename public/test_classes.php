@@ -1,0 +1,69 @@
+<?php
+require_once __DIR__ . '../../include.php';
+
+$reponse = new ReponseDao();
+$reponses = $reponse->findAll();
+
+$room = new RoomDao();
+$rooms = $room->findAll();
+
+$achat = new AchatDao();
+$achats = $achat->findAll();
+
+$post = new PostDao();
+$posts = $post->findAll();
+
+$signalement = new SignalementDao();
+$signalements = $signalement->findAll();
+
+$utilisateur = new UtilisateurDao();
+$utilisateurs = $utilisateur->findAll();
+
+foreach ($utilisateurs as $user) {
+    echo "ID: " . $user->getIdUtilisateur() . "<br>";
+    echo "Pseudo: " . $user->getPseudo() . "<br>";
+    echo "Email: " . $user->getEmail() . "<br>";
+    echo "Mot de passe: " . $user->getMotDePasse() . "<br>";
+    echo "Type de compte: " . $user->getTypeCompte() . "<br>";
+    echo "Est premium: " . ($user->getEstPremium() ? 'Oui' : 'Non') . "<br>";
+    echo "Date d'inscription: " . $user->getDateInscription() . "<br>";
+    echo "Yu points: " . $user->getYuPoints() . "<br>";
+}
+
+foreach ($signalements as $sig) {
+    echo "ID: " . $sig->getId() . "<br>";
+    echo "Raison: " . $sig->getRaison() . "<br><hr>";
+}
+
+foreach ($achats as $ach) {
+    echo "ID Objet: " . $ach->getIdObjet() . "<br>";
+    echo "Date d'Achat: " . $ach->getDateAchat() . "<br>";
+    echo "ID Utilisateur: " . $ach->getIdUtilisateur() . "<br><hr>";
+}
+
+foreach ($posts as $pt) {
+    echo "ID: " . $pt->getIdPost() . "<br>";
+    echo "Date: " . $pt->getDatePublication() . "<br>";
+    echo "Contenu: " . $pt->getContenu() . "<br>";
+    echo "Auteur ID: " . $pt->getIdAuteur() . "<br>";
+    echo "Room ID: " . $pt->getIdRoom() . "<br><hr>";
+}
+
+
+foreach ($rooms as $rm) {
+    echo "ID: " . $rm->getIdRoom() . "<br>";
+    echo "Nom: " . $rm->getNom() . "<br>";
+    echo "Visibilite: " . $rm->getVisibilite() . "<br>";
+    echo "Date de Creation: " . $rm->getDateCreation() . "<br>";
+    echo "Nombre de Visite: " . $rm->getNbVisit() . "<br>";
+    echo "ID Createur: " . $rm->getIdCreateur() . "<br><hr>";
+}
+
+foreach ($reponses as $rep) {
+    echo "ID: " . $rep->getId() . "<br>";
+    echo "Date: " . $rep->getDateReponse() . "<br>";
+    echo "Contenu: " . $rep->getContenu() . "<br>";
+    echo "Auteur ID: " . $rep->getIdAuteur() . "<br>";
+    echo "Post ID: " . $rep->getIdPost() . "<br><hr>";
+}
+?>
