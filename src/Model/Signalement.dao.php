@@ -1,30 +1,33 @@
 <?php
-require_once __DIR__ . 'include.php';
 class SignalementDao
 {
-    private ?PDO $pdo;
+    private PDO $conn;
 
-    public function __construct(?PDO $pdo=null)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->conn = Database::getInstance()->getConnection();
     }
 
-    public function getPdo(): ?PDO
+    public function __destruct()
     {
-        return $this->pdo;
+        Database::getInstance()->__destruct();
+    }
+    public function getConn(): ?PDO
+    {
+        return $this->conn;
     }
 
-    public function setPdo(PDO $pdo): void
+    public function setConn(PDO $conn): void
     {
-        $this->pdo = $pdo;
+        $this->conn = $conn;
     }
 
     public function findAll(): array
     {
         $signalements = [];
-        $stmt = $this->pdo->query("SELECT id, raison FROM signalements");
+        $stmt = $this->conn->query("SELECT idSignalement, raison FROM Signalement");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $signalement = new Signalement($row['id'], $row['raison']);
+            $signalement = new Signalement($row['idSignalement'], $row['raison']);
             $signalements[] = $signalement;
         }
         return $signalements;
@@ -32,19 +35,19 @@ class SignalementDao
 
     public function find(int $id): ?Signalement
     {
-        $stmt = $this->pdo->prepare("SELECT id, raison FROM signalements WHERE id = :id");
+        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM Signalement WHERE idSignalement = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Signalement($row['id'], $row['raison']);
+            return new Signalement($row['idSignalement'], $row['raison']);
         }
         return null;
     }
 
     public function insert(Signalement $signalement): bool
     {
-        $stmt = $this->pdo->prepare("INSERT INTO signalements (id, raison) VALUES (:id, :raison)");
+        $stmt = $this->conn->prepare("INSERT INTO Signalement (idSignalement, raison) VALUES (:id, :raison)");
         $stmt->bindParam(':id', $signalement->getId(), PDO::PARAM_INT);
         $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
@@ -52,7 +55,7 @@ class SignalementDao
 
     public function delete(int $id): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM signalements WHERE id = :id");
+        $stmt = $this->conn->prepare("DELETE FROM Signalement WHERE idSignalement = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
