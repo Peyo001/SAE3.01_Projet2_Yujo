@@ -49,6 +49,8 @@ class Database
 
     // Empêcher clonage et désérialisation
     private function __clone() {}
-    public function __wakeup() {}
+    public function __wakeup() {
+        throw new Exception("Un singleton ne doit pas être désérialisé");
+    }
 }
 ?>
