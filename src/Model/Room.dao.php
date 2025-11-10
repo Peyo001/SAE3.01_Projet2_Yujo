@@ -33,6 +33,24 @@
             return null;
         }
 
+        public function findAllRoom(): array {
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreation FROM ROOM");
+            $stmt->execute();
+            $users = [];
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $users[] = new Room(
+                    (int)$row['idRoom'],
+                    $row['nom'],
+                    $row['visibilite'],
+                    $row['dateCreation'],
+                    (int)$row['nbVisit'],
+                    (bool)$row['idCreation']);
+            }
+            
+            return $users;
+        }
+
         public function createRoom(Room $room): bool {
             $stmt = $this->conn->prepare("INSERT INTO ROOM (nom, visibilite, dateCreation, nbVisit, idCreateur) VALUES (:nom, :visibilite, :dateCreation, :nbVisit, :idCreateur)");
             $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
