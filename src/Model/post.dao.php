@@ -1,44 +1,63 @@
-<?php 
-
-class PostDao {
-
+<?php
+class PostDao
+{
     private PDO $pdo;
-    public function __construct(?PDO $pdo)
-    {
-        $this->setPdo($pdo);
-    }
 
-    public function getPdo(): ?PDO
-    {
-        return $this->pdo;
-    }
-
-    public function setPdo(?PDO $pdo): void
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
+    public function getLastId(): int
+    {
+        $stmt = $this->pdo->query("SELECT MAX(idPost) AS maxId FROM POST");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['maxId'] ?? 0; // si la table est vide, retourne 0
+    } 
+    
+    public function createPost(Post $post): bool
+    {
+        // Générer un nouvel ID
+        $newId = $this->getLastId() + 1;
+        $post->setIdPost($newId);
+    
+        $stmt = $this->pdo->prepare("
+            INSERT INTO POST (idPost, contenu, typePost, datePublication, idAuteur, idRoom)
+            VALUES (:idPost, :contenu, :typePost, :datePublication, :idAuteur, :idRoom)
+        ");
+    
+        $stmt->bindValue(':idPost', $post->getIdPost(), PDO::PARAM_INT);
+        $stmt->bindValue(':contenu', $post->getContenu(), PDO::PARAM_STR);
+        $stmt->bindValue(':typePost', $post->getTypePost(), PDO::PARAM_STR);
+        $stmt->bindValue(':datePublication', $post->getDatePublication(), PDO::PARAM_STR);
+        $stmt->bindValue(':idAuteur', $post->getIdAuteur(), PDO::PARAM_INT);
+        $stmt->bindValue(':idRoom', $post->getIdRoom(), PDO::PARAM_INT);
+    
+        return $stmt->execute();
+    } 
+
+    // Supprimer un post
+    public function deletePost(int $idPost): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM POST WHERE idPost = :idPost");
+        $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    // Récupérer un post par ID
     public function find(int $id): ?Post
     {
-        $sql = "SELECT * FROM post WHERE idPost = :id";
-        $pdoStatement = $this->pdo->prepare($sql);
-        $pdoStatement->execute(array(":id" => $id));
-        $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
-        $post = $pdoStatement->fetch();
-        return $post;
+        $stmt = $this->pdo->prepare("SELECT * FROM POST WHERE idPost = :id");
+        $stmt->execute([':id' => $id]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        return $stmt->fetch() ?: null;
     }
 
+    // Récupérer tous les posts
     public function findAll(): array
     {
-        $sql = "SELECT * FROM post";
-        $pdoStatement = $this->pdo->prepare($sql);
-        $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
-        $pdoStatement->execute();
-        $post = $pdoStatement->fetchAll();
-        return $post;
+        $stmt = $this->pdo->query("SELECT * FROM POST");
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        return $stmt->fetchAll() ?: [];
     }
-
-
 }
-
-?>
