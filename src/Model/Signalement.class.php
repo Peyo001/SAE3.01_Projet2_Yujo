@@ -28,6 +28,9 @@ class Signalement {
     }
 
     public function setRaison(?string $raison): void {
+
+
         $this->raison = $raison;
     }
 }
+?>
