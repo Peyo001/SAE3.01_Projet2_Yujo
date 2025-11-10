@@ -5,12 +5,12 @@ class PostDao
 
     public function __construct()
     {
-        $this->conn = $Database::getInstance()->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     public function getLastId(): int
     {
-        $stmt = $this->pdo->query("SELECT MAX(idPost) AS maxId FROM POST");
+        $stmt = $this->conn->query("SELECT MAX(idPost) AS maxId FROM POST");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['maxId'] ?? 0; // si la table est vide, retourne 0
     } 
@@ -21,7 +21,7 @@ class PostDao
         $newId = $this->getLastId() + 1;
         $post->setIdPost($newId);
     
-        $stmt = $this->pdo->prepare("
+        $stmt = $this->conn->prepare("
             INSERT INTO POST (idPost, contenu, typePost, datePublication, idAuteur, idRoom)
             VALUES (:idPost, :contenu, :typePost, :datePublication, :idAuteur, :idRoom)
         ");
@@ -39,7 +39,7 @@ class PostDao
     // Supprimer un post
     public function deletePost(int $idPost): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM POST WHERE idPost = :idPost");
+        $stmt = $this->conn->prepare("DELETE FROM POST WHERE idPost = :idPost");
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -47,7 +47,7 @@ class PostDao
     // Récupérer un post par ID
     public function find(int $id): ?Post
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM POST WHERE idPost = :id");
+        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
         $stmt->execute([':id' => $id]);
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         return $stmt->fetch() ?: null;
@@ -56,7 +56,7 @@ class PostDao
     // Récupérer tous les posts
     public function findAll(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM POST");
+        $stmt = $this->conn->query("SELECT * FROM POST");
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         return $stmt->fetchAll() ?: [];
     }
