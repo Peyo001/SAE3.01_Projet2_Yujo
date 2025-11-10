@@ -13,7 +13,7 @@ class UtilisateurDao
     //DESTRUCTEUR
     public function __destruct()
     {
-        Database::getInstance()->__destruct();
+
     }
 
     //METHODES
@@ -39,7 +39,7 @@ class UtilisateurDao
         return null;
     }
 
-    public function findAllUtilisateur(): array
+    public function findAllUsers(): array
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints  FROM UTILISATEUR");
         $stmt->execute();
