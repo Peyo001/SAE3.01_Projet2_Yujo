@@ -11,7 +11,7 @@ class ReponseDao
 
     public function findReponseById(?int $id): ?Reponse{
         $sql = "SELECT * FROM REPONSE WHERE idReponse = :id";
-        $pdoStatement = $this->pdo->prepare($sql);
+        $pdoStatement = $this->conn->prepare($sql);
         $pdoStatement->bindParam(':id', $id, PDO::PARAM_INT);
         $pdoStatement->execute();
         $row = $pdoStatement->fetch(PDO::FETCH_ASSOC);
@@ -30,7 +30,7 @@ class ReponseDao
 
     public function findAllReponses(): array{
         $sql = "SELECT * FROM REPONSE";
-        $pdoStatement = $this->pdo->prepare($sql);
+        $pdoStatement = $this->conn->prepare($sql);
         $pdoStatement->execute();
         $reponse = [];
 
