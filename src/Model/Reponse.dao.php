@@ -9,7 +9,7 @@ class ReponseDao
     }
 
 
-    public function findReponseById(?int $id): ?Reponse{
+    public function find(?int $id): ?Reponse{
         $sql = "SELECT * FROM REPONSE WHERE idReponse = :id";
         $pdoStatement = $this->conn->prepare($sql);
         $pdoStatement->bindParam(':id', $id, PDO::PARAM_INT);
@@ -28,7 +28,7 @@ class ReponseDao
         return null;
     }
 
-    public function findAllReponses(): array{
+    public function findAll(): array{
         $sql = "SELECT * FROM REPONSE";
         $pdoStatement = $this->conn->prepare($sql);
         $pdoStatement->execute();
@@ -51,14 +51,14 @@ class ReponseDao
         $stmt = $this->conn->prepare("INSERT INTO REPONSE (idReponse, dateRepoonse, contenu, idAuteur, idPost) VALUES (:pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints)");
         $stmt->bindValue(':idReponse', $response->getId(), PDO::PARAM_INT);
         $stmt->bindValue(':dateReponse', $response->getDateReponse(), PDO::PARAM_STR);
-        $stmt->bindValue(':contenu', $response->getMContenu(), PDO::PARAM_STR);
+        $stmt->bindValue(':contenu', $response->getContenu(), PDO::PARAM_STR);
         $stmt->bindValue(':idAuteur', $response->getIdAuteur(), PDO::PARAM_INT);
         $stmt->bindValue(':idPost', $response->getIdPost(), PDO::PARAM_INT);
         
         return $stmt->execute();
     }
 
-    public function deleteResponse(int $id): boolval{
+    public function deleteResponse(int $id): bool{
         $stmt = $this->conn->prepare("DELETE FROM REPONSE WHERE idReponse = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
