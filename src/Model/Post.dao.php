@@ -1,11 +1,11 @@
 <?php
 class PostDao
 {
-    private PDO $pdo;
+    private PDO $conn;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->conn = $Database::getInstance()->getConnection();
     }
 
     public function getLastId(): int

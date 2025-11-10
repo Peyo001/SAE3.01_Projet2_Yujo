@@ -2,19 +2,12 @@
 
 class ReponseDao
 {
-    private ?PDO $pdo;
+    private PDO $conn;
 
-    public function __construct(PDO $PDO){
-        $this->pdo = $pdo;
+    public function __construct() {
+        $this->conn = Database::getInstance()->getConnection();
     }
 
-    public function getPdo() : ?PDO {
-        return $this->pdo;
-    }
-
-    public function setPdo($pdo): void {
-        $this->pdo = $pdo;
-    }
 
     public function findReponseById(?int $id): ?Reponse{
         $sql = "SELECT * FROM REPONSE WHERE idReponse = :id";
