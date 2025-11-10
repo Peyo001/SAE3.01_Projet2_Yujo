@@ -53,11 +53,11 @@
 
         public function createRoom(Room $room): bool {
             $stmt = $this->conn->prepare("INSERT INTO ROOM (nom, visibilite, dateCreation, nbVisit, idCreateur) VALUES (:nom, :visibilite, :dateCreation, :nbVisit, :idCreateur)");
-            $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
-            $stmt->bindValue(':visibilite', $user->getVisibilite(), PDO::PARAM_STR);
-            $stmt->bindValue(':dateCreation', $user->getDateCreation(), PDO::PARAM_STR);
-            $stmt->bindValue(':nbVisit', $user->getNbVisit(), PDO::PARAM_INT);
-            $stmt->bindValue(':idCreateur', $user->getIdCreateur(), PDO::PARAM_INT);
+            $stmt->bindValue(':nom', $room->getNom(), PDO::PARAM_STR);
+            $stmt->bindValue(':visibilite', $room->getVisibilite(), PDO::PARAM_STR);
+            $stmt->bindValue(':dateCreation', $room->getDateCreation(), PDO::PARAM_STR);
+            $stmt->bindValue(':nbVisit', $room->getNbVisit(), PDO::PARAM_INT);
+            $stmt->bindValue(':idCreateur', $room->getIdCreateur(), PDO::PARAM_INT);
 
             return $stmt->execute();
         }
