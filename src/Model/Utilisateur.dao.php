@@ -17,10 +17,10 @@ class UtilisateurDao
     }
 
     //METHODES
-    public function findUtilisateurById(int $id): ?Utilisateur
+    public function find(int $id): ?Utilisateur
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints FROM UTILISATEUR WHERE idUtilisateur = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -39,7 +39,7 @@ class UtilisateurDao
         return null;
     }
 
-    public function findAllUsers(): array
+    public function findAll(): array
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints  FROM UTILISATEUR");
         $stmt->execute();
@@ -77,7 +77,7 @@ class UtilisateurDao
     public function deleteUser(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM UTILISATEUR WHERE idUtilisateur = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }

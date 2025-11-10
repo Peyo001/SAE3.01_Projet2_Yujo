@@ -15,7 +15,7 @@
         }
 
         // METHODES
-        public function findRoomById(int $id): ?Room {
+        public function find(int $id): ?Room {
             $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
@@ -33,8 +33,8 @@
             return null;
         }
 
-        public function findAllRoom(): array {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreation FROM ROOM");
+        public function findAll(): array {
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM");
             $stmt->execute();
             $users = [];
 
@@ -45,7 +45,7 @@
                     $row['visibilite'],
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
-                    (bool)$row['idCreation']);
+                    (int)$row['idCreateur']);
             }
             
             return $users;
