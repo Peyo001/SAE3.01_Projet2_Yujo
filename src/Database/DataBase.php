@@ -22,7 +22,6 @@ class Database
         } catch (Exception $e) {
             throw new Exception("Erreur PDO : " . $e->getMessage());
         }
-        echo "Connexion à la base de données réussie.";
     }
 
 
