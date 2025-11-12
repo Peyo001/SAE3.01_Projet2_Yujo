@@ -12,7 +12,7 @@ class ReponseDao
     public function find(?int $id): ?Reponse{
         $sql = "SELECT * FROM REPONSE WHERE idReponse = :id";
         $pdoStatement = $this->conn->prepare($sql);
-        $pdoStatement->bindParam(':id', $id, PDO::PARAM_INT);
+        $pdoStatement->bindValue(':id', $id, PDO::PARAM_INT);
         $pdoStatement->execute();
         $row = $pdoStatement->fetch(PDO::FETCH_ASSOC);
 
@@ -60,7 +60,7 @@ class ReponseDao
 
     public function deleteResponse(int $id): bool{
         $stmt = $this->conn->prepare("DELETE FROM REPONSE WHERE idReponse = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
