@@ -47,7 +47,7 @@
             return $users;
         }
 
-        public function createRoom(Objet $objet): bool {
+        public function createObjet(Objet $objet): bool {
             $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix) VALUES (:description, :modele3dPath, :prix)");
             $stmt->bindValue(':description', $objet->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath(), PDO::PARAM_STR);
