@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% block css %} {% endblock %}
+</head>
+<body>
+
+<header>
+    {% block header %}{% endblock %}
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="bottom-nav">
+    <nav>
+        <a href="#"><img src="../public/assets/icons/person_3_blanc.svg" class="person-3-blanc"></a>
+        <a href="#"><img src="../public/assets/icons/person_blanc.svg" class="person-blanc"></a>
+        <a href="#"><img src="../public/assets/icons/logo_yujo.png" class="logo-yujo"></a>
+        <a href="#"><img src="../public/assets/icons/shop_blanc.svg" class="shop-blanc"></a>
+        <a href="#"><img src="../public/assets/icons/settings_blanc.svg" class="settings-blanc"></a>
+    </nav>
+</footer>
+
+</body>
+</html>
