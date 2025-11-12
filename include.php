@@ -2,6 +2,7 @@
 //information de connexion a la base de donnee
 require_once __DIR__ . '/config/configDatabase.php';
 require_once __DIR__ . '/src/Database/DataBase.php';
+require_once __DIR__ . '/config/twig.php';
 
 // Autoloading des classes
 require_once __DIR__ . '/src/Model/Signalement.class.php';
