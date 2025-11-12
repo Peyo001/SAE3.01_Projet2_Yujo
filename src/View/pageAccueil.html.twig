@@ -1,0 +1,54 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="../public/css/style.css">
+{% endblock %}
+
+{% block content %}
+
+<section class="amis-section">
+    <h2>Connaissances</h2>
+    <div class="amis-slider">
+        {% for ami in amis %}
+            <div class="ami">
+                <div class="avatar">
+                    <img src="../public/assets/icons/person_noir.svg" class="ami-icon">
+                </div>
+                <p>{{ ami.pseudo }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="discover-section">
+    <h2>À découvrir</h2>
+
+    {% for post in posts %}
+        <article class="card">
+            <div class="card-header">
+                <div class="avatar avatar-small">
+                <img src="../public/assets/icons/person_noir.svg" class="ami-icon-small">
+                </div>
+                <p>{{ post.auteur }}</p>
+            </div>
+
+            {% if post.typePost == 'quiz' %}
+                <button class="btn big">{{ post.contenu }}</button>
+
+            {% elseif post.typePost == 'room' %}
+                <img class="room-preview" src="/assets/room.png">
+                <div class="room-actions">
+                    <button class="btn secondary">Visiter</button>
+                    <button class="btn secondary">Nom room</button>
+                </div>
+
+            {% else %}
+                <p>{{ post.contenu }}</p>
+            {% endif %}
+        </article>
+    {% endfor %}
+</section>
+
+{% endblock %}
