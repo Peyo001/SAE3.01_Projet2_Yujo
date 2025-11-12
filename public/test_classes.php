@@ -22,6 +22,9 @@ $utilisateurs = $utilisateur->findAll();
 $Sanction = new SanctionDao();
 $sanctions = $Sanction->findAll();
 
+$ami = new AmiDao();
+$amis = $ami->findAll();
+
 foreach ($sanctions as $sanction) {
     echo "ID Signalement: " . $sanction->getIdSignalement() . "<br>";
     echo "ID Utilisateur: " . $sanction->getIdUtilisateur() . "<br>";
@@ -76,5 +79,11 @@ foreach ($reponses as $rep) {
     echo "Contenu: " . $rep->getContenu() . "<br>";
     echo "Auteur ID: " . $rep->getIdAuteur() . "<br>";
     echo "Post ID: " . $rep->getIdPost() . "<br><hr>";
+}
+
+foreach ($amis as $ami) {
+    echo "ID user 1: " . $ami->getIdUtilisateur1() . "<br>";
+    echo "ID user 2: " . $ami->getIdUtilisateur2() . "<br>";
+    echo "Date Ajout: " . $ami->getDateAjout() . "<br><hr>";
 }
 ?>
