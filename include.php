@@ -19,4 +19,6 @@ require_once __DIR__ . '/src/Model/Reponse.class.php';
 require_once __DIR__ . '/src/Model/Reponse.dao.php';
 require_once __DIR__ . '/src/Model/Sanction.class.php';
 require_once __DIR__ . '/src/Model/Sanction.dao.php';
+require_once __DIR__ . '/src/Model/Ami.class.php';
+require_once __DIR__ . '/src/Model/Ami.dao.php';
 ?>
