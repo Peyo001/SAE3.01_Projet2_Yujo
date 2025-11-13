@@ -3,15 +3,17 @@ Application web de reseau social dans le cadre de la SAE 3.01 Développement d'u
 
 
 
-Dans un monde où les réseaux sociaux se résument souvent à des images parfaites et des interactions superficielles, Yujo propose une alternative révolutionnaire : un réseau social immersif et authentique, basé sur des rooms virtuelles personnalisables. 
+Dans un monde où les réseaux sociaux se résument souvent à des images parfaites et des interactions superficielles, Yujo propose une alternative révolutionnaire : un réseau social immersif et authentique, fondé sur des rooms virtuelles personnalisables.
+Avec Yujo, fini les profils figés et les fils d’actualité passifs. Ici, vous créez votre propre espace personnel, un lieu unique en 2D ou 3D, façonné selon vos goûts, vos passions et votre personnalité. Choisissez un thème, ajoutez du mobilier, des objets qui vous représentent et façonnez une ambiance qui vous ressemble. Votre room devient une véritable extension de vous-même — un univers qui raconte votre histoire et votre manière d’être.
 
-Avec Yujo, fini les profils figés et les fils d’actualité passifs. Ici, vous créez votre propre espace, un lieu unique en 2D ou 3D, façonné selon vos goûts, vos passions et votre personnalité. Choisissez un thème, ajoutez du mobilier, des objets qui vous représentent et façonnez une ambiance qui vous correspond. Votre room devient une véritable extension de vous-même, un endroit où vous pouvez inviter vos amis, discuter librement et partager des moments sincères. 
+Les autres utilisateurs peuvent découvrir votre room en visitant votre profil ou en la retrouvant comme un post sur la page d’accueil. Vous pouvez, vous aussi, explorer les rooms d’autres membres, vous inspirer de leurs créations et échanger directement avec eux. Chaque espace devient ainsi une porte ouverte sur la personnalité de son créateur et une opportunité de rencontres sincères.
 
-Mais Yujo, ce n’est pas qu’un décor : c’est un espace interactif vivant. Vous vous déplacez dans les rooms des autres personnes, croisez d’autres avatars en temps réel et engagez des conversations spontanées, comme dans la vraie vie. Vous pouvez entrer dans une room publique pour rencontrer de nouvelles personnes, ou créer une room privée pour échanger avec vos proches. Chaque espace devient une opportunité d’exprimer qui vous êtes et de construire des relations plus profondes. 
+Mais Yujo ne se limite pas à la simple contemplation : c’est un espace d’interaction et de partage. Les rooms peuvent accueillir des discussions, des défis, des mini-jeux ou des projets collaboratifs. Ces expériences sont conçues pour encourager des échanges naturels, authentiques et créatifs — loin de la superficialité des réseaux classiques.
 
-L’application ne se limite pas à la discussion : elle encourage l’engagement collectif. Dans les rooms, vous pouvez participer à des défis, organiser des débats, jouer à des mini-jeux et même collaborer sur des projets communs. Ces activités sont conçues pour briser la glace, stimuler les échanges et rendre les interactions plus naturelles et engageantes. 
+Contrairement aux plateformes traditionnelles, Yujo met l’accent sur la sincérité, l’inclusivité et le bien-être numérique. Pas de pression sociale, pas de course aux likes : ici, l’objectif est d’être soi-même, sans filtres ni artifices. L’application promeut un usage plus sain et réfléchi des réseaux sociaux, grâce à des contenus éducatifs qui valorisent la bienveillance et les bonnes pratiques en ligne.
 
-Contrairement aux réseaux sociaux traditionnels, Yujo met l’accent sur la sincérité et l’inclusivité. Ici, pas de pression sociale, pas de course aux likes : l’objectif est de créer un espace où chacun peut être soi-même, sans artifices. L’algorithme ne vous pousse pas à scroller à l’infini, mais vous invite à vivre des expériences enrichissantes et à interagir réellement avec votre entourage. Enfin, Yujo sensibilise ses utilisateurs à une utilisation plus saine et responsable des réseaux sociaux. Des contenus éducatifs sont intégrés pour aider à comprendre les bonnes pratiques numériques et encourager des échanges respectueux et bienveillants. 
-Avec Yujo, vous ne subissez plus les réseaux sociaux, vous les façonnez à votre image. Créez votre espace, exprimez-vous librement et vivez des interactions numériques enfin authentiques, dynamiques et humaines. 
+Avec Yujo, vous ne subissez plus les réseaux sociaux — vous les façonnez à votre image.
+
+Créez votre espace, exprimez-vous librement et vivez des interactions numériques enfin authentiques, dynamiques et humaines.
 
 Rejoignez Yujo et redécouvrez ce que signifie être vraiment connecté.
