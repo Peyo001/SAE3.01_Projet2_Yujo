@@ -26,11 +26,11 @@ class Ami {
         $this->idUtilisateur2 = $idUtilisateur2;
     }
 
-    public function getDateAjout(): int {
+    public function getDateAjout(): ?string {
         return $this->dateAjout;
     }
 
-    public function setDateAjout(int $dateAjout): void {
+    public function setDateAjout(?string $dateAjout): void {
         $this->dateAjout = $dateAjout;
     }
 }
