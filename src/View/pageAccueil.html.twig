@@ -16,7 +16,7 @@
                 <div class="avatar">
                     <img src="../public/assets/icons/person_noir.svg" class="ami-icon">
                 </div>
-                <p>{{ ami.pseudo }}</p>
+                <p>{{ utilisateurs[ami.idUtilisateur2] }}</p>
             </div>
         {% endfor %}
     </div>
@@ -31,7 +31,7 @@
                 <div class="avatar avatar-small">
                 <img src="../public/assets/icons/person_noir.svg" class="ami-icon-small">
                 </div>
-                <p>{{ post.auteur }}</p>
+                <p>{{ utilisateurs[post.idAuteur] }}</p>
             </div>
 
             {% if post.typePost == 'quiz' %}
