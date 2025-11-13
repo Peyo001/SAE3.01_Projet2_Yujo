@@ -44,7 +44,7 @@ class PostDao
         return $stmt->execute();
     }
 
-    // Récupérer un post par ID
+    // Récupérer un post par ID de post
     public function find(int $id): ?Post
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
@@ -54,6 +54,16 @@ class PostDao
 
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         return $stmt->fetch() ?: null;
+    }
+
+    // Récupérer les posts dans un tableau par ID d'auteur
+    public function findPostsByAuteur(int $idAuteur): array
+    {
+    $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
+    $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
+    $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+    $stmt->execute();
+    return $stmt->fetchAll() ?: [];
     }
 
     // Récupérer tous les posts
