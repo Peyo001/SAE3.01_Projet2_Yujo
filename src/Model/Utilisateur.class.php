@@ -3,6 +3,10 @@ class Utilisateur
 {
     // ATTRIBUTS
     private int $idUtilisateur;
+    private string $nom;
+    private string $prenom;
+    private string $dateNaiss;
+    private string $genre;
     private string $pseudo;
     private string $email;
     private string $motDePasse;
@@ -14,6 +18,10 @@ class Utilisateur
     // CONSTRUCTEUR
     public function __construct(
         int $idUtilisateur,
+        string $nom,
+        string $prenom,
+        string $dateNaiss,
+        string $genre,
         string $pseudo,
         string $email,
         string $motDePasse,
@@ -42,6 +50,39 @@ class Utilisateur
     public function getIdUtilisateur(): int
     {
         return $this->idUtilisateur;
+    }
+
+    public function getNom(): string
+    {
+        return $this->nom;
+    }
+
+    public function getPrenom(): string
+    {
+        return $this->prenom;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
+    public function getDateNaiss(): string
+    {
+        return $this->dateNaiss;
+    }
+
+    public function getAge(): int
+    {
+        $birthDate = new DateTime($this->dateNaiss);
+        $today = new DateTime();
+        $age = $today->diff($birthDate)->y;
+        return $age;
+    }
+
+    public function getGenre(): string
+    {
+        return $this->genre;
     }
 
     public function getPseudo(): string
@@ -90,6 +131,26 @@ class Utilisateur
         $this->pseudo = $pseudo;
     }
 
+    public function setNom(string $nom): void
+    {
+        $this->nom = $nom;
+    }
+
+    public function setPrenom(string $prenom): void
+    {
+        $this->prenom = $prenom;
+    }
+
+    public function setDateNaiss(string $dateNaiss): void
+    {
+        $this->dateNaiss = $dateNaiss;
+    }
+
+    public function setGenre(string $genre): void
+    {
+        $this->genre = $genre;
+    }
+
     public function setEmail(string $email): void
     {
         $this->email = $email;
@@ -124,6 +185,10 @@ class Utilisateur
     public function __toString(): string
     {
         return "Utilisateur #{$this->idUtilisateur}\n"
+            . "Nom : {$this->nom}\n"
+            . "Prénom : {$this->prenom}\n"
+            . "Date de naissance : {$this->dateNaiss}\n"
+            . "Genre : {$this->genre}\n"
             . "Pseudo : {$this->pseudo}\n"
             . "Email : {$this->email}\n"
             . "Type de compte : {$this->typeCompte}\n"
