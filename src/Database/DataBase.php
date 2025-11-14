@@ -22,6 +22,7 @@ class Database
         } catch (Exception $e) {
             throw new Exception("Erreur PDO : " . $e->getMessage());
         }
+    
     }
 
 
