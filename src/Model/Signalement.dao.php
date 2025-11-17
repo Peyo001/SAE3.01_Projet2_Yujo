@@ -4,7 +4,7 @@ class SignalementDao
 {
     private PDO $conn;
 
-    public function __construct(PDO $pdo=null)
+    public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
     }
