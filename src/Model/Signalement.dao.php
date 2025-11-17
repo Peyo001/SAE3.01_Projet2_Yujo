@@ -22,7 +22,7 @@ class SignalementDao
     public function findAll(): array
     {
         $signalements = [];
-        $stmt = $this->conn->query("SELECT idSignalement, raison FROM signalement");
+        $stmt = $this->conn->query("SELECT idSignalement, raison FROM SIGNALEMENT");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $signalement = new Signalement($row['idSignalement'], $row['raison']);
             $signalements[] = $signalement;
@@ -32,7 +32,7 @@ class SignalementDao
 
     public function find(int $id): ?Signalement
     {
-        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM signalement WHERE idSignalement = :id");
+        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT WHERE idSignalement = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -44,7 +44,7 @@ class SignalementDao
 
     public function insert(Signalement $signalement): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO signalement (idSignalement, raison) VALUES (:idSignalement, :raison)");
+        $stmt = $this->conn->prepare("INSERT INTO SIGNALEMENT (idSignalement, raison) VALUES (:idSignalement, :raison)");
         $stmt->bindValue(':idSignalement', $signalement->getId(), PDO::PARAM_INT);
         $stmt->bindValue(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
@@ -52,7 +52,7 @@ class SignalementDao
 
     public function delete(int $id): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM signalement WHERE idSignalement = :idSignalement");
+        $stmt = $this->conn->prepare("DELETE FROM SIGNALEMENT WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
