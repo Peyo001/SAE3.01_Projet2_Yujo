@@ -12,9 +12,9 @@ class Database
         try {
             // Connexion PDO simple
             $this->conn = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME,
-                DB_USER,
-                DB_PASSWORD
+                'mysql:host=' . "localhost" . ';dbname=' . "SAE_301",
+                "mxcr",
+                "spiderman"
             );
 
             // Définir le charset UTF-8
