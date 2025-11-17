@@ -82,13 +82,13 @@ class GroupeDao
         return $stmt->execute();
     }
 
-    public function insertMembre(int $idGroupe, int $idUtilisateur): bool
+    public function insertMembre(Groupe $groupe, int $idUtilisateur): bool
     {
-        if ($idGroupe->estMembre($idUtilisateur)) {
+        if ($groupe->estMembre($idUtilisateur)) {
             return false; // Membre déjà dans le groupe
         }
         $stmt = $this->conn->prepare("INSERT INTO Groupe (idGroupe, idUtilisateur) VALUES (:idGroupe, :idUtilisateur)");
-        $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
+        $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute(); // renvoie true si succès, false sinon
     }
