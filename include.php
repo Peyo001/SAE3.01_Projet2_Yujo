@@ -1,4 +1,8 @@
 <?php
+
+// Autoloading via Composer
+require_once __DIR__ . '/vendor/autoload.php';
+
 //information de connexion a la base de donnee
 require_once __DIR__ . '/config/configDatabase.json';
 require_once __DIR__ . '/src/Database/DataBase.php';
