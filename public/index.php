@@ -2,9 +2,9 @@
 require_once __DIR__ . '/../include.php';
 session_start();
 
-$email = "alice@email.com"; 
+$email = $_SESSION['email'];; 
 
-$pdo = DataBase::getInstance()->getConnection();
+$pdo = Database::getInstance()->getConnection();
 
 // Récupère l'utilisateur en BDD
 $stmt = $pdo->prepare("SELECT idUtilisateur FROM utilisateur WHERE email = :email");
