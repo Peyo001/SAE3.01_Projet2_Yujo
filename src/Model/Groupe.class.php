@@ -11,8 +11,8 @@ class Groupe
     // CONSTRUCTEUR
     public function __construct(
         int $idGroupe,
-        string $nom,
-        ?string $description,
+        string $nomGroupe,
+        ?string $descriptionGroupe,
         ?string $dateCreation,
         array $membres = []
     ) {
