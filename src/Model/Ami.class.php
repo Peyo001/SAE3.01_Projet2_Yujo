@@ -26,7 +26,7 @@ class Ami {
         $this->idUtilisateur2 = $idUtilisateur2;
     }
 
-    public function getDateAjout(): int {
+    public function getDateAjout(): ?string {
         return $this->dateAjout;
     }
 
