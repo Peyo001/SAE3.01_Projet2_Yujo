@@ -8,14 +8,16 @@
         private ?string $dateCreation;
         private ?int $nbVisit;
         private ?int $idCreateur;
+        private ?string $personnalisation;
 
-        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur) {
+        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur, ?string $personnalisation) {
             $this->setIdRoom($idRoom);
             $this->setNom($nom);
             $this->setVisibilite($visibilite);
             $this->setDateCreation($dateCreation);
             $this->setNbVisit($nbVisit);
             $this->setIdCreateur($idCreateur);
+            $this->setPersonnalisation($personnalisation);
         }
 
 
@@ -44,6 +46,10 @@
             return $this->idCreateur;
         }
 
+        public function getPersonnalisation(): ?string
+        {
+            return $this->personnalisation;
+        }
 
         // Setters
         public function setIdRoom(?int $idRoom): void {
@@ -68,5 +74,10 @@
 
         public function setIdCreateur(?int $idCreateur): void {
             $this->idCreateur = $idCreateur;
+        }
+
+        public function setPersonnalisation($personnalisation): void
+        {
+                $this->personnalisation = $personnalisation;
         }
     }

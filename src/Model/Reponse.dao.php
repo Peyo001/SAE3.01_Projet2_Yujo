@@ -48,7 +48,7 @@ class ReponseDao
 
     public function createResponse(Reponse $response): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO REPONSE (idReponse, dateRepoonse, contenu, idAuteur, idPost) VALUES (:pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints)");
+        $stmt = $this->conn->prepare("INSERT INTO REPONSE (idReponse, dateRepoonse, contenu, idAuteur, idPost) VALUES (:idReponse, :dateReponse, :contenu, :idAuteur, :idPost)");
         $stmt->bindValue(':idReponse', $response->getId(), PDO::PARAM_INT);
         $stmt->bindValue(':dateReponse', $response->getDateReponse(), PDO::PARAM_STR);
         $stmt->bindValue(':contenu', $response->getContenu(), PDO::PARAM_STR);
