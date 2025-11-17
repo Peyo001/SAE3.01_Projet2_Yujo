@@ -17,7 +17,7 @@ class GroupeDao
     // Récupère les membres d’un groupe
     private function getMembres(int $idGroupe): array
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur FROM GROUPE WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur FROM GROUPE JOIN COMPOSER ON GROUPE.idGroupe = COMPOSER.idGroupe WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -36,8 +36,8 @@ class GroupeDao
             return new Groupe(
                 $row['idGroupe'],
                 $row['nomGroupe'],
-                $row['descriptionGroupe'],
-                $row['dateCreation'],
+                $row['description'],
+                $row['dateCreationGroupe'],
                 $membres
             );
         }
@@ -56,8 +56,8 @@ class GroupeDao
             $groupes[] = new Groupe(
                 $row['idGroupe'],
                 $row['nomGroupe'],
-                $row['descriptionGroupe'],
-                $row['dateCreation'],
+                $row['description'],
+                $row['dateCreationGroupe'],
                 $membres
             );
         }
@@ -67,11 +67,15 @@ class GroupeDao
 
     public function insert(Groupe $groupe): bool
     {
+<<<<<<< HEAD
         $stmt = $this->conn->prepare("INSERT INTO GROUPE (idGroupe, nomGroupe, descriptionGroupe, dateCreation) VALUES (:idGroupe, :nomGroupe, :descriptionGroupe, :dateCreation)");
+=======
+        $stmt = $this->conn->prepare("INSERT INTO GROUPE (idGroupe, nomGroupe, description, dateCreationGroupe) VALUES (:idGroupe, :nomGroupe, :descriptionGroupe, :dateCreation)");
+>>>>>>> a3516d35c52384812a8a3e11b7772b288ca5ad95
         $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':nomGroupe', $groupe->getNomGroupe(), PDO::PARAM_STR);
-        $stmt->bindValue(':descriptionGroupe', $groupe->getDescriptionGroupe(), PDO::PARAM_STR);
-        $stmt->bindValue(':dateCreation', $groupe->getDateCreation(), PDO::PARAM_STR);
+        $stmt->bindValue(':description', $groupe->getDescriptionGroupe(), PDO::PARAM_STR);
+        $stmt->bindValue(':dateCreationGroupe', $groupe->getDateCreation(), PDO::PARAM_STR);
         return $stmt->execute();
     }
 
@@ -82,14 +86,19 @@ class GroupeDao
         return $stmt->execute();
     }
 
-    public function insertMembre(Groupe $groupe, int $idUtilisateur): bool
+    public function insertMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
     {
         if ($groupe->estMembre($idUtilisateur)) {
             return false; // Membre déjà dans le groupe
         }
+<<<<<<< HEAD
         $stmt = $this->conn->prepare("INSERT INTO GROUPE (idGroupe, idUtilisateur) VALUES (:idGroupe, :idUtilisateur)");
+=======
+        $stmt = $this->conn->prepare("INSERT INTO COMPOSER (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
+>>>>>>> a3516d35c52384812a8a3e11b7772b288ca5ad95
         $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
         return $stmt->execute(); // renvoie true si succès, false sinon
     }
 }
