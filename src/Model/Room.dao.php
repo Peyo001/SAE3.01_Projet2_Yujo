@@ -11,7 +11,7 @@
 
         //DESTRUCTEUR
         public function __destruct() {
-            Database::getInstance()->__destruct();
+            // Rien à nettoyer ici
         }
 
         // METHODES

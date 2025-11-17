@@ -45,7 +45,7 @@ class UtilisateurDao
 
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints  FROM UTILISATEUR");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints FROM UTILISATEUR");
         $stmt->execute();
         $users = [];
 
