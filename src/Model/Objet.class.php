@@ -7,7 +7,7 @@
         private ?string $modele3dPath;
         private ?int $prix;
 
-        public function __construct(?int $idObjet, ?string $descritption, ?string $modele3dPath, ?int $prix) {
+        public function __construct(?int $idObjet, ?string $description, ?string $modele3dPath, ?int $prix) {
             $this->setIdObjet($idObjet);
             $this->setDescription($description);
             $this->setModele3dPath($modele3dPath);
