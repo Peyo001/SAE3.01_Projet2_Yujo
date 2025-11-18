@@ -22,7 +22,7 @@ class AchatDao
 
     public function find(int $idObjet): ?Achat
     {
-        $stmt = $this->conn->prepare("SELECT * FROM acheter WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->bindValue(':dateAchat', $idObjet, PDO::PARAM_STR);
         $stmt->bindValue(':idUtilisateur', $idObjet, PDO::PARAM_INT);
@@ -37,7 +37,7 @@ class AchatDao
     public function findAll(): array
     {
         $achats = [];
-        $stmt = $this->conn->query("SELECT * FROM acheter");
+        $stmt = $this->conn->query("SELECT * FROM ACHETER");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $achat = new Achat($row['idObjet'], $row['dateAchat'], $row['idUtilisateur']);
             $achats[] = $achat;
@@ -47,7 +47,7 @@ class AchatDao
 
     public function insert(Achat $achat): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO acheter (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
+        $stmt = $this->conn->prepare("INSERT INTO ACHETER (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
         $stmt->bindValue(':idObjet', $achat->getIdObjet(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAchat', $achat->getDateAchat(), PDO::PARAM_STR);
         $stmt->bindValue(':idUtilisateur', $achat->getIdUtilisateur(), PDO::PARAM_INT);
@@ -56,7 +56,7 @@ class AchatDao
 
     public function delete(int $idObjet): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM acheter WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
     }

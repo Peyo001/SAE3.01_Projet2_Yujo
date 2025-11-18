@@ -49,8 +49,6 @@ class PostDao
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmt->bindValue(':contenu', $id, PDO::PARAM_INT);
-        $stmt->bindValue(':idAuteur', $id, PDO::PARAM_INT);
 
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         return $stmt->fetch() ?: null;

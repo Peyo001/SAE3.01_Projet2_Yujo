@@ -16,7 +16,7 @@
 
         // METHODES
         public function find(int $id): ?Room {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilitée, personnalisation, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -28,7 +28,8 @@
                     $row['visibilite'],
                     $row['dateCreation'],
                     $row['nbVisit'],
-                    $row['idCreateur']);
+                    $row['idCreateur'],
+                    $row['personnalisation']);
             }
             return null;
         }
@@ -45,16 +46,19 @@
                     $row['visibilite'],
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
-                    (int)$row['idCreateur']);
+                    (int)$row['idCreateur'],
+                    $row['personnalisation']);
             }
             
             return $users;
         }
 
         public function createRoom(Room $room): bool {
-            $stmt = $this->conn->prepare("INSERT INTO ROOM (nom, visibilite, dateCreation, nbVisit, idCreateur) VALUES (:nom, :visibilite, :dateCreation, :nbVisit, :idCreateur)");
+            $stmt = $this->conn->prepare("INSERT INTO ROOM (idRoom, nom, visibilite, personnalisation, dateCreation, nbVisit, idCreateur) VALUES (:idRoom, :nom, :visibilite, :personnalisation, :dateCreation, :nbVisit, :idCreateur)");
+            $stmt->bindValue(':idRoom', $room->getIdRoom(), PDO::PARAM_INT);
             $stmt->bindValue(':nom', $room->getNom(), PDO::PARAM_STR);
             $stmt->bindValue(':visibilite', $room->getVisibilite(), PDO::PARAM_STR);
+            $stmt->bindValue(':personnalisation', $room->getPersonnalisation(), PDO::PARAM_STR);
             $stmt->bindValue(':dateCreation', $room->getDateCreation(), PDO::PARAM_STR);
             $stmt->bindValue(':nbVisit', $room->getNbVisit(), PDO::PARAM_INT);
             $stmt->bindValue(':idCreateur', $room->getIdCreateur(), PDO::PARAM_INT);
