@@ -25,7 +25,7 @@ class Reponse
     }
 
     public function getContenu(): ?string {
-        return $this->idReponse;
+        return $this->contenu;
     }
 
     public function setContenu(?string $contenu): void{

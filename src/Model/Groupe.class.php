@@ -4,8 +4,8 @@ class Groupe
     // ATTRIBUTS
     private int $idGroupe;
     private string $nomGroupe;
-    private ?string $descriptionGroupe;
-    private ?string $dateCreation;
+    private ?string $description;
+    private ?string $dateCreationGroupe;
     private array $membres = [];    
 
     // CONSTRUCTEUR
@@ -43,12 +43,12 @@ class Groupe
     }
     public function getDescriptionGroupe(): ?string
     {
-        return $this->descriptionGroupe;
+        return $this->description;
     }
 
     public function getDateCreation(): ?string
     {
-        return $this->dateCreation;
+        return $this->dateCreationGroupe;
     }
 
     public function getMembres(): array
@@ -69,13 +69,13 @@ class Groupe
 
     public function setDescriptionGroupe(?string $descriptionGroupe): void
     {
-        $this->descriptionGroupe = $descriptionGroupe;
+        $this->description = $descriptionGroupe;
     }
 
 
     public function setDateCreation(?string $dateCreation): void
     {
-        $this->dateCreation = $dateCreation;
+        $this->dateCreationGroupe = $dateCreation;
     }
 
     public function setMembres(array $membres): void
