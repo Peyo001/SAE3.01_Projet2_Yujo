@@ -16,7 +16,7 @@
 
         // METHODES
         public function find(int $id): ?Objet {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJETS WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,7 +32,7 @@
         }
 
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJETS");
             $stmt->execute();
             $users = [];
 
@@ -48,7 +48,8 @@
         }
 
         public function createObjet(Objet $objet): bool {
-            $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix) VALUES (:description, :modele3dPath, :prix)");
+            $stmt = $this->conn->prepare("INSERT INTO OBJETS (idObjet, description, modele3dPath, prix) VALUES (:idObjet, :description, :modele3dPath, :prix)");
+            $stmt->bindValue(':idObjet', $objet->getIdObjet(), PDO::PARAM_INT);
             $stmt->bindValue(':description', $objet->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath(), PDO::PARAM_STR);
             $stmt->bindValue(':prix', $objet->getPrix(), PDO::PARAM_INT);
@@ -57,7 +58,7 @@
         }
     
         public function deleteObjet(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM OBJET WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("DELETE FROM OBJETS WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();
