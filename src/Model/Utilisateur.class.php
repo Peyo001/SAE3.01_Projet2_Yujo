@@ -14,6 +14,7 @@ class Utilisateur
     private bool $estPremium;
     private ?string $dateInscription;
     private int $yuPoints;
+    private ?string $personnalisation;
 
     // CONSTRUCTEUR
     public function __construct(
@@ -28,7 +29,8 @@ class Utilisateur
         string $typeCompte,
         bool $estPremium,
         ?string $dateInscription,
-        int $yuPoints
+        int $yuPoints,
+        string $personnalisation
     ) {
         $this->setIdUtilisateur($idUtilisateur);
         $this->setPseudo($pseudo);
@@ -38,6 +40,7 @@ class Utilisateur
         $this->setEstPremium($estPremium);
         $this->setDateInscription($dateInscription);
         $this->setYuPoints($yuPoints);
+        $this->setPersonnalisation($personnalisation);
     }
 
     // DESTRUCTEUR
@@ -120,6 +123,11 @@ class Utilisateur
         return $this->yuPoints;
     }
 
+    public function getPersonnalisation(): ?string
+    {
+        return $this->personnalisation;
+    }
+
     //SETTERS 
     public function setIdUtilisateur(int $idUtilisateur): void
     {
@@ -195,6 +203,11 @@ class Utilisateur
             . "Premium : " . ($this->estPremium ? "Oui" : "Non") . "\n"
             . "Date d’inscription : " . ($this->dateInscription ?? "Non renseignée") . "\n"
             . "YuPoints : {$this->yuPoints}\n";
+    }
+
+    public function setPersonnalisation($personnalisation): void
+    {
+        $this->personnalisation = $personnalisation;
     }
 }
 ?>

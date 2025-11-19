@@ -6,7 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 //information de connexion a la base de donnee
 require_once __DIR__ . '/config/configDatabase.json';
 require_once __DIR__ . '/src/Database/DataBase.php';
-require_once __DIR__ . '/config/twig.php';
+//require_once __DIR__ . '/config/twig.php';
 
 // Autoloading des classes
 require_once __DIR__ . '/src/Model/Signalement.class.php';
@@ -25,4 +25,8 @@ require_once __DIR__ . '/src/Model/Sanction.class.php';
 require_once __DIR__ . '/src/Model/Sanction.dao.php';
 require_once __DIR__ . '/src/Model/Ami.class.php';
 require_once __DIR__ . '/src/Model/Ami.dao.php';
+require_once __DIR__ . '/src/Model/Objet.class.php';
+require_once __DIR__ . '/src/Model/Objet.dao.php';
+require_once __DIR__ . '/src/Model/Groupe.class.php';
+require_once __DIR__ . '/src/Model/Groupe.dao.php';
 ?>
