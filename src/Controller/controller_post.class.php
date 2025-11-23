@@ -43,4 +43,48 @@ class ControllerPost extends Controller
         ]);
     }
 
+
+    public function afficherFormulaireInsertion(): void
+    {
+        echo $this->getTwig()->render('ajout_post.twig', [
+            'menu' => 'nouveau_post'
+        ]);
+    }
+
+    public function traiterFormulaireInsertion(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=post&methode=afficherFormulaireInsertion');
+            exit;
+        }
+
+        $contenu = trim($_POST['contenu'] ?? '');
+        $typePost = $_POST['type_post'] ?? 'texte'; 
+        $idRoom = (int)($_POST['id_room'] ?? 1); 
+        
+        $idAuteur = 1; 
+        if (empty($contenu)) {
+             echo "Le contenu ne peut pas être vide."; 
+             return;
+        }
+
+        $post = new Post();
+        $post->setContenu($contenu);
+        $post->setTypePost($typePost);
+        $post->setIdAuteur($idAuteur);
+        $post->setIdRoom($idRoom);
+        
+        $post->setDatePublication(date('Y-m-d H:i:s'));
+
+        $manager = new PostDao();
+        
+        $succes = $manager->createPost($post);
+
+        if ($succes) {
+            header('Location: index.php?controleur=post&methode=lister');
+            exit;
+        } else {
+            throw new Exception("Erreur lors de la création du post.");
+        }
+    }
 }
