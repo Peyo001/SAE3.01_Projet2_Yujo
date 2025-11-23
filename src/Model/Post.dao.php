@@ -71,4 +71,15 @@ class PostDao
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         return $stmt->fetchAll() ?: [];
     }
+    
+    public function findPostsByRoom(int $idRoom): array
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idRoom = :idRoom ORDER BY datePublication DESC");
+        $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $stmt->execute();
+        return $stmt->fetchAll() ?: [];
+    }
 }
+
+
