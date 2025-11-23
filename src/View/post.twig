@@ -1,0 +1,34 @@
+{% extends "base_template.twig" %}
+
+{% block title %}Post n°{{ post.idPost }} - {{ config.application.title }}{% endblock %}
+
+{% block content %}
+<main>
+    <h1>Post n°{{ post.idPost }}</h1>
+
+    <div>
+        <h3>Type de post :</h3>
+        <p>{{ post.typePost }}</p>
+    </div>
+
+    <div>
+        <h3>Contenu :</h3>
+        <p>{{ post.contenu }}</p>
+    </div>
+
+    <div>
+        <h3>Date de publication :</h3>
+        <p>{{ post.datePublication }}</p>
+    </div>
+
+    <div>
+        <h3>Auteur :</h3>
+        <p>ID utilisateur : {{ post.idAuteur }}</p>
+    </div>
+
+    <div>
+        <h3>Room / Groupe :</h3>
+        <p>ID Room : {{ post.idRoom }}</p>
+    </div>
+</main>
+{% endblock %}
