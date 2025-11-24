@@ -12,7 +12,7 @@ class AchatDao
 
     public function __destruct()
     {
-        Database::getInstance()->__destruct();
+        // Rien à nettoyer ici
     }
 
     public function getConn(): ?PDO
