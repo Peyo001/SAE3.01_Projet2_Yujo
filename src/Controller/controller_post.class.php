@@ -62,7 +62,7 @@ class ControllerPost extends Controller
         $typePost = $_POST['type_post'] ?? 'texte'; 
         $idRoom = (int)($_POST['id_room'] ?? 1); 
         
-        $idAuteur = 1; 
+        $idAuteur = $_SESSION['user_id']; 
         if (empty($contenu)) {
              echo "Le contenu ne peut pas être vide."; 
              return;
@@ -77,7 +77,7 @@ class ControllerPost extends Controller
         $post->setDatePublication(date('Y-m-d H:i:s'));
 
         $manager = new PostDao();
-        
+        // Note : On n'a pas mis d'ID, c'est la BDD qui va le créer (Auto Increment)
         $succes = $manager->createPost($post);
 
         if ($succes) {

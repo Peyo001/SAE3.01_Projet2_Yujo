@@ -1,0 +1,37 @@
+{% extends "base_template.twig" %}
+
+{% block title %}Fil d'actualité{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1>Fil d'actualité</h1>
+            
+            <p>
+                <a href="index.php?controleur=post&methode=afficherFormulaireInsertion">
+                    [+] Publier quelque chose
+                </a>
+            </p>
+            <hr>
+        </div>
+
+        <div class="col-12">
+            {% for post in posts %}
+                <div class="post-item" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <h3>
+                        <a href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">
+                            Post #{{ post.idPost }}
+                        </a> 
+                        <small>({{ post.typePost }})</small>
+                    </h3>
+                    
+                    <p>{{ post.contenu }}</p>
+                    
+                    <small>Publié le {{ post.datePublication }}</small>
+                </div>
+            {% else %}
+                <p>Aucun post à afficher pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
