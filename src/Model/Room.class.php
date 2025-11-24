@@ -7,17 +7,18 @@
         private ?string $visibilite;
         private ?string $dateCreation;
         private ?int $nbVisit;
-        private ?int $idCreateur;
-        private ?string $personnalisation;
+        private ?int $idCreateur;   // incorrect il faut enlever et créer une classe Créer
 
-        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur, ?string $personnalisation) {
+        // attribut métier
+        private ?array $objets = [];    // liste d'objets présents dans la room
+
+        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur) {
             $this->setIdRoom($idRoom);
             $this->setNom($nom);
             $this->setVisibilite($visibilite);
             $this->setDateCreation($dateCreation);
             $this->setNbVisit($nbVisit);
             $this->setIdCreateur($idCreateur);
-            $this->setPersonnalisation($personnalisation);
         }
 
 
@@ -46,9 +47,8 @@
             return $this->idCreateur;
         }
 
-        public function getPersonnalisation(): ?string
-        {
-            return $this->personnalisation;
+        public function getObjets(): array {
+            return $this->objets;
         }
 
         // Setters
@@ -76,8 +76,11 @@
             $this->idCreateur = $idCreateur;
         }
 
-        public function setPersonnalisation($personnalisation): void
-        {
-                $this->personnalisation = $personnalisation;
+        public function setObjets(array $objets): void {
+            $this->objets = $objets;
+        }
+
+        public function addObjet(Objet $objet): void {
+            $this->objets[] = $objet;
         }
     }
