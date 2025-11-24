@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * @file index.php
  * @brief Point d'entrée principal de l'application.
@@ -8,7 +10,7 @@
  * en chargeant le contrôleur et la méthode appropriés en fonction des paramètres GET.
  */
 
-require_once 'include.php';
+require_once __DIR__ . '../../include.php';
 
 try
 {
