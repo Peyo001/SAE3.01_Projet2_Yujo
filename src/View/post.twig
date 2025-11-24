@@ -1,34 +1,36 @@
 {% extends "base_template.twig" %}
 
-{% block title %}Post n°{{ post.idPost }} - {{ config.application.title }}{% endblock %}
+{% block title %}Post #{{ post.idPost }}{% endblock %}
 
 {% block content %}
-<main>
-    <h1>Post n°{{ post.idPost }}</h1>
+    <div class="row">
+        <div class="col-12">
+             <h1>Détail du Post</h1>
+             <a href="index.php?controleur=post&methode=lister"><- Retour</a>
+             <hr>
+        </div>
 
-    <div>
-        <h3>Type de post :</h3>
-        <p>{{ post.typePost }}</p>
-    </div>
+        <div class="col-9">
+            <p class="text-body-primary" style="font-size: 1.2em;">
+                {{ post.contenu }}
+            </p>
+        </div>
 
-    <div>
-        <h3>Contenu :</h3>
-        <p>{{ post.contenu }}</p>
+        <div class="col-3">
+            <div class="">
+                <h6>Informations</h6>
+                <ul>
+                    <li><strong>Date :</strong> {{ post.datePublication }}</li>
+                    <li><strong>Type :</strong> {{ post.typePost }}</li>
+                    <li><strong>Auteur ID :</strong> {{ post.idAuteur }}</li>
+                    <li><strong>Room ID :</strong> {{ post.idRoom }}</li>
+                </ul>
+                
+                <br>
+                <a href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}" style="color: red; font-size: 0.8em;">
+                    Supprimer ce post
+                </a>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <h3>Date de publication :</h3>
-        <p>{{ post.datePublication }}</p>
-    </div>
-
-    <div>
-        <h3>Auteur :</h3>
-        <p>ID utilisateur : {{ post.idAuteur }}</p>
-    </div>
-
-    <div>
-        <h3>Room / Groupe :</h3>
-        <p>ID Room : {{ post.idRoom }}</p>
-    </div>
-</main>
 {% endblock %}
