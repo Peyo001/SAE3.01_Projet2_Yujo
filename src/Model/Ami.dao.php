@@ -24,7 +24,7 @@ class AmiDao{
 
     // Récupérer un ami d'un utilisateur par leurs IDs
     public function find(int $idUtilisateur1, int $idUtilisateur2): ?Ami {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM AMIS WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM AMI WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
         $stmt->bindValue(':idUtilisateur1', $idUtilisateur1, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $idUtilisateur2, PDO::PARAM_INT);
         $stmt->execute();
@@ -46,7 +46,7 @@ class AmiDao{
 
     $stmt = $this->conn->prepare("
         SELECT idUtilisateur1, idUtilisateur2 
-        FROM AMIS 
+        FROM AMI 
         WHERE idUtilisateur1 = :idUtilisateur OR idUtilisateur2 = :idUtilisateur
     ");
     $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
@@ -65,7 +65,7 @@ class AmiDao{
 }
 
     public function insert(Ami $ami): bool {
-        $stmt = $this->conn->prepare("INSERT INTO AMIS (idUtilisateur1, idUtilisateur2, dateAjout) VALUES (:idUtilisateur1, :idUtilisateur2, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO AMI (idUtilisateur1, idUtilisateur2, dateAjout) VALUES (:idUtilisateur1, :idUtilisateur2, :dateAjout)");
         $stmt->bindValue(':idUtilisateur1', $ami->getIdUtilisateur1(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $ami->getIdUtilisateur2(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $ami->getDateAjout(), PDO::PARAM_STR);
@@ -73,7 +73,7 @@ class AmiDao{
     }
 
     public function delete(int $idUtilisateur1, int $idUtilisateur2): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AMIS WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
+        $stmt = $this->conn->prepare("DELETE FROM AMI WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
         $stmt->bindValue(':idUtilisateur1', $idUtilisateur1, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $idUtilisateur2, PDO::PARAM_INT);
         return $stmt->execute();
