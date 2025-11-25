@@ -44,8 +44,7 @@ class SignalementDao
 
     public function insert(Signalement $signalement): bool
     {
-        $stmt = $this->pdo->prepare("INSERT INTO signalements (id, raison) VALUES (:id, :raison)");
-        $stmt->bindParam(':id', $signalement->getId(), PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare("INSERT INTO signalements (raison) VALUES (:raison)");
         $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
     }
