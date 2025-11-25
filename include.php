@@ -4,9 +4,9 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 //information de connexion a la base de donnee
-require_once __DIR__ . '/config/configDatabase.json';
+require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/src/Database/DataBase.php';
-//require_once __DIR__ . '/config/twig.php';
+require_once __DIR__ . '/config/twig.php';
 
 // Autoloading des classes
 require_once __DIR__ . '/src/Model/Signalement.class.php';
@@ -29,4 +29,10 @@ require_once __DIR__ . '/src/Model/Objet.class.php';
 require_once __DIR__ . '/src/Model/Objet.dao.php';
 require_once __DIR__ . '/src/Model/Groupe.class.php';
 require_once __DIR__ . '/src/Model/Groupe.dao.php';
+
+//Chargement des controllers
+require_once __DIR__ . '/src/Controller/controller.class.php';
+require_once __DIR__ . '/src/Controller/controller_factory.class.php';
+require_once __DIR__ . '/src/Controller/controller_post.class.php';
+require_once __DIR__ . '/src/Controller/controller_signalement.class.php';
 ?>
