@@ -44,6 +44,33 @@ class UtilisateurDao
         return null;
     }
 
+    public function findByEmail(string $email): ?Utilisateur
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM UTILISATEUR WHERE email = :email");
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Utilisateur(
+                $row['idUtilisateur'],
+                $row['nom'],
+                $row['prenom'],
+                $row['dateNaissance'],
+                $row['genre'],
+                $row['pseudo'],
+                $row['email'],
+                $row['motDePasse'], 
+                $row['typeCompte'],
+                (bool)$row['estPremium'],
+                $row['dateInscription'],
+                (int)$row['yuPoints'],
+                $row['personnalisation']
+            );
+        }
+        return null;
+    }
+
     public function findAll(): array
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints FROM UTILISATEUR");
