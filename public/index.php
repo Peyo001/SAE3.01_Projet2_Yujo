@@ -2,12 +2,12 @@
 require_once __DIR__ . '/../include.php';
 session_start();
 
-$email = "alice@email.com"; 
+$email = "alice@example.com"; 
 
 $pdo = DataBase::getInstance()->getConnection();
 
 // Récupère l'utilisateur en BDD
-$stmt = $pdo->prepare("SELECT idUtilisateur FROM utilisateur WHERE email = :email");
+$stmt = $pdo->prepare("SELECT idUtilisateur FROM UTILISATEUR WHERE email = :email");
 $stmt->execute(['email' => $email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,7 +38,7 @@ foreach ($amis as $ami) {
         $idAmi = $ami->getIdUtilisateur1();
     }
 
-    $stmt = $pdo->prepare("SELECT pseudo FROM utilisateur WHERE idUtilisateur = :id");
+    $stmt = $pdo->prepare("SELECT pseudo FROM UTILISATEUR WHERE idUtilisateur = :id");
     $stmt->execute(['id' => $idAmi]);
     $utilisateurs[$idAmi] = $stmt->fetchColumn();
 }
