@@ -2,55 +2,37 @@
 
 class Database
 {
-    private static ?Database $instance = null; // Singleton
-    private PDO $conn;                          // Connexion PDO
+    private static ?Database $instance = null;
+    private PDO $conn;                        
 
-    
-    // Constructeur privé
     private function __construct()
     {
         try {
-            // Connexion PDO simple
+            $config = Config::getParameter('database');
+
             $this->conn = new PDO(
-                'mysql:host=' . "localhost" . ';dbname=' . "SAE_301",
-                "mxcr",
-                "spiderman"
+                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
+                $config['user'],
+                $config['password']
             );
 
-            // Définir le charset UTF-8
             $this->conn->exec("SET NAMES utf8mb4");
         } catch (Exception $e) {
             throw new Exception("Erreur PDO : " . $e->getMessage());
         }
-    
     }
 
-
-    //destructeur
-    public function __destruct()
-    {
-        
-    }   
-
-    // Récupérer l'instance unique
     public static function getInstance(): Database
     {
         if (self::$instance === null) {
             self::$instance = new Database();
         }
+
         return self::$instance;
     }
 
-    // Récupérer la connexion PDO
     public function getConnection(): PDO
     {
         return $this->conn;
     }
-
-    // Empêcher clonage et désérialisation
-    private function __clone() {}
-    public function __wakeup() {
-        throw new Exception("Un singleton ne doit pas être désérialisé");
-    }
 }
-?>
