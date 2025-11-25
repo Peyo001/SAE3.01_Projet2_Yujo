@@ -2,7 +2,7 @@
 class Groupe
 {
     // ATTRIBUTS
-    private int $idGroupe;
+    private ?int $idGroupe = null;
     private string $nomGroupe;
     private ?string $description;
     private ?string $dateCreationGroupe;
@@ -10,11 +10,11 @@ class Groupe
 
     // CONSTRUCTEUR
     public function __construct(
-        int $idGroupe,
+        ?int $idGroupe = null,
         string $nomGroupe,
         ?string $descriptionGroupe,
         ?string $dateCreation,
-        array $membres = []
+        array $membres = []                                                                                                             
     ) {
         $this->setIdGroupe($idGroupe);
         $this->setNomGroupe($nomGroupe);
