@@ -1,0 +1,44 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Post #{{ post.idPost }}{% endblock %}
+
+<<<<<<< HEAD
+{% block css %}
+    <link rel="stylesheet" href="../public/css/style.css">
+{% endblock %}
+
+
+=======
+>>>>>>> c44f315ee8a16e01a37b5011c3a47ce7c02970a9
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+             <h1>Détail du Post</h1>
+             <a href="index.php?controleur=post&methode=lister"><- Retour</a>
+             <hr>
+        </div>
+
+        <div class="col-9">
+            <p class="text-body-primary" style="font-size: 1.2em;">
+                {{ post.contenu }}
+            </p>
+        </div>
+
+        <div class="col-3">
+            <div class="">
+                <h6>Informations</h6>
+                <ul>
+                    <li><strong>Date :</strong> {{ post.datePublication }}</li>
+                    <li><strong>Type :</strong> {{ post.typePost }}</li>
+                    <li><strong>Auteur ID :</strong> {{ post.idAuteur }}</li>
+                    <li><strong>Room ID :</strong> {{ post.idRoom }}</li>
+                </ul>
+                
+                <br>
+                <a href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}" style="color: red; font-size: 0.8em;">
+                    Supprimer ce post
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

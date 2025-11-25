@@ -1,0 +1,43 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Nouveau Post{% endblock %}
+
+<<<<<<< HEAD
+{% block css %}
+    <link rel="stylesheet" href="../public/css/style.css">
+{% endblock %}
+
+=======
+>>>>>>> c44f315ee8a16e01a37b5011c3a47ce7c02970a9
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1>Créer un nouveau post</h1>
+            <a href="index.php?controleur=post&methode=lister"><- Retour</a>
+            <hr>
+        </div>
+
+        <div class="col-9">
+            <form action="index.php?controleur=post&methode=traiterFormulaireInsertion" method="post">
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="contenu">Votre message :</label><br>
+                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" required></textarea>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="type_post">Type de post :</label><br>
+                    <select name="type_post" id="type_post">
+                        <option value="texte">Texte</option>
+                        <option value="image">Image</option>
+                        <option value="lien">Lien</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="id_room" value="1">
+
+                <button type="submit">Publier</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

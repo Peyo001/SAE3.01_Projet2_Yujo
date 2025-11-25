@@ -1,51 +1,56 @@
 <?php
-require_once __DIR__ . '/../include.php';
-session_start();
+/**
+ * @file index.php
+ * @brief Point d'entrée principal de l'application.
+ *
+ * @details Ce fichier gère la logique principale de routage de l'application, 
+ * en chargeant le contrôleur et la méthode appropriés en fonction des paramètres GET.
+ */
 
-$email = "alice@example.com"; 
+require_once __DIR__ . '../../include.php';
 
-$pdo = DataBase::getInstance()->getConnection();
-
-// Récupère l'utilisateur en BDD
-$stmt = $pdo->prepare("SELECT idUtilisateur FROM UTILISATEUR WHERE email = :email");
-$stmt->execute(['email' => $email]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-$userId = $user['idUtilisateur']; 
-
-// Récupération des amis de l'utilisateur
-$amiDao = new AmiDao();
-$amis = $amiDao->findAmis($userId);
-
-// Récupération des posts
-$postDao = new PostDao();
-$posts = [];
-foreach ($amis as $ami) {
-    $idAmi = ($ami->getIdUtilisateur1() == $userId) ? $ami->getIdUtilisateur2() : $ami->getIdUtilisateur1();
-
-    $postsAmi = $postDao->findPostsByAuteur($idAmi);
-    if (!empty($postsAmi)) {
-        $posts = array_merge($posts, $postsAmi); 
+try
+{
+    // Détermine le contrôleur à utiliser et la méthode à appeler
+    if (isset($_GET['controleur']))
+    {
+        $controllerName = $_GET['controleur'];
     }
-}
-
-// Récupération des pseudos des amis
-$utilisateurs = [];
-foreach ($amis as $ami) {
-    if ($ami->getIdUtilisateur1() == $userId) {
-        $idAmi = $ami->getIdUtilisateur2();
-    } else {
-        $idAmi = $ami->getIdUtilisateur1();
+    else
+    {
+        $controllerName = '';
+    }
+    if (isset($_GET['methode']))
+    {
+        $methode = $_GET['methode'];
+    }
+    else
+    {
+        $methode = '';
     }
 
-    $stmt = $pdo->prepare("SELECT pseudo FROM UTILISATEUR WHERE idUtilisateur = :id");
-    $stmt->execute(['id' => $idAmi]);
-    $utilisateurs[$idAmi] = $stmt->fetchColumn();
-}
+    //Gestion de la page index.php sans paramètres
+    if ($controllerName == '' && $methode == '')
+    {
+        $controllerName = ""; //controleur de la page d'accueil 
+        $methode = ""; //methode afficher de la page d'accueil
+    }
+    else
+    {
+        if ($controllerName == '')
+        {
+            throw new Exception("Il manque le contrôleur");
+        }
+        if ($methode == '')
+        {
+            throw new Exception("Il manque la méthode");
+        }
+    }
 
-// Affichage avec Twig
-echo $twig->render('pageAccueil.html.twig', [
-    'amis' => $amis,
-    'posts' => $posts,
-    'utilisateurs' => $utilisateurs
-]);
+    $controleur = ControllerFactory::getController($controllerName, $loader, $twig);
+    $controleur->call($methode);
+}
+catch (Exception $e)
+{
+    die('Erreur : ' . $e->getMessage());
+}
