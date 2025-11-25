@@ -35,4 +35,6 @@ require_once __DIR__ . '/src/Controller/controller.class.php';
 require_once __DIR__ . '/src/Controller/controller_factory.class.php';
 require_once __DIR__ . '/src/Controller/controller_post.class.php';
 require_once __DIR__ . '/src/Controller/controller_signalement.class.php';
+require_once __DIR__ . '/src/Controller/controller_room.class.php';
+require_once __DIR__ . '/src/Controller/controller_objet.class.php';
 ?>
