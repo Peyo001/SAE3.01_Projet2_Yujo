@@ -1,26 +1,44 @@
 <?php
 
 class Config {
-    /*
-    Class to manage configuration parameters stored in a JSON file.
-    */
+    /**
+     * Classe Config
+     *
+     * Cette classe gère les paramètres de configuration stockés dans un fichier JSON.
+     * Elle permet de récupérer des paramètres spécifiques via une clé donnée.
+     *
+     */
 
     private static $configPath = __DIR__ . '/config.json';
     private static $dictParameters = null;
 
-    private static function getJson() {
+    /**
+     * Cette méthode récupère les paramètres de configuration depuis un fichier JSON.
+     *
+     * @return array Tableau associatif des paramètres de configuration.
+     * @throws Exception Si le fichier de configuration est introuvable.
+     */
+    private static function getConfiguration() {
         
-        if (!file_exists(self::$configPath)) {
-            throw new Exception("Configuration file not found: " . self::$configPath);
+        if (!file_exists(Config::$configPath)) {
+            throw new Exception("La configuration est introuvable: " . Config::$configPath);
         }
-        $jsonContent = file_get_contents(self::$configPath);
+        $jsonContent = file_get_contents(Config::$configPath);
         
         return json_decode($jsonContent, true);
     }
 
-    public static function getParameter($key) {
+
+    /**
+     * Cette méthode récupère un paramètre de configuration spécifique en fonction de la clé fournie.
+     *
+     * @param string $key La clé du paramètre de configuration à récupérer.
+     * @return mixed La valeur du paramètre de configuration.
+     * @throws Exception Si le fichier de configuration est introuvable ou si la clé n'existe pas.
+     */
+    public static function getParametre($key) {
         if (Config::$dictParameters === null) {
-            Config::$dictParameters = Config::getJson();
+            Config::$dictParameters = Config::getConfiguration();
         }
 
         if (!array_key_exists($key, Config::$dictParameters)) {

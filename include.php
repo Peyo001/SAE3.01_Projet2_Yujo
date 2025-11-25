@@ -34,8 +34,5 @@ require_once __DIR__ . '/src/Model/Groupe.dao.php';
 require_once __DIR__ . '/src/Controller/controller.class.php';
 require_once __DIR__ . '/src/Controller/controller_factory.class.php';
 require_once __DIR__ . '/src/Controller/controller_post.class.php';
-<<<<<<< HEAD
 require_once __DIR__ . '/src/Controller/controller_signalement.class.php';
-=======
->>>>>>> c44f315ee8a16e01a37b5011c3a47ce7c02970a9
 ?>
