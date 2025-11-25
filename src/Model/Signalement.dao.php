@@ -42,14 +42,14 @@ class SignalementDao
         return null;
     }
 
-    public function insert(Signalement $signalement): bool
+    public function inserer(Signalement $signalement): bool
     {
-        $stmt = $this->pdo->prepare("INSERT INTO signalements (raison) VALUES (:raison)");
+        $stmt = $this->conn->prepare("INSERT INTO SIGNALEMENT (raison) VALUES (:raison)");
         $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
     }
 
-    public function delete(int $id): bool
+    public function supprimer(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM SIGNALEMENT WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $id, PDO::PARAM_INT);

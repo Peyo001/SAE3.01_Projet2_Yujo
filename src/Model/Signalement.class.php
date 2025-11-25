@@ -1,7 +1,6 @@
 <?php
 
 class Signalement {
-    // On met ?int pour dire que l'id peut être null (avant insertion)
     private ?int $id; 
     private ?string $raison;
 
