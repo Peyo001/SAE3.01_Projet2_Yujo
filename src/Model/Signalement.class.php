@@ -1,13 +1,6 @@
 <?php
 
 class Signalement {
-<<<<<<< HEAD
-    private int $id;
-    private ?string $raison;
-
-    public function __construct(int $id, ?string $raison) {
-=======
-    // On met ?int pour dire que l'id peut être null (avant insertion)
     private ?int $id; 
     private ?string $raison;
 
