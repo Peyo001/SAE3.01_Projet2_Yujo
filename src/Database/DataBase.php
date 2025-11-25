@@ -5,10 +5,10 @@ class Database
     private static ?Database $instance = null;
     private PDO $conn;                        
 
-    private function __construct()                                                                                                                                                                                     
+    private function __construct()
     {
         try {
-            $config = Config::getParameter('database');
+            $config = Config::getParametre('database');
 
             $this->conn = new PDO(
                 'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
@@ -17,8 +17,7 @@ class Database
             );
 
             $this->conn->exec("SET NAMES utf8mb4");
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw new Exception("Erreur PDO : " . $e->getMessage());
         }
     }
