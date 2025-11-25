@@ -65,14 +65,22 @@ class GroupeDao
         return $groupes;
     }
 
-    public function insert(Groupe $groupe): bool
+    public function EnregistrerGroupe(Groupe $groupe): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO GROUPE (idGroupe, nomGroupe, description, dateCreationGroupe) VALUES (:idGroupe, :nomGroupe, :descriptionGroupe, :dateCreation)");
-        $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
+        $stmt = $this->conn->prepare("
+            INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe) 
+            VALUES (:nomGroupe, :description, :dateCreationGroupe)
+        ");
         $stmt->bindValue(':nomGroupe', $groupe->getNomGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':description', $groupe->getDescriptionGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':dateCreationGroupe', $groupe->getDateCreation(), PDO::PARAM_STR);
-        return $stmt->execute();
+
+        $res = $stmt->execute();
+        if ($res) {
+            $groupe->setIdGroupe((int)$this->conn->lastInsertId());
+        }
+        
+        return $res;
     }
 
     public function delete(int $idGroupe): bool
@@ -82,16 +90,16 @@ class GroupeDao
         return $stmt->execute();
     }
 
-    public function insertMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
+    public function AjouterMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
     {
         if ($groupe->estMembre($idUtilisateur)) {
-            return false; // Membre déjà dans le groupe
+            return false; 
         }
         $stmt = $this->conn->prepare("INSERT INTO COMPOSER (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
         $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
-        return $stmt->execute(); // renvoie true si succès, false sinon
+        return $stmt->execute(); 
     }
 }
 ?>
