@@ -1,5 +1,15 @@
 <?php
-    // Création de la classe Room
+    /**
+     * Classe Room
+     * 
+     * Cette classe représente une room virtuelle où les utilisateurs peuvent interagir avec des objets 3D.
+     * Elle permet de créer un objet Room et de l'utiliser avec les propriétés idRoom, nom, visibilite, dateCreation, nbVisit et idCreateur.
+     * 
+     * Exemple d'utilisation :
+     * $room = new Room(1, 'MaRoom', 'Publique', '2024-01-01', 100, 42);
+     * echo $room->getNom(); // Affiche 'MaRoom'
+     * 
+     */
     
     class Room {
         private ?int $idRoom;

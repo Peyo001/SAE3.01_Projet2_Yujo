@@ -1,4 +1,14 @@
 <?php
+/**
+ * Classe Avatar
+ * 
+ * Cette classe représente un avatar créé par un utilisateur.
+ * Elle permet de créer un objet Avatar et de l'utiliser avec les propriétés idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires et idUtilisateur.
+ * 
+ * Exemple d'utilisation :
+ * $avatar = new Avatar(1, 'MonAvatar', 'Masculin', '2024-01-01', 'Clair', 'Brun', 'T-shirt', 'Lunettes', 42);
+ * echo $avatar->getNom(); // Affiche le nom de MonAvatar
+ */
 class Avatar {
 
     //Attributs

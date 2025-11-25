@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe Groupe
+ * 
+ * Cette classe représente un groupe d'utilisateurs.
+ * Elle permet de créer un objet Groupe et de l'utiliser avec les propriétés idGroupe, nomGroupe, description, dateCreationGroupe et membres.
+ * 
+ * Exemple d'utilisation :
+ * $groupe = new Groupe(1, 'Groupe1', 'Description du groupe', '2024-01-01', ['Alice', 'Bob']);
+ * echo $groupe->getListeMembres(); // Affiche "Alice, Bob"
+ * 
+ */
 class Groupe
 {
     // ATTRIBUTS

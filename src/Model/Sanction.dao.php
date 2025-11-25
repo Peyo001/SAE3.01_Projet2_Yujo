@@ -1,5 +1,15 @@
 <?php
-
+/** 
+ * Classe SanctionDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Sanction dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $sanctionDao = new SanctionDao();
+ * $sanction = $sanctionDao->findAll();
+ * 
+ */
 class SanctionDao {
     private PDO $conn;
 

@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe Post
+ * 
+ * Cette classe représente un post créé par un utilisateur dans une room.
+ * Elle permet de créer un objet Post et de l'utiliser avec les propriétés idPost, contenu, typePost, datePublication, idAuteur et idRoom.
+ * 
+ * Exemple d'utilisation : 
+ * $post = new Post();
+ * $post->setContenu('Bonjour tout le monde !');
+ * echo $post->getContenu(); // Affiche 'Bonjour tout le monde !'
+ */
 class Post
 {
     private ?int $idPost = null;

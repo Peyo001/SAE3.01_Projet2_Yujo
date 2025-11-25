@@ -1,5 +1,14 @@
 <?php
-    // Création de la classe Objet
+    /**
+     * Classe Objet
+     * 
+     * Cette classe représente un objet 3D disponible dans une room.
+     * Elle permet de créer un objet Objet et de l'utiliser avec les propriétés idObjet, description, modele3dPath, prix et idRoom.
+     * 
+     * Exemple d'utilisation :
+     * $objet = new Objet(1, 'Chaise en bois', '/models/chaise.obj', 100, 5);
+     * echo $objet->getDescription(); // Affiche 'Chaise en bois'
+     */
     
     class Objet {
         private ?int $idObjet;

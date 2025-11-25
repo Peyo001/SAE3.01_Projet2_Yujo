@@ -1,4 +1,15 @@
 <?php 
+/**
+ * Classe AmiDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Ami dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $amiDao = new AmiDao();
+ * $ami = $amiDao->findAll();
+ * 
+ */
 
 class AmiDao{
     private PDO $conn;

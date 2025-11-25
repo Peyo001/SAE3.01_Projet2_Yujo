@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe PostDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Post dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $postDao = new PostDao();
+ * $post = $postDao->findAll();
+ * 
+ */
 class PostDao
 {
     private PDO $conn;

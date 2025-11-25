@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Classe Signalement
+ * 
+ * Cette classe représente un signalement fait par un utilisateur.
+ * Elle permet de creer un objet Signalement et de l'utiliser avec les propriétés id et raison.
+ * 
+ * Exemple d'utilisation :
+ * $signalement = new Signalement(1, 'Contenu inapproprié');
+ * echo $signalement->getRaison(); // Affiche 'Contenu inapproprié'
+ * 
+ */
 class Signalement {
     private int $id;
     private ?string $raison;

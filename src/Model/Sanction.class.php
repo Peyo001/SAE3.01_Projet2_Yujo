@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * Classe Sanction
+ * 
+ * Cette classe représente un signalement fait par un utilisateur sur un post.
+ * Elle permet de creer un objet Sanction et de l'utiliser avec les propriétés idSignalement, idUtilisateur, idPost, dateSignalement et status.
+ * 
+ * Exemple d'utilisation :
+ * $sanction = new Sanction(1, 42, 100, '2024-01-01', 'en_attente');
+ * echo $sanction->getStatus(); // Affiche 'en_attente'
+ */
 class Sanction {
     private int $idSignalement;
     private int $idUtilisateur;

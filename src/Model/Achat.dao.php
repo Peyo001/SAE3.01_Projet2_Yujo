@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Classe AchatDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Achat dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $achatDao = new AchatDao();
+ * $achat = $achatDao->findAll();
+ * 
+ */
 
 class AchatDao
 {
