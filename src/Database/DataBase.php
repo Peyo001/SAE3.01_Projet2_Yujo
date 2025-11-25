@@ -5,13 +5,20 @@ class Database
     private static ?Database $instance = null;
     private PDO $conn;                        
 
-    private function __construct()
+    private function __construct()                                                                                                                                                                                     
     {
         try {
             $config = json_decode(file_get_contents(__DIR__ . '/../../config/configDatabase.json'), true)['database'];
 
             $this->conn = new PDO(
-                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'], $config['user'], $config['password']);
+                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'], $config['user'], $config['password']);                                                                                                                                                                                          
+            $config = Config::getParameter('database');
+
+            $this->conn = new PDO(
+                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
+                $config['user'],
+                $config['password']
+            );
 
             $this->conn->exec("SET NAMES utf8mb4");
         }
