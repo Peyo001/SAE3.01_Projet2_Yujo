@@ -1,0 +1,36 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Créer un groupe{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <a href="index.php?controleur=groupe&methode=lister" class="mb-3 d-block">&larr; Annuler et retour</a>
+
+            <div class="card shadow -sm">
+                <div class="card-body p-4">
+                    <h2 class="card-title mb-4">Nouveau Groupe</h2>
+
+                    <form action="index.php?controleur=groupe&methode=traiterFormulaireCreation" method="post">
+                        
+                        <div class="mb-3">
+                            <label for="nom_groupe" class="form-label">Nom du groupe <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nom_groupe" name="nom_groupe" placeholder="Ex: Les Amateurs de Cuisine" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Décrivez le but de ce groupe..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Créer le groupe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
