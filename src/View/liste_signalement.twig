@@ -1,0 +1,27 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des signalements{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="../public/css/style.css">
+{% endblock %}
+
+{% block content %}
+<h1>Liste des signalements</h1>
+<a href="index.php?controleur=signalement&methode=afficherFormulaireInsertion">+ Nouveau signalement</a>
+<hr>
+
+{% if signalements is empty %}
+    <p>Aucun signalement pour le moment.</p>
+{% else %}
+    <ul>
+        {% for s in signalements %}
+            <li>
+                ID : {{ s.id }} <br>
+                Raison : {{ s.raison }} <br>
+                <a href="index.php?controleur=signalement&methode=afficher&id={{ s.id }}">Voir</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

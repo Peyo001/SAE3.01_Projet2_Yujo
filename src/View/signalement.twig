@@ -1,0 +1,40 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Signalement #{{ signalement.id }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="../public/css/style.css">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+             <h1>Détail du Signalement</h1>
+             <a href="index.php?controleur=signalement&methode=lister"><- Retour à la liste</a>
+             <hr>
+        </div>
+
+        <div class="col-9">
+            <h3>Motif indiqué :</h3>
+            <p class="text-body-primary">
+                {{ signalement.raison }}
+            </p>
+        </div>
+
+        <div class="col-3">
+            <div class="">
+                <h6>Actions</h6>
+                <p>Signalement #{{ signalement.id }}</p>
+                
+              
+                <hr>
+                
+                <a href="index.php?controleur=signalement&methode=supprimer&id={{ signalement.id }}" 
+                   style="color: red; font-size: 0.8em;"
+                   onclick="return confirm('Voulez-vous vraiment supprimer ce signalement ?');">
+                    Supprimer ce signalement
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
