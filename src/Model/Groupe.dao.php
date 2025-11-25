@@ -17,7 +17,13 @@ class GroupeDao
     // Récupère les membres d’un groupe
     private function getMembres(int $idGroupe): array
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur FROM GROUPE JOIN COMPOSER ON GROUPE.idGroupe = COMPOSER.idGroupe WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("
+            SELECT COMPOSER.idUtilisateur 
+            FROM GROUPE 
+            JOIN COMPOSER ON GROUPE.idGroupe = COMPOSER.idGroupe 
+            WHERE GROUPE.idGroupe = :idGroupe
+        ");
+        
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
