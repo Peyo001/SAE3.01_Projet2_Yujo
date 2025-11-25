@@ -1,0 +1,41 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Les Groupes{% endblock %}
+                                                                                                                                                
+{% block content %}
+    <div class="row">
+        <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+            <h1>Liste des Groupes</h1>
+            <a href="index.php?controleur=groupe&methode=afficherFormulaireCreation" class="btn btn-primary">
+                + Créer un groupe
+            </a>
+        </div>
+
+        <div class="col-12">
+            <div class="row">
+                {% for groupe in groupes %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ groupe.nomGroupe }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Créé le {{ groupe.dateCreation|date("d/m/Y") }}</h6>
+                                <p class="card-text">
+                                    {{ groupe.descriptionGroupe|slice(0, 100) }}...
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <a href="index.php?controleur=groupe&methode=afficher&id={{ groupe.idGroupe }}" class="btn btn-outline-primary w-100">
+                                    Voir le groupe
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info">Aucun groupe n'a été créé pour le moment.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
