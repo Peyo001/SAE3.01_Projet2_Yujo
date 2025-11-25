@@ -1,4 +1,15 @@
 <?php 
+/**
+ * Classe Ami
+ * 
+ * Cette classe permet de lier deux utilisateur.
+ * Elle permet de créer un objet Ami et de l'utiliser avec les propriétés idUtilisateur1, idUtilisateur2 et dateAjout.
+ * 
+ * Exemple d'utilisation :
+ * $ami = new Ami(1, 2, '2024-01-01');
+ * echo $ami->getIdUtilisateur1(); // Affiche l'ami 1
+ * 
+ */
 class Ami {
     private int $idUtilisateur1;
     private int $idUtilisateur2;

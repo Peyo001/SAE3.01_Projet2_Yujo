@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe Achat
+ * 
+ * Cette classe représente un achat effectué par un utilisateur.
+ * Elle permet de creer un objet Achat et de l'utiliser avec les propriétés idObjet, dateAchat et idUtilisateur.
+ * 
+ * Exemple d'utilisation :
+ * $achat = new Achat(1, '2024-01-01', 42);
+ * echo $achat->getIdObjet(); // Affiche 1
+ * 
+ */
 
 class Achat {
     private int $idObjet;

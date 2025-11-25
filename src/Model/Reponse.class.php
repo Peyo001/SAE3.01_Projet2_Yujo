@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * Classe Reponse
+ * 
+ * Cette classe représente une réponse à un post dans un forum ou un système de commentaires.
+ * Elle permet de créer un objet Reponse et de l'utiliser avec les propriétés idReponse, dateReponse, contenu, idAuteur et idPost.
+ * 
+ * Exemple d'utilisation :
+ * $reponse = new Reponse(1, '2024-01-01', 'Ceci est une réponse.', 42, 10);
+ * echo $reponse->getContenu(); // Affiche 'Ceci est une réponse.'
+ */
 class Reponse
 {
     private ?int $idReponse;

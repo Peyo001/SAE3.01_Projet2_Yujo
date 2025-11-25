@@ -1,4 +1,15 @@
 <?php
+    /**
+     * Classe RoomDao
+     * 
+     * Cette classe gère les opérations de la base de données pour les objets Room.
+     * Elle utilise la classe Database pour obtenir une connexion PDO.
+     * 
+     * Exemple d'utilisation :
+     * $roomDao = new RoomDao();
+     * $room = $roomDao->findAll();
+     * 
+     */
     class RoomDao {
 
         // ATTRIBUT

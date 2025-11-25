@@ -1,4 +1,14 @@
 <?php
+    /**
+     * Classe ObjetDao
+     * 
+     * Cette classe permet d'accéder aux données des objets dans la base de données.
+     * Elle utilise la classe Database pour obtenir une connexion PDO.
+     * 
+     * Exemple d'utilisation :
+     * $objetDao = new ObjetDao();
+     * $objet = $objetDao->find(1);
+     */
     class ObjetDao {
 
         // ATTRIBUT

@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe GroupeDao
+ * 
+ * Cette classe gère les opérations de la base de données pour les groupes.
+ * Elle utilise la classe DATABASE pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $groupeDao = new GroupeDao();
+ * $groupe = $groupeDao->findAll();
+ * 
+ */
 class GroupeDao
 {
     private PDO $conn;

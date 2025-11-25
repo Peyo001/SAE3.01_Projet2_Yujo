@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Classe SignalementDao
+ * 
+ * Cette classe gère les opérations CRUD pour les signalements dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $signalementDao = new SignalementDao();
+ * $signalement = $signalementDao->findAll();
+ * 
+ */
 class SignalementDao
 {
     private PDO $conn;

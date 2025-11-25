@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * Classe ReponseDao
+ * 
+ * Cette classe gère les opérations de la base de données pour les réponses aux posts.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $reponseDao = new ReponseDao();
+ * $reponse = $reponseDao->findAll();
+ */
 class ReponseDao
 {
     private PDO $conn;

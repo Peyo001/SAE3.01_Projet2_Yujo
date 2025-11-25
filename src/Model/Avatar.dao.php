@@ -1,4 +1,14 @@
 <?php
+/**
+ * Classe AvatarDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Avatar dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $avatarDao = new AvatarDao();
+ * $avatar = $avatarDao->findAll();
+ */
 class AvatarDao {
     //Attributs
     private PDO $conn;
