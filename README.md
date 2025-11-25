@@ -100,9 +100,12 @@ class exempleDocumentation {
     }
 }
 ```
+
+De manière générale tout le code doit être en français.
+
 - **Nommage des fichiers** : Utilisez le camelCase pour les fichiers PHP (`maClasse.php`), kebab-case pour les templates (`page-accueil.html.twig`).
-- **Variables** : Utilisez le camelCase (`$myVar`), noms explicites et en anglais.
-- **Classes** : Utilisez le PascalCase (`MyClass`), noms explicites et en anglais.
-- **Fonctions/Méthodes** : Utilisez le camelCase (`myFunction()`), noms explicites et en anglais.
+- **Variables** : Utilisez le camelCase (`$myVar`), noms explicites.
+- **Classes** : Utilisez le PascalCase (`MyClass`), noms explicites.
+- **Fonctions/Méthodes** : Utilisez le camelCase (`myFunction()`), noms explicites.
 - **Indentation** : Respectez une indentation cohérente (4 espaces).
 - **Organisation** : Séparez le code métier, la présentation et la configuration dans les dossiers dédiés.
