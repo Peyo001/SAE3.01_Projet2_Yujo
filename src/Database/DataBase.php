@@ -8,7 +8,11 @@ class Database
     private function __construct()
     {
         try {
+<<<<<<< HEAD
             $config = Config::getParameter('database');
+=======
+            $config = json_decode(file_get_contents(__DIR__ . '/../../config/configDatabase.json'), true)['database'];
+>>>>>>> c44f315ee8a16e01a37b5011c3a47ce7c02970a9
 
             $this->conn = new PDO(
                 'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
