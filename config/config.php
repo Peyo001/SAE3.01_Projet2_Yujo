@@ -9,7 +9,7 @@ class Config {
      *
      */
 
-    private static $configPath = __DIR__ . 'config.json';
+    private static $configPath = __DIR__ . '/config.json';
     private static $dictParameters = null;
 
     /**
@@ -48,3 +48,4 @@ class Config {
         return Config::$dictParameters[$key];
     }
 }
+?>
