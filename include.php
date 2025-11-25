@@ -38,5 +38,5 @@ require_once __DIR__ . '/src/Controller/controller_signalement.class.php';
 require_once __DIR__ . '/src/Controller/controller_room.class.php';
 require_once __DIR__ . '/src/Controller/controller_objet.class.php';
 require_once __DIR__ . '/src/Controller/controller_utilisateur.class.php';
-
+require_once __DIR__ . '/src/Controller/controller_groupe.class.php';
 ?>
