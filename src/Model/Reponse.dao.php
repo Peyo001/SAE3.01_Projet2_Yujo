@@ -28,6 +28,15 @@ class ReponseDao
         return null;
     }
 
+    public function findResponsesByPost(int $idPost): ?array{
+        $sql = "SELECT * FROM REPONSE WHERE idPost = :idPost";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $stmt->execute();
+        return $stmt->fetchAll() ?: [];
+    }
+
     public function findAll(): array{
         $sql = "SELECT * FROM REPONSE";
         $pdoStatement = $this->conn->prepare($sql);
@@ -42,11 +51,12 @@ class ReponseDao
                 $row['idAuteur'],
                 $row['idPost'],
             );
+            $reponse[] = $reponse;
         }
         return $reponse;
     }
 
-    public function createResponse(Reponse $response): bool
+    public function insert(Reponse $response): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO REPONSE (idReponse, dateRepoonse, contenu, idAuteur, idPost) VALUES (:idReponse, :dateReponse, :contenu, :idAuteur, :idPost)");
         $stmt->bindValue(':idReponse', $response->getId(), PDO::PARAM_INT);
@@ -58,7 +68,7 @@ class ReponseDao
         return $stmt->execute();
     }
 
-    public function deleteResponse(int $id): bool{
+    public function delete(int $id): bool{
         $stmt = $this->conn->prepare("DELETE FROM REPONSE WHERE idReponse = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
