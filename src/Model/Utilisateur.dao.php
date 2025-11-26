@@ -1,4 +1,15 @@
 <?php
+/**
+ * 
+ * Classe UtilisateurDao
+ * 
+ * Cette classe gère les opérations CRUD pour les utilisateurs dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $utilisteurDao = new UtilisateurDao();
+ * $utilisateur = $utilisateurDao->findAll();
+ */
 class UtilisateurDao
 {
     //ATTRIBUT
