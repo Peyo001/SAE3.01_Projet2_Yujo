@@ -1,33 +1,74 @@
-{% extends "base_template.html.twig" %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Yujo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-{% block title %}Connexion - Yujo{% endblock %}
+    <style>
+        body {
+            background: linear-gradient(90deg, #4b2cb7, #ff0080);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            margin: 0;
+        }
 
-{% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card p-4">
-            <h2 class="text-center mb-4">Connexion</h2>
-            
-            {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
+        .card {
+            max-width: 500px;
+            margin: 40px auto;
+            border-radius: 10px;
+        }
 
-            <form action="index.php?controleur=utilisateur&methode=traiterConnexion" method="post">
-                <div class="mb-3">
-                    <label>Email</label>
-                    <input type="email" name="email" class="form-control" value="{{ last_email }}" required>
-                </div>
-                <div class="mb-3">
-                    <label>Mot de passe</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-            </form>
-            
-            <p class="mt-3 text-center">
-                Pas encore de compte ? <a href="index.php?controleur=utilisateur&methode=afficherFormulaireInscription">S'inscrire</a>
-            </p>
-        </div>
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .title-row img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card p-4 shadow-sm">
+
+    <div class="title-row">
+        <img src="../public/assets/icons/logo_yujo.png" alt="Logo Yujo">
+        <h2 class="m-0">Connexion</h2>
     </div>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form action="index.php?controleur=utilisateur&methode=traiterConnexion" method="post">
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" value="{{ last_email }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Mot de passe</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+    </form>
+
+    <p class="mt-3 text-center">
+        Pas encore de compte ?
+        <a href="index.php?controleur=utilisateur&methode=afficherFormulaireInscription">S'inscrire</a>
+    </p>
+
 </div>
-{% endblock %}
+
+</body>
+</html>
