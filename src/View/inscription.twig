@@ -1,58 +1,107 @@
-{% extends "base_template.html.twig" %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Yujo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-{% block title %}Inscription - Yujo{% endblock %}
+    <style>
+        body {
+            background: linear-gradient(90deg, #4b2cb7, #ff0080);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
 
-{% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-md-8">
-        <div class="card p-4">
-            <h2 class="text-center mb-4">Rejoindre Yujo</h2>
-            
-            <form action="index.php?controleur=utilisateur&methode=traiterInscription" method="post">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>Nom</label>
-                        <input type="text" name="nom" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Prénom</label>
-                        <input type="text" name="prenom" class="form-control" required>
-                    </div>
-                </div>
+        .card {
+            width: 100%;
+            max-width: 450px;   
+            border-radius: 10px;
+            padding: 10px;
+        }
 
-                <div class="mb-3">
-                    <label>Pseudo</label>
-                    <input type="text" name="pseudo" class="form-control" required>
-                </div>
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-                <div class="mb-3">
-                    <label>Email</label>
-                    <input type="email" name="email" class="form-control" required>
-                </div>
+        .title-row img {
+            width: 40px; 
+        }
+    </style>
+</head>
 
-                <div class="mb-3">
-                    <label>Mot de passe</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>Date de naissance</label>
-                        <input type="date" name="date_naissance" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Genre</label>
-                        <select name="genre" class="form-control">
-                            <option value="Autre">Autre</option>
-                            <option value="Homme">Homme</option>
-                            <option value="Femme">Femme</option>
-                        </select>
-                    </div>
-                </div>
+<body>
 
-                <button type="submit" class="btn btn-success w-100 mt-3">S'inscrire</button>
-            </form>
-        </div>
+<div class="card p-3 shadow-sm">
+    
+    <div class="title-row">
+        <img src="../public/assets/icons/logo_yujo.png" alt="Logo Yujo">
+        <h2 class="m-0">Rejoindre Yujo</h2>
     </div>
+
+    <form action="index.php?controleur=utilisateur&methode=traiterInscription" method="post">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>Nom</label>
+                <input type="text" name="nom" class="form-control" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Prénom</label>
+                <input type="text" name="prenom" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Pseudo</label>
+            <input type="text" name="pseudo" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>Date de naissance</label>
+                <input type="date" name="date_naissance" class="form-control" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Genre</label>
+                <select name="genre" class="form-control">
+                    <option value="Autre">Autre</option>
+                    <option value="Homme">Homme</option>
+                    <option value="Femme">Femme</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-3">S'inscrire</button>
+        
+    </form>
+
+    <p class="mt-0 text-center">
+        Déjà un compte ?
+        <a href="index.php?controleur=utilisateur&methode=connexion">Se connecter</a>
+    </p>
+
 </div>
-{% endblock %}
+
+</body>
+</html>
