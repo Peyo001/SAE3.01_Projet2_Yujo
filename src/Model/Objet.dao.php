@@ -12,19 +12,38 @@
     class ObjetDao {
 
         // ATTRIBUT
+        // Propriété représentant la connexion à la base de données via PDO.
         private PDO $conn;
 
         // CONSTRUCTEUR
+        /**
+         * Constructeur de la classe ObjetDao.
+         * 
+         * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
+         */
         public function __construct() {
             $this->conn = Database::getInstance()->getConnection();
         }
 
         //DESTRUCTEUR
+        /**
+         * Destructeur de la classe ObjetDao.
+         * 
+         * Ce destructeur libère les ressources de la connexion à la base de données.
+         */
         public function __destruct() {
             Database::getInstance()->__destruct();
         }
 
         // METHODES
+        /**
+         * Trouve un objet dans la base de données par son identifiant.
+         * 
+         * Cette méthode récupère un objet spécifique en fonction de son identifiant et retourne un objet de type `Objet`.
+         * 
+         * @param int $id Identifiant de l'objet à récupérer.
+         * @return Objet|null Retourne un objet `Objet` si trouvé, sinon null.
+         */
         public function find(int $id): ?Objet {
             $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, idRoom FROM OBJET WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -44,6 +63,13 @@
             return null;
         }
 
+        /**
+         * Récupère tous les objets de la base de données.
+         * 
+         * Cette méthode récupère tous les objets et retourne un tableau d'objets `Objet`.
+         * 
+         * @return Objet[] Tableau des objets `Objet`.
+         */
         public function findAll(): array {
             $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET");
             $stmt->execute();
@@ -61,6 +87,14 @@
             return $users;
         }
 
+        /**
+         * Récupère les objets d'une room spécifique.
+         * 
+         * Cette méthode récupère tous les objets qui appartiennent à une room donnée en fonction de son identifiant.
+         * 
+         * @param int $idRoom Identifiant de la room.
+         * @return Objet[] Tableau d'objets `Objet` dans la room spécifiée.
+         */
         public function findByRoom(int $idRoom): array {
             $stmt = $this->conn->prepare("SELECT * FROM OBJET WHERE idRoom = :idRoom");
             $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
@@ -78,6 +112,14 @@
             return $objets;
         }
 
+        /**
+         * Met à jour un objet dans la base de données.
+         * 
+         * Cette méthode met à jour les informations d'un objet existant en base de données.
+         * 
+         * @param Objet $objet L'objet à mettre à jour.
+         * @return bool Retourne true si la mise à jour a réussi, sinon false.
+         */
         public function updateObjet(Objet $objet): bool {
             $stmt = $this->conn->prepare("UPDATE OBJET SET description = :description, modele3dPath = :modele3dPath, prix = :prix, idRoom = :idRoom WHERE idObjet = :idObjet;");
             $stmt->bindValue(':description', $objet->getDescription());
@@ -89,6 +131,14 @@
             return $stmt->execute();
         }
 
+         /**
+         * Crée un nouvel objet dans la base de données.
+         * 
+         * Cette méthode permet d'ajouter un nouvel objet dans la base de données avec les informations de l'objet fourni.
+         * 
+         * @param Objet $objet L'objet à insérer dans la base de données.
+         * @return bool Retourne true si l'insertion a réussi, sinon false.
+         */
         public function createObjet(Objet $objet): bool {
             $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix, idRoom) VALUES (:description, :modele3dPath, :prix, :idRoom)");
 
@@ -98,7 +148,15 @@
             $stmt->bindValue(':idRoom', $objet->getIdRoom(), PDO::PARAM_INT);
             return $stmt->execute();
         }
-    
+        
+         /**
+         * Supprime un objet de la base de données.
+         * 
+         * Cette méthode permet de supprimer un objet de la base de données en fonction de son identifiant.
+         * 
+         * @param int $id Identifiant de l'objet à supprimer.
+         * @return bool Retourne true si la suppression a réussi, sinon false.
+         */
         public function deleteObjet(int $id): bool {
             $stmt = $this->conn->prepare("DELETE FROM OBJET WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
