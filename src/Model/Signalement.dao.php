@@ -11,24 +11,52 @@
  * 
  */
 class SignalementDao
-{
+{   
+    // Propriété représentant la connexion à la base de données via PDO.
     private PDO $conn;
 
+    //CONSTRUCTEUR
+    /**
+     * Constructeur de la classe SignalementDao.
+     * 
+     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
+     */
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
     }
 
+    /**
+     * Récupère la connexion à la base de données.
+     * 
+     * Cette méthode permet d'obtenir la connexion PDO utilisée par la classe pour interagir avec la base de données.
+     * 
+     * @return ?PDO La connexion à la base de données.
+     */
     public function getConn(): ?PDO
     {
         return $this->conn;
     }
 
+    /**
+     * Définit la connexion à la base de données.
+     * 
+     * Cette méthode permet de définir une connexion PDO personnalisée.
+     * 
+     * @param PDO $conn La connexion à la base de données.
+     */
     public function setConn(PDO $conn): void
     {
         $this->conn = $conn;
     }
 
+    /**
+     * Récupère tous les signalements de la base de données.
+     * 
+     * Cette méthode permet de récupérer tous les signalements présents dans la table `SIGNALEMENT`.
+     * 
+     * @return Signalement[] Tableau des objets `Signalement`.
+     */
     public function findAll(): array
     {
         $signalements = [];
@@ -40,6 +68,14 @@ class SignalementDao
         return $signalements;
     }
 
+    /**
+     * Récupère un signalement spécifique par son identifiant.
+     * 
+     * Cette méthode permet de récupérer un signalement spécifique en fonction de son identifiant dans la table `SIGNALEMENT`.
+     * 
+     * @param int $id Identifiant du signalement à récupérer.
+     * @return Signalement|null Retourne un objet `Signalement` si trouvé, sinon null.
+     */
     public function find(int $id): ?Signalement
     {
         $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT WHERE idSignalement = :id");
@@ -52,6 +88,14 @@ class SignalementDao
         return null;
     }
 
+    /**
+     * Insère un nouveau signalement dans la base de données.
+     * 
+     * Cette méthode permet d'insérer un nouvel enregistrement de signalement dans la table `SIGNALEMENT`.
+     * 
+     * @param Signalement $signalement L'objet `Signalement` à insérer dans la base de données.
+     * @return bool Retourne true si l'insertion a réussi, sinon false.
+     */
     public function insert(Signalement $signalement): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO SIGNALEMENT (idSignalement, raison) VALUES (:idSignalement, :raison)");
@@ -59,7 +103,15 @@ class SignalementDao
         $stmt->bindValue(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
     }
-
+    
+    /**
+     * Supprime un signalement de la base de données.
+     * 
+     * Cette méthode permet de supprimer un signalement en fonction de son identifiant de la table `SIGNALEMENT`.
+     * 
+     * @param int $idSignalement Identifiant du signalement à supprimer.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
     public function delete(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM SIGNALEMENT WHERE idSignalement = :idSignalement");
