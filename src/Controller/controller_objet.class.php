@@ -1,5 +1,18 @@
 <?php
-
+/**
+ * Classe ControllerObjet 
+ * 
+ * Cette classe gère les actions liées aux objets dans l'application. Elle utilise les classes métiers et DAO appropriées
+ * pour interagir avec la base de données et afficher les vues correspondantes.
+ * 
+ * Exemple d'utilisation :
+ * $controllerObjet = new ControllerObjet($loader, $twig);
+ * $controllerObjet->lister();
+ * $controllerObjet->afficher();
+ *
+ * 
+ * 
+ */
     class ControllerObjet extends Controller {
 
         public function __construct(\Twig\Environment $twig, \Twig\Loader\FilesystemLoader $loader) {

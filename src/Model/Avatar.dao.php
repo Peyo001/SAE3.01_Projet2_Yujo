@@ -10,19 +10,36 @@
  * $avatar = $avatarDao->findAll();
  */
 class AvatarDao {
-    //Attributs
+    //// Attribut représentant la connexion à la base de données via PDO.
     private PDO $conn;
 
     //Constructeur
+    /**
+     * Constructeur de la classe AvatarDao.
+     * 
+     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
+     */
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
     }
 
     //destructeur
+    /**
+     * Destructeur de la classe AvatarDao.
+     * 
+     * Ce destructeur est vide mais peut être utilisé pour nettoyer des ressources si nécessaire.
+     */
     public function __destruct() {
     }
 
     //Méthodes
+    /**
+     * Récupère tous les avatars enregistrés dans la base de données.
+     * 
+     * Cette méthode exécute une requête pour récupérer tous les avatars et retourne un tableau d'objets Avatar.
+     * 
+     * @return Avatar[] Tableau d'objets Avatar représentant tous les avatars de la base de données.
+     */
     public function findAll(): array {
         $avatars = [];
         $stmt = $this->conn->query("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM avatar");
@@ -43,6 +60,14 @@ class AvatarDao {
         return $avatars;
     }
 
+    /**
+     * Récupère un avatar spécifique en fonction de son identifiant.
+     * 
+     * Cette méthode exécute une requête pour récupérer un avatar par son identifiant et retourne un objet Avatar.
+     * 
+     * @param int $idAvatar L'identifiant de l'avatar à récupérer.
+     * @return Avatar|null Retourne un objet Avatar si l'avatar est trouvé, sinon null.
+     */
     public function find(int $idAvatar): ?Avatar {
         $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);
@@ -64,6 +89,14 @@ class AvatarDao {
         return null;
     }   
 
+    /**
+     * Insère un nouvel avatar dans la base de données.
+     * 
+     * Cette méthode permet d'ajouter un avatar en utilisant les données de l'objet Avatar passé en paramètre.
+     * 
+     * @param Avatar $avatar L'objet Avatar à insérer dans la base de données.
+     * @return bool Retourne true si l'insertion a réussi, sinon false.
+     */
 
     public function insert(Avatar $avatar): bool {
         $stmt = $this->conn->prepare("INSERT INTO avatar (idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur) VALUES (:idAvatar, :nom, :genre, :dateCreation, :CouleurPeau, :CouleurCheveux, :vetements, :accessoires, :idUtilisateur)");
@@ -79,6 +112,14 @@ class AvatarDao {
         return $stmt->execute();
     }
 
+    /**
+     * Supprime un avatar de la base de données.
+     * 
+     * Cette méthode supprime un avatar spécifié par son identifiant de la base de données.
+     * 
+     * @param int $idAvatar L'identifiant de l'avatar à supprimer.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
     public function delete(int $idAvatar): bool {
         $stmt = $this->conn->prepare("DELETE FROM avatar WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);

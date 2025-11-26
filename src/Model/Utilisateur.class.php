@@ -6,7 +6,7 @@
  * Elle permet de créer un objet Utilisateur et de l'utiliser avec les propriétés idUtilisateur, nom, prenom, dateNaiss, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints et personnalisation.
  * 
  * Exemple d'utilisation :
- * Utilisateur utilisateur1 = 
+ *
  */
 class Utilisateur
 {
