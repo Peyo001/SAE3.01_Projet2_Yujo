@@ -42,4 +42,57 @@ class ControllerReponse extends Controller
             'reponse' => $reponse
         ]);
     }
+
+    public function afficherFormulaireInsertion(): void
+    {
+        echo $this->getTwig()->render('ajout_reponse.twig', [
+            'menu' => 'nouvelle_reponse'
+        ]);
+    }
+
+    public function traiterFormulaireInsertion(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'REPONSE') {
+            header('Location: index.php?controleur=reponse&methode=afficherFormulaireInsertion');
+            exit;
+        }
+
+        $dateReponse = $_POST['dateReponse'] ?? null;
+        $contenu = $_POST['contenu'] ?? null;
+        $idAuteur = $_POST['idAuteur'] ?? null;
+        $idPost = $_POST['idPost'] ?? null;
+
+        if (!$dateReponse || !$contenu || !$idAuteur || !$idPost) {
+            echo "Tous les champs sont requis.";
+            return;
+        }
+
+        $reponse = new Reponse(null, $dateReponse, $contenu, $idAuteur, $idPost);
+        $manager = new ReponseDao();
+        $success = $manager->insert($reponse);
+
+        if ($success) {
+            header('Location: index.php?controleur=reponse&methode=lister');
+            exit;
+        } else {
+            echo "Erreur lors de l'insertion de la réponse.";
+        }
+    }
+    public function supprimer(): void{
+        if (!isset($_GET['idReponse'])) {
+            header('Location: index.php?controleur=reponse&methode=lister');
+            exit;
+        }
+
+        $manager = new ReponseDao();
+        $success = $manager->delete((int)$_GET['idReponse']);
+
+        if ($success) {
+            header('Location: index.php?controleur=reponse&methode=lister');
+            exit;
+        } else {
+            echo "Erreur lors de la suppression de la réponse.";
+        }
+    }
+
 }
