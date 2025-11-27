@@ -38,22 +38,20 @@ class ReponseDao
     }
 
     public function findAll(): array{
-        $sql = "SELECT * FROM REPONSE";
-        $pdoStatement = $this->conn->prepare($sql);
-        $pdoStatement->execute();
-        $reponse = [];
+        $stmt = $this->conn->query("SELECT * FROM REPONSE");
+        $reponses = [];
 
-        while ($row = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-            $reponse[] = new Reponse(
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $reponse = new Reponse(
                 $row['idReponse'],
                 $row['dateReponse'],
                 $row['contenu'],
                 $row['idAuteur'],
                 $row['idPost'],
             );
-            $reponse[] = $reponse;
+            $reponses[] = $reponse;
         }
-        return $reponse;
+        return $reponses;
     }
 
     public function insert(Reponse $response): bool
