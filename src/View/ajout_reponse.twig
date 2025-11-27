@@ -1,0 +1,27 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Nouvelle Réponse{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1>Créer une réponse</h1>
+            <a href="index.php?controleur=reponse&methode=lister"><- Retour</a>
+            <hr>
+        </div>
+
+        <div class="col-9">
+            <form action="index.php?controleur=reponse&methode=traiterFormulaireInsertion" method="reponse">
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="contenu">Votre réponse :</label><br>
+                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" required></textarea>
+                </div>
+
+                <input type="hidden" name="id_post" value="1">
+
+                <button type="submit">Envoyer votre réponse</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

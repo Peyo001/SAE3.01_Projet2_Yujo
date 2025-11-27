@@ -1,0 +1,24 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des réponses{% endblock %}
+
+{% block content %}
+<h1>Liste des réponses</h1>
+<a href="index.php?controleur=reponse&methode=afficherFormulaireInsertion">+ Nouvelle réponse</a>
+<hr>
+
+{% if reponses is empty %}
+    <p>Aucune réponse pour le moment.</p>
+{% else %}
+    <ul>
+        {% for r in reponses %}
+            <li>
+                ID : {{ r.idReponse }} <br>
+                {{ r.contenu }} <br>
+                <small>Publié le {{ r.dateReponse }}</small>
+                <a href="index.php?controleur=reponse&methode=afficher&id={{ r.idReponse }}">Voir</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
