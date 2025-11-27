@@ -1,20 +1,49 @@
 <?php
+/**
+ * Classe GroupeDao
+ * 
+ * Cette classe gère les opérations de la base de données pour les groupes.
+ * Elle utilise la classe DATABASE pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $groupeDao = new GroupeDao();
+ * $groupe = $groupeDao->findAll();
+ * 
+ */
 class GroupeDao
-{
+{   
+    // Propriété représentant la connexion à la base de données via PDO.
     private PDO $conn;
 
+    /**
+     * Constructeur de la classe GroupeDao.
+     * 
+     * Ce constructeur initialise la connexion à la base de données en utilisant la classe DATABASE.
+     */
     public function __construct()
     {
         $this->conn = DATABASE::getInstance()->getConnection();
     }
 
     // DESTRUCTEUR
+    /**
+     * Destructeur de la classe GroupeDao.
+     * 
+     * Ce destructeur est vide mais peut être utilisé pour nettoyer des ressources si nécessaire.
+     */
     public function __destruct()
     {
         // Rien à nettoyer ici
     }
 
-    // Récupère les membres d’un groupe
+    /**
+     * Récupère les membres d'un groupe.
+     * 
+     * Cette méthode récupère la liste des utilisateurs membres d'un groupe à partir de la table `COMPOSER`.
+     * 
+     * @param int $idGroupe Identifiant du groupe pour lequel on veut récupérer les membres.
+     * @return array Liste des identifiants des utilisateurs membres du groupe.
+     */
     private function getMembres(int $idGroupe): array
     {
         $stmt = $this->conn->prepare("
@@ -29,7 +58,14 @@ class GroupeDao
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    // Trouver un groupe par son ID
+    /**
+     * Trouve un groupe par son identifiant.
+     * 
+     * Cette méthode recherche un groupe dans la base de données en fonction de son identifiant et retourne un objet Groupe.
+     * 
+     * @param int $idGroupe Identifiant du groupe à récupérer.
+     * @return Groupe|null Retourne un objet Groupe si le groupe est trouvé, sinon null.
+     */
     public function find(int $idGroupe): ?Groupe
     {
         $stmt = $this->conn->prepare("SELECT * FROM GROUPE WHERE idGroupe = :idGroupe");
@@ -50,7 +86,13 @@ class GroupeDao
         return null;
     }
 
-    // Récupérer tous les groupes
+    /**
+     * Récupère tous les groupes.
+     * 
+     * Cette méthode récupère tous les groupes et retourne un tableau d'objets Groupe.
+     * 
+     * @return Groupe[] Tableau contenant tous les groupes.
+     */
     public function findAll(): array
     {
         $stmt = $this->conn->prepare("SELECT * FROM GROUPE");
@@ -71,7 +113,15 @@ class GroupeDao
         return $groupes;
     }
 
-    public function EnregistrerGroupe(Groupe $groupe): bool
+    /**
+     * Insère un nouveau groupe dans la base de données.
+     * 
+     * Cette méthode ajoute un nouveau groupe dans la base de données avec les données de l'objet Groupe passé en paramètre.
+     * 
+     * @param Groupe $groupe L'objet Groupe à insérer dans la base de données.
+     * @return bool Retourne true si l'insertion a réussi, sinon false.
+     */
+    public function insert(Groupe $groupe): bool
     {
         $stmt = $this->conn->prepare("
             INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe) 
@@ -89,6 +139,14 @@ class GroupeDao
         return $res;
     }
 
+     /**
+     * Supprime un groupe de la base de données.
+     * 
+     * Cette méthode supprime un groupe de la base de données en fonction de son identifiant.
+     * 
+     * @param int $idGroupe L'identifiant du groupe à supprimer.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
     public function delete(int $idGroupe): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM GROUPE WHERE idGroupe = :idGroupe");
@@ -96,7 +154,17 @@ class GroupeDao
         return $stmt->execute();
     }
 
-    public function AjouterMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
+     /**
+     * Ajoute un membre au groupe.
+     * 
+     * Cette méthode permet d'ajouter un membre à un groupe, si le membre n'est pas déjà présent.
+     * 
+     * @param Groupe $groupe L'objet Groupe auquel le membre doit être ajouté.
+     * @param int $idUtilisateur L'identifiant de l'utilisateur à ajouter.
+     * @param string $dateAjout La date d'ajout du membre au groupe.
+     * @return bool Retourne true si l'ajout a réussi, sinon false.
+     */
+    public function insertMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
     {
         if ($groupe->estMembre($idUtilisateur)) {
             return false; 

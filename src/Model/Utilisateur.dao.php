@@ -1,22 +1,51 @@
 <?php
+/**
+ * 
+ * Classe UtilisateurDao
+ * 
+ * Cette classe gère les opérations CRUD pour les utilisateurs dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $utilisteurDao = new UtilisateurDao();
+ * $utilisateur = $utilisateurDao->findAll();
+ */
 class UtilisateurDao
 {
     //ATTRIBUT
     private PDO $conn;
 
     //CONSTRUCTEUR
+    /**
+     * Constructeur de la classe UtilisateurDao.
+     * 
+     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
+     */
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
     }
 
     //DESTRUCTEUR
+     /**
+     * Destructeur de la classe UtilisateurDao.
+     * 
+     * Ce destructeur est vide, mais il pourrait être utilisé pour libérer des ressources si nécessaire.
+     */
     public function __destruct()
     {
 
     }
 
     //METHODES
+    /**
+     * Récupère un utilisateur spécifique par son identifiant.
+     * 
+     * Cette méthode récupère un utilisateur spécifique en fonction de son identifiant dans la table `UTILISATEUR`.
+     * 
+     * @param int $id L'identifiant de l'utilisateur à récupérer.
+     * @return Utilisateur|null Retourne un objet `Utilisateur` si trouvé, sinon `null`.
+     */
     public function find(int $id): ?Utilisateur
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE idUtilisateur = :id");
@@ -44,33 +73,13 @@ class UtilisateurDao
         return null;
     }
 
-    public function findByEmail(string $email): ?Utilisateur
-    {
-        $stmt = $this->conn->prepare("SELECT * FROM UTILISATEUR WHERE email = :email");
-        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            return new Utilisateur(
-                $row['idUtilisateur'],
-                $row['nom'],
-                $row['prenom'],
-                $row['dateNaissance'],
-                $row['genre'],
-                $row['pseudo'],
-                $row['email'],
-                $row['motDePasse'], 
-                $row['typeCompte'],
-                (bool)$row['estPremium'],
-                $row['dateInscription'],
-                (int)$row['yuPoints'],
-                $row['personnalisation']
-            );
-        }
-        return null;
-    }
-
+    /**
+     * Récupère tous les utilisateurs de la base de données.
+     * 
+     * Cette méthode permet de récupérer tous les utilisateurs présents dans la table `UTILISATEUR`.
+     * 
+     * @return Utilisateur[] Tableau des objets `Utilisateur`.
+     */
     public function findAll(): array
     {
         $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints FROM UTILISATEUR");
@@ -97,6 +106,14 @@ class UtilisateurDao
         return $users;
     }
 
+    /**
+     * Crée un nouvel utilisateur dans la base de données.
+     * 
+     * Cette méthode permet d'insérer un nouvel utilisateur dans la table `UTILISATEUR` en utilisant les informations de l'objet `Utilisateur`.
+     * 
+     * @param Utilisateur $user L'objet `Utilisateur` à insérer dans la base de données.
+     * @return bool Retourne `true` si l'insertion a réussi, sinon `false`.
+     */
     public function createUser(Utilisateur $user): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO UTILISATEUR (nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation) VALUES (:nom, :prenom, :dateNaissance, :genre, :pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints, :personnalisation)");
@@ -115,6 +132,14 @@ class UtilisateurDao
         return $stmt->execute();
     }
     
+    /**
+     * Supprime un utilisateur de la base de données.
+     * 
+     * Cette méthode permet de supprimer un utilisateur de la table `UTILISATEUR` en fonction de son identifiant.
+     * 
+     * @param int $id L'identifiant de l'utilisateur à supprimer.
+     * @return bool Retourne `true` si la suppression a réussi, sinon `false`.
+     */
     public function deleteUser(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM UTILISATEUR WHERE idUtilisateur = :id");
