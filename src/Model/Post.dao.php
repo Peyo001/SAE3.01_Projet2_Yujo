@@ -1,13 +1,38 @@
 <?php
+/**
+ * Classe PostDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Post dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $postDao = new PostDao();
+ * $post = $postDao->findAll();
+ * 
+ */
 class PostDao
 {
+    // Propriété représentant la connexion à la base de données via PDO.
     private PDO $conn;
 
+    /**
+     * Constructeur de la classe PostDao.
+     * 
+     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
+     */
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
     }
     
+    /**
+     * Crée un nouveau post dans la base de données.
+     * 
+     * Cette méthode insère un nouveau post dans la table `POST` en utilisant les données de l'objet `Post` passé en paramètre.
+     * 
+     * @param Post $post L'objet `Post` à insérer dans la base de données.
+     * @return bool Retourne true si l'insertion a réussi, sinon false.
+     */
     public function createPost(Post $post): bool
     {
         $stmt = $this->conn->prepare("
@@ -31,6 +56,14 @@ class PostDao
         return $success;
     }
 
+    /**
+     * Supprime un post de la base de données.
+     * 
+     * Cette méthode supprime un post en fonction de son identifiant de la table `POST`.
+     * 
+     * @param int $idPost L'identifiant du post à supprimer.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
     // Supprimer un post
     public function deletePost(int $idPost): bool
     {
@@ -39,6 +72,14 @@ class PostDao
         return $stmt->execute();
     }
 
+    /**
+     * Trouve un post dans la base de données par son identifiant.
+     * 
+     * Cette méthode récupère un post spécifique en fonction de son identifiant et retourne un objet `Post`.
+     * 
+     * @param int $id Identifiant du post à récupérer.
+     * @return Post|null Retourne un objet `Post` si trouvé, sinon null.
+     */
     // Récupérer un post par ID de post
     public function find(int $id): ?Post
     {
@@ -51,7 +92,15 @@ class PostDao
         return $stmt->fetch() ?: null;
     }
 
-    // Récupérer les posts dans un tableau par ID d'auteur
+    /**
+     * Récupère les posts d'un auteur spécifique.
+     * 
+     * Cette méthode récupère tous les posts d'un utilisateur en fonction de son identifiant.
+     * Les posts sont triés par date de publication, du plus récent au plus ancien.
+     * 
+     * @param int $idAuteur Identifiant de l'auteur des posts.
+     * @return Post[] Tableau d'objets `Post` représentant les posts de l'auteur.
+     */
     public function findPostsByAuteur(int $idAuteur): array
     {
     $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
@@ -61,7 +110,13 @@ class PostDao
     return $stmt->fetchAll() ?: [];
     }
 
-    // Récupérer tous les posts
+   /**
+     * Récupère tous les posts dans la base de données.
+     * 
+     * Cette méthode récupère tous les posts de la table `POST`.
+     * 
+     * @return Post[] Tableau de tous les objets `Post` dans la base de données.
+     */
     public function findAll(): array
     {
         $stmt = $this->conn->query("SELECT * FROM POST");
@@ -69,6 +124,15 @@ class PostDao
         return $stmt->fetchAll() ?: [];
     }
     
+    /**
+     * Récupère tous les posts d'une room spécifique.
+     * 
+     * Cette méthode récupère tous les posts publiés dans une room en fonction de l'identifiant de la room.
+     * Les posts sont triés par date de publication, du plus récent au plus ancien.
+     * 
+     * @param int $idRoom Identifiant de la room.
+     * @return Post[] Tableau des objets `Post` dans la room spécifiée.
+     */
     public function findPostsByRoom(int $idRoom): array
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idRoom = :idRoom ORDER BY datePublication DESC");

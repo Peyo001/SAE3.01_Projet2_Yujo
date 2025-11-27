@@ -424,5 +424,6 @@ FodyWeavers.xsd
 # Dépendance
 /vendor/
 
-# Fichiers de configuration 
+# Fichiers de configuration
+/config 
 /config/config.json
