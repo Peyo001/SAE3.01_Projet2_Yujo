@@ -7,6 +7,9 @@ class ControllerReponse extends Controller
         parent::__construct($loader, $twig);
     }
 
+    /**
+     * LISTE DES RÉPONSES
+     */
     public function lister(): void
     {
         $manager = new ReponseDao();
@@ -17,12 +20,15 @@ class ControllerReponse extends Controller
             $reponses = $manager->findAll();
         }
 
-        echo $this->getTwig()->render('liste_reponses.twig', [
+        echo $this->getTwig()->render('liste_reponse.twig', [
             'reponses' => $reponses,
             'title' => 'Liste des réponses'
         ]);
     }
 
+    /**
+     * AFFICHER UNE RÉPONSE
+     */
     public function afficher(): void
     {
         if (!isset($_GET['idReponse'])) {
@@ -43,6 +49,10 @@ class ControllerReponse extends Controller
         ]);
     }
 
+    /**
+     * FORMULAIRE AJOUT RÉPONSE
+     */
+
     public function afficherFormulaireInsertion(): void
     {
         echo $this->getTwig()->render('ajout_reponse.twig', [
@@ -50,6 +60,9 @@ class ControllerReponse extends Controller
         ]);
     }
 
+    /**
+     * TRAITEMENT DU FORMULAIRE
+     */
     public function traiterFormulaireInsertion(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'REPONSE') {
@@ -78,21 +91,4 @@ class ControllerReponse extends Controller
             echo "Erreur lors de l'insertion de la réponse.";
         }
     }
-    public function supprimer(): void{
-        if (!isset($_GET['idReponse'])) {
-            header('Location: index.php?controleur=reponse&methode=lister');
-            exit;
-        }
-
-        $manager = new ReponseDao();
-        $success = $manager->delete((int)$_GET['idReponse']);
-
-        if ($success) {
-            header('Location: index.php?controleur=reponse&methode=lister');
-            exit;
-        } else {
-            echo "Erreur lors de la suppression de la réponse.";
-        }
-    }
-
 }
