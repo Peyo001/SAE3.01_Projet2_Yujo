@@ -13,10 +13,9 @@
     <ul>
         {% for r in reponses %}
             <li>
-                ID : {{ r.idReponse }} <br>
+                ID : {{ r.getId() }} <br>
                 {{ r.contenu }} <br>
                 <small>Publié le {{ r.dateReponse }}</small>
-                <a href="index.php?controleur=reponse&methode=afficher&id={{ r.idReponse }}">Voir</a>
             </li>
         {% endfor %}
     </ul>

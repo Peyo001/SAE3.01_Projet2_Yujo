@@ -12,13 +12,8 @@ class ControllerReponse extends Controller
      */
     public function lister(): void
     {
-        $manager = new ReponseDao();
-
-        if (isset($_GET['idReponse'])) {
-            $reponses = $manager->find($_GET['idReponse']);
-        } else {
-            $reponses = $manager->findAll();
-        }
+        $dao = new ReponseDao();
+        $reponses = $dao->findAll();
 
         echo $this->getTwig()->render('liste_reponse.twig', [
             'reponses' => $reponses,
@@ -56,7 +51,7 @@ class ControllerReponse extends Controller
     public function afficherFormulaireInsertion(): void
     {
         echo $this->getTwig()->render('ajout_reponse.twig', [
-            'menu' => 'nouvelle_reponse'
+            'title' => 'Nouvelle réponse'
         ]);
     }
 
