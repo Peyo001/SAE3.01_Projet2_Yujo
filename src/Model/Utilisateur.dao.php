@@ -10,32 +10,8 @@
  * $utilisteurDao = new UtilisateurDao();
  * $utilisateur = $utilisateurDao->findAll();
  */
-class UtilisateurDao
+class UtilisateurDao extends Dao
 {
-    //ATTRIBUT
-    private PDO $conn;
-
-    //CONSTRUCTEUR
-    /**
-     * Constructeur de la classe UtilisateurDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct()
-    {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-
-    //DESTRUCTEUR
-     /**
-     * Destructeur de la classe UtilisateurDao.
-     * 
-     * Ce destructeur est vide, mais il pourrait être utilisé pour libérer des ressources si nécessaire.
-     */
-    public function __destruct()
-    {
-
-    }
 
     //METHODES
     /**

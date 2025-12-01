@@ -12,8 +12,8 @@ class ControllerSignalement extends Controller
      */
     public function lister(): void
     {
-        $dao = new SignalementDao();
-        $signalements = $dao->findAll();
+        $manager = new SignalementDao($this->getPdo());
+        $signalements = $manager->findAll();
 
         echo $this->getTwig()->render('liste_signalement.twig', [
             'signalements' => $signalements,
@@ -31,8 +31,8 @@ class ControllerSignalement extends Controller
             exit;
         }
 
-        $dao = new SignalementDao();
-        $signalement = $dao->find($_GET['id']);
+        $manager = new SignalementDao($this->getPdo());
+        $signalement = $manager->find($_GET['id']);
 
         if (!$signalement) {
             echo "Signalement introuvable.";
@@ -75,8 +75,8 @@ class ControllerSignalement extends Controller
 
         $signalement = new Signalement($idPost, $raison);
 
-        $dao = new SignalementDao();
-        $succes = $dao->insert($signalement);
+        $manager = new SignalementDao($this->getPdo());
+        $succes = $manager->insert($signalement);
 
         if ($succes) {
             header('Location: index.php?controleur=signalement&methode=lister');

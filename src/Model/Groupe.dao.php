@@ -10,31 +10,8 @@
  * $groupe = $groupeDao->findAll();
  * 
  */
-class GroupeDao
+class GroupeDao extends Dao
 {   
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe GroupeDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe DATABASE.
-     */
-    public function __construct()
-    {
-        $this->conn = DATABASE::getInstance()->getConnection();
-    }
-
-    // DESTRUCTEUR
-    /**
-     * Destructeur de la classe GroupeDao.
-     * 
-     * Ce destructeur est vide mais peut être utilisé pour nettoyer des ressources si nécessaire.
-     */
-    public function __destruct()
-    {
-        // Rien à nettoyer ici
-    }
 
     /**
      * Récupère les membres d'un groupe.
