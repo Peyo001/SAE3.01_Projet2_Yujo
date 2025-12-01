@@ -77,7 +77,7 @@ class ControllerReponse extends Controller
 
         $reponse = new Reponse(null, $dateReponse, $contenu, $idAuteur, $idPost);
         $manager = new ReponseDao();
-        $success = $manager->insert($reponse);
+        $success = $manager->createResponse($reponse);
 
         if ($success) {
             header('Location: index.php?controleur=reponse&methode=lister');
