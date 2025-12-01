@@ -9,31 +9,8 @@
      * $objetDao = new ObjetDao();
      * $objet = $objetDao->find(1);
      */
-    class ObjetDao {
-
-        // ATTRIBUT
-        // Propriété représentant la connexion à la base de données via PDO.
-        private PDO $conn;
-
-        // CONSTRUCTEUR
-        /**
-         * Constructeur de la classe ObjetDao.
-         * 
-         * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-         */
-        public function __construct() {
-            $this->conn = Database::getInstance()->getConnection();
-        }
-
-        //DESTRUCTEUR
-        /**
-         * Destructeur de la classe ObjetDao.
-         * 
-         * Ce destructeur libère les ressources de la connexion à la base de données.
-         */
-        public function __destruct() {
-            Database::getInstance()->__destruct();
-        }
+    class ObjetDao extends Dao
+    {
 
         // METHODES
         /**

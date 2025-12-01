@@ -9,7 +9,7 @@ class ControllerPost extends Controller
 
     public function lister(): void
     {
-        $manager = new PostDao();
+        $manager = new PostDao($this->getPdo());
 
         if (isset($_GET['id_auteur'])) {
             $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
@@ -30,7 +30,7 @@ class ControllerPost extends Controller
             exit;
         }
 
-        $manager = new PostDao();
+        $manager = new PostDao($this->getPdo());
         $post = $manager->find($_GET['id']);
 
         if (!$post) {
@@ -80,7 +80,7 @@ class ControllerPost extends Controller
         
         $post->setDatePublication(date('Y-m-d H:i:s'));
 
-        $manager = new PostDao();
+        $manager = new PostDao($this->getPdo());
         $succes = $manager->createPost($post);
 
         if ($succes) {
@@ -101,7 +101,7 @@ class ControllerPost extends Controller
             exit;
         }
 
-        $manager = new PostDao();
+        $manager = new PostDao($this->getPdo());
         $manager->deletePost($idPost);
 
 

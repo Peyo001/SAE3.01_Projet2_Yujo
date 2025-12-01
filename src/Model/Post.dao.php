@@ -10,21 +10,8 @@
  * $post = $postDao->findAll();
  * 
  */
-class PostDao
+class PostDao extends Dao
 {
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe PostDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct()
-    {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-    
     /**
      * Crée un nouveau post dans la base de données.
      * 

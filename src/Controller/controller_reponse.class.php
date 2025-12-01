@@ -31,7 +31,7 @@ class ControllerReponse extends Controller
             exit;
         }
 
-        $manager = new ReponseDao();
+        $manager = new ReponseDao($this->getPdo());
         $reponse = $manager->find($_GET['idReponse']);
 
         if (!$reponse) {
@@ -76,8 +76,8 @@ class ControllerReponse extends Controller
         }
 
         $reponse = new Reponse(null, $dateReponse, $contenu, $idAuteur, $idPost);
-        $manager = new ReponseDao();
-        $success = $manager->createResponse($reponse);
+        $manager = new ReponseDao($this->getPdo());
+        $success = $manager->insert($reponse);
 
         if ($success) {
             header('Location: index.php?controleur=reponse&methode=lister');

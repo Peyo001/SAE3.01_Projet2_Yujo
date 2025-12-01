@@ -10,33 +10,8 @@
  * $signalement = $signalementDao->findAll();
  * 
  */
-class SignalementDao
-{   
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    //CONSTRUCTEUR
-    /**
-     * Constructeur de la classe SignalementDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct()
-    {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-
-    /**
-     * Récupère la connexion à la base de données.
-     * 
-     * Cette méthode permet d'obtenir la connexion PDO utilisée par la classe pour interagir avec la base de données.
-     * 
-     * @return ?PDO La connexion à la base de données.
-     */
-    public function getConn(): ?PDO
-    {
-        return $this->conn;
-    }
+class SignalementDao extends Dao    
+{ 
 
     /**
      * Définit la connexion à la base de données.
