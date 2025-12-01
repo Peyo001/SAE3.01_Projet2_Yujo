@@ -2,11 +2,12 @@
     class RoomDao {
 
         // ATTRIBUT
-        private PDO $conn;
+        private ?PDO $pdo;
 
         // CONSTRUCTEUR
-        public function __construct() {
-            $this->conn = Database::getInstance()->getConnection();
+        public function __construct(?PDO $pdo) {
+            global $config;
+            $this->setPdo($pdo);
         }
 
         //DESTRUCTEUR
@@ -15,8 +16,17 @@
         }
 
         // METHODES
+
+        public function getPdo(): ?PDO {
+            return $this->pdo;
+        }
+
+        public function setPdo(?PDO $pdo): void {
+            $this->pdo = $pdo;
+        }
+
         public function find(int $id): ?Room {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -26,7 +36,6 @@
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur']
                 );
@@ -38,7 +47,7 @@
         }
 
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, nbVisit FROM ROOM");
             $stmt->execute();
             $rooms = [];
 
@@ -47,12 +56,11 @@
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur']
                 );
                 
-                $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
+                //$room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
                 $rooms[] = $room;
             }
             
@@ -60,7 +68,7 @@
         }
 
         public function findByCreateur(int $id): array {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idCreateur = :id");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, nbVisit, idCreateur FROM ROOM WHERE idCreateur = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
@@ -71,7 +79,6 @@
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur']
                 );
@@ -95,7 +102,6 @@
                     $row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['dateCreation'],
                     $row['nbVisit'],
                     $row['idCreateur']
                 );
@@ -119,7 +125,6 @@
                     $row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['dateCreation'],
                     $row['nbVisit'],
                     $row['idCreateur']
                 );
@@ -142,7 +147,7 @@
             return $stmt->execute();
         }
 
-        public function findObjetsByRoom(int $idRoom): array {
+        /*public function findObjetsByRoom(int $idRoom): array {
             $stmt = $this->conn->prepare("SELECT * FROM OBJET WHERE idRoom = :idRoom");
             $stmt->bindParam(':idRoom', $idRoom);
             $stmt->execute();
@@ -159,7 +164,7 @@
             }
 
             return $objets;
-        }
+        }*/
 
         public function incrementVisit(int $idRoom): void {
             $stmt = $this->conn->prepare("UPDATE ROOM SET nbVisit = nbVisit + 1 WHERE idRoom = :idRoom");
@@ -182,16 +187,39 @@
             return $stmt->execute();
         }
 
-        public function createRoom(Room $room): bool {
-            $stmt = $this->conn->prepare("INSERT INTO ROOM (idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur) VALUES (:idRoom, :nom, :visibilite, :dateCreation, :nbVisit, :idCreateur)");
+        /*public function createRoom(Room $room): bool {
+            $stmt = $this->conn->prepare("INSERT INTO ROOM (idRoom, nom, visibilite, nbVisit, idCreateur) VALUES (:idRoom, :nom, :visibilite, :nbVisit, :idCreateur)");
             $stmt->bindValue(':idRoom', $room->getIdRoom(), PDO::PARAM_INT);
             $stmt->bindValue(':nom', $room->getNom(), PDO::PARAM_STR);
             $stmt->bindValue(':visibilite', $room->getVisibilite(), PDO::PARAM_STR);
-            $stmt->bindValue(':dateCreation', $room->getDateCreation(), PDO::PARAM_STR);
             $stmt->bindValue(':nbVisit', $room->getNbVisit(), PDO::PARAM_INT);
             $stmt->bindValue(':idCreateur', $room->getIdCreateur(), PDO::PARAM_INT);
 
             return $stmt->execute();
+        }*/
+
+        public function creerRoom(int $idRoom, string $nom, string $visibilite, int $nbVisit, array $objets): void {
+
+            try {
+                $this->pdo->beginTransaction();
+
+                $sql = "INSERT INTO ROOM (nom, visibilite, nbVisit) VALUES (:nom, :visibilite, :nbVisit)";
+                $pdoStatement = $this->pdo->prepare($sql);
+
+                $pdoStatement->execute([
+                    ':nom' => $nom,
+                    ':visibilite' => $visibilite,
+                    ':nbVisit' => $nbVisit,
+                ]);
+
+                $idRoom = $this->pdo->lastInsertId();
+
+                $this->pdo->commit();
+            }
+            catch (\PDOException $e) {
+                $this->pdo->roolBack();
+                throw $e;
+            }
         }
     
         public function deleteRoom(int $id): bool {
