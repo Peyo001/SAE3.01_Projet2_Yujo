@@ -3,7 +3,7 @@
  * Classe Utilisateur
  * 
  * Cette classe représente un utilisateur de l'application.
- * Elle permet de créer un objet Utilisateur et de l'utiliser avec les propriétés idUtilisateur, nom, prenom, dateNaiss, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints et personnalisation.
+ * Elle permet de créer un objet Utilisateur et de l'utiliser avec les propriétés idUtilisateur, nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints et personnalisation.
  * 
  * Exemple d'utilisation :
  *
@@ -14,7 +14,7 @@ class Utilisateur
     private int $idUtilisateur;// Identifiant unique de l'utilisateur
     private string $nom;// Nom de l'utilisateur
     private string $prenom;// Prénom de l'utilisateur
-    private string $dateNaiss;// Date de naissance de l'utilisateur
+    private string $dateNaissance;// Date de naissance de l'utilisateur
     private string $genre;// Genre de l'utilisateur (Homme, Femme, Autre)
     private string $pseudo;// Pseudo de l'utilisateur
     private string $email;// Email de l'utilisateur
@@ -35,7 +35,7 @@ class Utilisateur
      * @param int $idUtilisateur Identifiant de l'utilisateur.
      * @param string $nom Nom de l'utilisateur.
      * @param string $prenom Prénom de l'utilisateur.
-     * @param string $dateNaiss Date de naissance de l'utilisateur.
+     * @param string $dateNaissance Date de naissance de l'utilisateur.
      * @param string $genre Genre de l'utilisateur.
      * @param string $pseudo Pseudo de l'utilisateur.
      * @param string $email Email de l'utilisateur.
@@ -65,7 +65,7 @@ class Utilisateur
         $this->setIdUtilisateur($idUtilisateur);
         $this->setNom($nom);                 // <--- C'était l'erreur (ligne manquante ?)
         $this->setPrenom($prenom);
-        $this->setDateNaiss($dateNaissance);
+        $this->setDateNaissance($dateNaissance);
         $this->setGenre($genre);
         $this->setPseudo($pseudo);
         $this->setEmail($email);
@@ -146,7 +146,7 @@ class Utilisateur
      */
     public function getAge(): int
     {
-        $birthDate = new DateTime($this->dateNaiss);
+        $birthDate = new DateTime($this->dateNaissance);
         $today = new DateTime();
         $age = $today->diff($birthDate)->y;
         return $age;
@@ -288,9 +288,9 @@ class Utilisateur
     /**
      * Définit la date de naissance de l'utilisateur.
      * 
-     * @param string $dateNaiss La date de naissance de l'utilisateur.
+     * @param string $dateNaissance La date de naissance de l'utilisateur.
      */
-    public function setDateNaiss(string $dateNaiss): void
+    public function setDateNaissance(string $dateNaissance): void
     {
         $this->dateNaissance = $dateNaissance;
     }
@@ -375,7 +375,7 @@ class Utilisateur
         return "Utilisateur #{$this->idUtilisateur}\n"
             . "Nom : {$this->nom}\n"
             . "Prénom : {$this->prenom}\n"
-            . "Date de naissance : {$this->dateNaiss}\n"
+            . "Date de naissance : {$this->dateNaissance}\n"
             . "Genre : {$this->genre}\n"
             . "Pseudo : {$this->pseudo}\n"
             . "Email : {$this->email}\n"
