@@ -1,0 +1,25 @@
+{
+  "name": "sae3.01_projet2_yujo",
+  "version": "1.0.0",
+  "description": "**Yujo** est une application web de réseau social immersive et authentique, éveloppée dans le cadre de la SAE 3.01 (BUT Informatique S3-S4).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Peyo001/SAE3.01_Projet2_Yujo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Peyo001/SAE3.01_Projet2_Yujo/issues"
+  },
+  "homepage": "https://github.com/Peyo001/SAE3.01_Projet2_Yujo#readme",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8"
+  }
+}

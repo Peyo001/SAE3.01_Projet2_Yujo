@@ -12,12 +12,16 @@
     <p>Aucun signalement pour le moment.</p>
 {% else %}
     <ul>
-        {% for s in signalements %}
-            <li>
-                ID : {{ s.id }} <br>
-                Raison : {{ s.raison }} <br>
-                <a href="index.php?controleur=signalement&methode=afficher&id={{ s.id }}">Voir</a>
-            </li>
+    {% for signalement in signalements %}
+                <div class="signalement-item" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <h3>
+                        <a href="index.php?controleur=signalement&methode=afficher&id={{ signalement.id }}">
+                            Signalement #{{ signalement.id }}
+                        </a> 
+                    </h3>
+                    <p>Raison : {{ signalement.raison }}</p>
+                
+                </div>
         {% endfor %}
     </ul>
 {% endif %}

@@ -1,25 +1,59 @@
 <?php
-
+/**
+ * Classe AchatDao
+ * 
+ * Cette classe gère les opérations CRUD pour les objets Achat dans la base de données.
+ * Elle utilise la classe Database pour obtenir une connexion PDO.
+ * 
+ * Exemple d'utilisation :
+ * $achatDao = new AchatDao();
+ * $achat = $achatDao->findAll();
+ * 
+ */
 
 class AchatDao
 {
+    // Propriété représentant la connexion à la base de données via PDO.
     private PDO $conn;
 
+    /**
+     * Constructeur de la classe AchatDao.
+     * 
+     * Ce constructeur initialise une connexion à la base de données en utilisant la classe Database.
+     */
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
     }
 
+    /**
+     * Destructeur de la classe AchatDao.
+     * 
+     * Ce destructeur ne fait rien ici, mais il peut être utilisé pour nettoyer les ressources si nécessaire.
+     */
     public function __destruct()
     {
         // Rien à nettoyer ici
     }
 
+    /**
+     * Récupère la connexion PDO utilisée pour interagir avec la base de données.
+     * 
+     * @return PDO|null Retourne la connexion PDO si elle est disponible, sinon null.
+     */
     public function getConn(): ?PDO
     {
         return $this->conn;
     }
 
+    /**
+     * Trouve un achat en fonction de son identifiant d'objet.
+     * 
+     * Cette méthode recherche un achat spécifique dans la base de données en fonction de l'identifiant de l'objet.
+     * 
+     * @param int $idObjet Identifiant de l'objet à rechercher.
+     * @return Achat|null Retourne un objet Achat si trouvé, sinon null.
+     */
     public function find(int $idObjet): ?Achat
     {
         $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet");
@@ -34,6 +68,13 @@ class AchatDao
         return null;
     }
 
+    /**
+     * Récupère tous les achats enregistrés dans la base de données.
+     * 
+     * Cette méthode récupère tous les achats et retourne un tableau d'objets Achat.
+     * 
+     * @return Achat[] Tableau contenant tous les objets Achat.
+     */
     public function findAll(): array
     {
         $achats = [];
@@ -45,6 +86,14 @@ class AchatDao
         return $achats;
     }
 
+    /**
+     * Insère un nouvel achat dans la base de données.
+     * 
+     * Cette méthode permet d'ajouter un nouvel achat pour un utilisateur.
+     * 
+     * @param Achat $achat L'objet Achat à insérer dans la base de données.
+     * @return bool Retourne true si l'insertion a réussi, sinon false.
+     */
     public function insert(Achat $achat): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO ACHETER (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
@@ -54,6 +103,15 @@ class AchatDao
         return $stmt->execute();
     }
 
+
+    /**
+     * Supprime un achat en fonction de l'identifiant de l'objet.
+     * 
+     * Cette méthode permet de supprimer un achat en fonction de l'identifiant de l'objet acheté.
+     * 
+     * @param int $idObjet Identifiant de l'objet dont l'achat doit être supprimé.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
     public function delete(int $idObjet): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet");
