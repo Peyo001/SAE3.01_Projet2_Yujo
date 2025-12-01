@@ -1,0 +1,58 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}{{ groupe.nomGroupe }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 mb-3">
+            <a href="index.php?controleur=groupe&methode=lister" class="text-decoration-none">&larr; Retour aux groupes</a>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title">{{ groupe.nomGroupe }}</h1>
+                    <p class="text-muted"><small>Créé le {{ groupe.dateCreation|date("d/m/Y à H:i") }}</small></p>
+                    <hr>
+                    <h4>Description</h4>
+                    <p class="card-text">
+                        {{ groupe.descriptionGroupe }}
+                    </p>
+
+                    <div class="mt-4">
+                        {% if user_connected in groupe.membres %}
+                            <button class="btn btn-success disabled">
+                                ✓ Vous êtes membre
+                            </button>
+                            {% else %}
+                            <a href="index.php?controleur=groupe&methode=rejoindre&id={{ groupe.idGroupe }}" class="btn btn-primary">
+                                Rejoindre ce groupe
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    Membres ({{ groupe.membres|length }})
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for idMembre in groupe.membres %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Utilisateur #{{ idMembre }}
+                            
+                            {% if idMembre == user_connected %}
+                                <span class="badge bg-primary rounded-pill">Moi</span>
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">Aucun membre.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
