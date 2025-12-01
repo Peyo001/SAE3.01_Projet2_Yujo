@@ -7,77 +7,91 @@
 
 <?php
     class ControllerRoom extends Controller {
-        public function __construct(\Twig\Environment $twig, \Twig\Loader\FilesystemLoader $loader) {
-            parent::__construct($twig, $loader);
+        public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
+            parent::__construct($loader, $twig);
         }
 
-        public function afficher() {
-            $idRoom = isset($_GET['idRoom']) ? $_GET['idRoom'] : null;
-
-            if ($idRoom === null) {
-                die("Erreur : aucun idRoom fourni.");
+        public function afficher(): void {
+            if (!isset($_GET['idRoom'])) {
+                header('Location: index.php?controleur=room&methode=lister');
+                exit;
             }
 
             // Récupère les Rooms à l'aide de la méthode findAll() de RoomDao
             $managerRoom = new RoomDao($this->getPdo());
-            $room = $managerRoom->find($idRoom);
+            $room = $managerRoom->find($$_GET['idRoom']);
 
             if (!$room) {
                 die("Erreur : la room n'existe pas.");
             }
 
             // Génération de la vue
-            $template = $this->getTwig()->load('fichier twig de la room (Ex:room.twig)');
+            $template = $this->getTwig()->load('room.twig');
 
             echo $template->render([
                 'room' => $room
             ]);
         }
 
-        public function lister() {
-            $idCreateur = isset($_GET['idCreateur']) ? $_GET['idCreateur'] : null;            
+        public function lister(): void {           
             $managerRoom = new RoomDao($this->getPdo());
 
-            if ($idCreateur === null) {
-                $rooms = $managerRoom->findAll();
+            if (isset($_GET['idCreateur'])) {
+                
+                $rooms = $managerRoom->findByCreateur($_GET['idCreateur']);
             }
             else {
-                $rooms = $managerRoom->findByCreateur($idCreateur);
+                $rooms = $managerRoom->findAll();
             }
 
             // Généralisation de la vue
-            $template = $this->getTwig()->load('fichier twig (Ex:rooms_list.twig');
+            $template = $this->getTwig()->load('liste_rooms.twig');
 
             echo $template->render([
                 'rooms' => $rooms,
-                'idCreateur' => $idCreateur
+                'title' => 'Liste des Rooms'
             ]);
         }
 
-        public function creer() {
+        public function afficherFormulaireInsertion(): void {
+            $template = $this->getTwig()->load('ajout_room.twig');
+            echo $template->render([
+                'menu' => 'nouvelle_room'
+            ]);
+        }
+
+        public function traiterFormulaireInsertion(): void {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('Fichier twig (Ex:room_create.twig)');
+                header('Location: index.php?controleur=room&methode=afficherFormulaireInsertion');
+                exit;
+            }
+
+            $nom = $_POST['nom'] ?? 'Nom de la Room';
+            $visibilite = $_POST['visibilite'] ?? 'privée';
+            $nbVisit = $_POST['nbVisit'];
+            $idCreateur = $_SESSION['idUtilisateur'];
+
+            if (empty($nom)) {
+                echo "La Room doit obligatoirement avoir un nom"; 
                 return;
             }
 
-            $nom = $_POST['nom'];
-            $visibilite = $_POST['visibilite'];
-            $idCreateur = $_SESSION['idUtilisateur'];   // a modifier, en liant la classe UTILISATEUR
-
-            $room = new Room(
-                null,
-                $nom,
-                $visibilite,
-                date('YYYY-mm-dd'),
-                0,
-                $idCreateur
-            );
+            $room = new Room();
+            $room->setNom($nom);
+            $room->setVisibilite($visibilite);
+            $room->setNbVisit($nbVisit);
+            $room->setIdCreateur($idCreateur);
 
             $managerRoom = new RoomDao($this->getPdo());
-            $managerRoom->createRoom($room);
+            $succes = $managerRoom->createRoom($room);
 
-            header("(Ex:Location: index.php?controller=room&action=lister)");
-            exit;
+            if ($succes) {
+                header('Location: index.php?controleur=room&methode=lister');
+                exit;
+            }
+            else {
+                throw new Exception("Erreur lors de la création de la Room.");
+            }
         }
 
         public function modifier() {
