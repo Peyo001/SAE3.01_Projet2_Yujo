@@ -11,18 +11,9 @@
  * 
  */
 
-class AmiDao{
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe AmiDao.
-     * 
-     * Ce constructeur initialise une connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct() {
-        $this->conn = Database::getInstance()->getConnection();
-    }
+class AmiDao extends Dao
+{
+    
 
      /**
      * Récupère tous les amis enregistrés dans la base de données.

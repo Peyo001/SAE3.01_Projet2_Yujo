@@ -9,21 +9,8 @@
  * $reponseDao = new ReponseDao();
  * $reponse = $reponseDao->findAll();
  */
-class ReponseDao
+class ReponseDao extends Dao
 {   
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe ReponseDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct() {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-
-
     /**
      * Récupère une réponse spécifique par son identifiant.
      * 

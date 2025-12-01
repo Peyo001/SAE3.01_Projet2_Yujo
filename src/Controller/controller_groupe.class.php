@@ -9,8 +9,8 @@ class ControllerGroupe extends Controller
 
 
     public function lister(): void
-    {
-        $manager = new GroupeDao();
+    {   
+        $manager = new GroupeDao($this->getPdo());
         $groupes = $manager->findAll();
 
         echo $this->getTwig()->render('liste_groupes.twig', [
@@ -28,7 +28,7 @@ class ControllerGroupe extends Controller
             exit;
         }
 
-        $manager = new GroupeDao();
+        $manager = new GroupeDao($this->getPdo());
         $groupe = $manager->find($id);
 
         if (!$groupe) {
@@ -80,7 +80,7 @@ class ControllerGroupe extends Controller
 
         $groupe = new Groupe(null, $nom, $description, $dateCreation, []);
 
-        $manager = new GroupeDao();
+        $manager = new GroupeDao($this->getPdo());
 
         $succes = $manager->EnregistrerGroupe($groupe);
 
@@ -115,7 +115,7 @@ class ControllerGroupe extends Controller
             exit;
         }
 
-        $manager = new GroupeDao();
+        $manager = new GroupeDao($this->getPdo());
         $groupe = $manager->find($idGroupe);
 
         if ($groupe) {

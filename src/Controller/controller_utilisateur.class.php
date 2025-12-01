@@ -52,7 +52,7 @@ class ControllerUtilisateur extends Controller
         );
 
         // 5. Enregistrement
-        $manager = new UtilisateurDao();
+        $manager = new UtilisateurDao($this->getPdo());
         
         // Idéalement, il faudrait vérifier ici si l'email existe déjà (findByEmail)
         // Pour faire simple, on tente l'insertion directement
@@ -94,7 +94,7 @@ class ControllerUtilisateur extends Controller
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        $manager = new UtilisateurDao();
+        $manager = new UtilisateurDao($this->getPdo());
         // C'est ici qu'on utilise la nouvelle méthode findByEmail
         $user = $manager->findByEmail($email);
 
@@ -142,7 +142,7 @@ class ControllerUtilisateur extends Controller
             exit;
         }
         
-        $manager = new UtilisateurDao();
+        $manager = new UtilisateurDao($this->getPdo());
         $user = $manager->find($_SESSION['idUtilisateur']);
         
         echo $this->getTwig()->render('profil.twig', ['user' => $user]);
