@@ -1,0 +1,38 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des Rooms de l'application{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1>Liste des Rooms de l'application</h1>
+            
+            <p>
+                <a href="index.php?controleur=room&methode=afficherFormulaireInsertion">
+                    [+] Creer une nouvelle room
+                </a>
+            </p>
+            <hr>
+        </div>
+
+        <div class="col-12">
+            {% for room in rooms %}
+                <div class="room-item" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <h3>
+                        <a href="index.php?controleur=room&methode=afficher&id={{ room.idRoom }}">
+                            Room #{{ room.idRoom }}
+                        </a>
+                        <p>{{ room.nom }}</p>
+                        <small>({{ room.visibilite }})</small>
+                    </h3>
+                    
+                    <p>Nombre de visiteur : {{ room.nbVisit }}</p>
+                    
+                    <small>Publié le "Date de création de la Room"</small>
+                </div>
+            {% else %}
+                <p>Aucune Room à afficher pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

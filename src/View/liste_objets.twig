@@ -1,0 +1,37 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des objets de la boutique{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1>Liste des objets de la boutique</h1>
+            
+            <p>
+                <a href="index.php?controleur=objet&methode=afficherFormulaireInsertion">
+                    [+] Créer un nouvel objet
+                </a>
+            </p>
+            <hr>
+        </div>
+
+        <div class="col-12">
+            {% for objet in objets %}
+                <div class="objet-item" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                    <h3>
+                        <a href="index.php?controleur=objet&methode=afficher&id={{ objet.idObjet }}">
+                            Objet #{{ objet.idObjet }}
+                        </a> 
+                    </h3>
+                    
+                    <p>Modele3dPah : {{ objet.Modele3dPah }}</p>
+                    <p>{{ objet.description }}</p>
+                    <p>Prix : {{ objet.prix }}</p>
+                    
+                </div>
+            {% else %}
+                <p>Aucun objet à afficher pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
