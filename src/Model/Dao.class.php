@@ -1,6 +1,6 @@
 <?php
 
-abstract class Dao {
+class Dao {
     // ATTRIBUT
     // Propriété représentant la connexion à la base de données via PDO.
     protected PDO $conn;
@@ -15,15 +15,6 @@ abstract class Dao {
         $this->conn = $conn;
     }
 
-    //DESTRUCTEUR
-    /**
-     * Destructeur de la classe Dao.
-     * 
-     * Ce destructeur libère les ressources de la connexion à la base de données.
-     */
-    public function __destruct() {
-
-    }
 
     // ENCAPSULATION
     /**
