@@ -51,6 +51,15 @@ class ReponseDao
         return null;
     }
 
+    public function findResponsesByPost(int $idPost): ?array{
+        $sql = "SELECT * FROM REPONSE WHERE idPost = :idPost";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $stmt->execute();
+        return $stmt->fetchAll() ?: [];
+    }
+
     /**
      * Récupère toutes les réponses de la base de données.
      * 
@@ -59,21 +68,20 @@ class ReponseDao
      * @return Reponse[] Tableau contenant toutes les réponses sous forme d'objets `Reponse`.
      */
     public function findAll(): array{
-        $sql = "SELECT * FROM REPONSE";
-        $pdoStatement = $this->conn->prepare($sql);
-        $pdoStatement->execute();
-        $reponse = [];
+        $stmt = $this->conn->query("SELECT * FROM REPONSE");
+        $reponses = [];
 
-        while ($row = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-            $reponse[] = new Reponse(
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $reponse = new Reponse(
                 $row['idReponse'],
                 $row['dateReponse'],
                 $row['contenu'],
                 $row['idAuteur'],
                 $row['idPost'],
             );
+            $reponses[] = $reponse;
         }
-        return $reponse;
+        return $reponses;
     }
 
     /**

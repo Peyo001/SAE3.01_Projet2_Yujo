@@ -1,0 +1,35 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Reponse #{{ reponse.idReponse }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+             <h1>Détail de la réponse</h1>
+             <a href="index.php?controleur=reponse&methode=lister"><- Retour</a>
+             <hr>
+        </div>
+
+        <div class="col-9">
+            <p class="text-body-primary" style="font-size: 1.2em;">
+                {{ reponse.contenu }}
+            </p>
+        </div>
+
+        <div class="col-3">
+            <div class="">
+                <h6>Informations</h6>
+                <ul>
+                    <li><strong>Date :</strong> {{ reponse.dateReponse }}</li>
+                    <li><strong>Auteur ID :</strong> {{ reponse.idAuteur }}</li>
+                    <li><strong>Post ID :</strong> {{ reponse.idRoom }}</li>
+                </ul>
+                
+                <br>
+                <a href="index.php?controleur=reponse&methode=supprimer&id={{ reponse.idReponse }}" style="color: red; font-size: 0.8em;">
+                    Supprimer cette réponse
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
