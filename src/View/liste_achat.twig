@@ -1,0 +1,28 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des achats{% endblock %}
+
+{% block content %}
+    <h2> Liste des achats </h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Date d'achat</th>
+                <th>Objet</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for achat in achats %}
+                <tr>
+                    <td>{{ achat.idObjet }}</td>
+                    <td>{{ achat.date_achat|date("d/m/Y") }}</td>
+                    <td>{{ achat.idUtilisateur }} €</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucun achat trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+{% endblock %}  
