@@ -11,40 +11,8 @@
  * 
  */
 
-class AchatDao
+class AchatDao extends Dao
 {
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe AchatDao.
-     * 
-     * Ce constructeur initialise une connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct()
-    {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-
-    /**
-     * Destructeur de la classe AchatDao.
-     * 
-     * Ce destructeur ne fait rien ici, mais il peut être utilisé pour nettoyer les ressources si nécessaire.
-     */
-    public function __destruct()
-    {
-        // Rien à nettoyer ici
-    }
-
-    /**
-     * Récupère la connexion PDO utilisée pour interagir avec la base de données.
-     * 
-     * @return PDO|null Retourne la connexion PDO si elle est disponible, sinon null.
-     */
-    public function getConn(): ?PDO
-    {
-        return $this->conn;
-    }
 
     /**
      * Trouve un achat en fonction de son identifiant d'objet.

@@ -37,7 +37,8 @@
          */
         public function lister() {
             $idRoom = $_GET['idRoom'] ?? null;
-            $managerObjet = new ObjetDao();
+            $db=Database::getInstance()->getConnection();
+            $managerObjet = new ObjetDao($this->getPdo());
 
             if ($idRoom) {
                 $objets = $managerObjet->findByRoom($idRoom);
@@ -65,7 +66,7 @@
                 die("Erreur : aucun objet spécifié.");
             }
 
-            $managerObjet = new ObjetDao();
+            $managerObjet = new ObjetDao($this->getPdo());
             $objet = $managerObjet->find($idObjet);
             if (!$objet) {
                 die("Objet introuvable.");
@@ -102,7 +103,7 @@
             $prix = (int)$_POST['prix'];
 
             $objet = new Objet(null, $description, $modele3dPath, $prix, $idRoom);
-            $managerObjet = new ObjetDao();
+            $managerObjet = new ObjetDao($this->getPdo());
             $managerObjet->createObjet($objet);
 
             header("(Ex:Location: index.php?controller=room&action=afficher&idRoom=)".$idRoom);
@@ -122,7 +123,7 @@
                 die("Erreur : aucun objet spécifié.");
             }
 
-            $managerObjet = new ObjetDao();
+            $managerObjet = new ObjetDao($this->getPdo());
             $objet = $managerObjet->find($idObjet);
             if (!$objet) {
                 die("Objet introuvable.");
@@ -157,7 +158,7 @@
                 die("Erreur : aucun objet spécifié.");
             }
 
-            $managerObjet = new ObjetDao();
+            $managerObjet = new ObjetDao($this->getPdo());
             $objet = $managerObjet->find($idObjet);
             if (!$objet) {
                 die("Objet introuvable.");

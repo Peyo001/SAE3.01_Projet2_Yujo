@@ -9,29 +9,9 @@
  * $avatarDao = new AvatarDao();
  * $avatar = $avatarDao->findAll();
  */
-class AvatarDao {
-    //// Attribut représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    //Constructeur
-    /**
-     * Constructeur de la classe AvatarDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct() {
-        $this->conn = Database::getInstance()->getConnection();
-    }
-
-    //destructeur
-    /**
-     * Destructeur de la classe AvatarDao.
-     * 
-     * Ce destructeur est vide mais peut être utilisé pour nettoyer des ressources si nécessaire.
-     */
-    public function __destruct() {
-    }
-
+class AvatarDao extends Dao
+{
+    
     //Méthodes
     /**
      * Récupère tous les avatars enregistrés dans la base de données.

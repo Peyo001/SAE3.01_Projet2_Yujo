@@ -10,32 +10,8 @@
      * $room = $roomDao->findAll();
      * 
      */
-    class RoomDao {
-
-        // ATTRIBUT
-        // Propriété représentant la connexion à la base de données via PDO.
-        private PDO $conn;
-
-        // CONSTRUCTEUR
-        /**
-         * Constructeur de la classe RoomDao.
-         * 
-         * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-         */
-        public function __construct() {
-            $this->conn = Database::getInstance()->getConnection();
-        }
-
-        // DESTRUCTEUR
-        /**
-         * Destructeur de la classe RoomDao.
-         * 
-         * Ce destructeur est vide, mais peut être utilisé pour libérer des ressources si nécessaire.
-         */
-        public function __destruct() {
-            // Rien à nettoyer ici
-        }
-
+    class RoomDao extends Dao
+    {
         // METHODES
         
         /**

@@ -10,18 +10,8 @@
  * $sanction = $sanctionDao->findAll();
  * 
  */
-class SanctionDao {
-    // Propriété représentant la connexion à la base de données via PDO.
-    private PDO $conn;
-
-    /**
-     * Constructeur de la classe SanctionDao.
-     * 
-     * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
-     */
-    public function __construct() {
-        $this->conn = Database::getInstance()->getConnection();
-    }
+class SanctionDao extends Dao
+{
 
     /**
      * Récupère toutes les sanctions de la base de données.
