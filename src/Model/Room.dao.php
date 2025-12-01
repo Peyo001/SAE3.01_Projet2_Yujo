@@ -1,4 +1,6 @@
 <?php
+require_once 'Dao.class.php';
+require_once 'Objet.class.php';
     /**
      * Classe RoomDao
      * 
@@ -205,8 +207,9 @@
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $objets[] = new Objet(
                     $row['idObjet'],
-                    $row['nom'],
-                    $row['type'],
+                    $row['description'],
+                    $row['modele3dPath'],
+                    $row['prix'],
                     $row['idRoom']
                 );
             }
@@ -236,9 +239,10 @@
         * @return bool Retourne true si l'ajout a réussi, sinon false.
         */
         public function addObjetToRoom(Objet $objet): bool {
-            $stmt = $this->conn->prepare("INSERT INTO OBJET (nom, type, idRoom) VALUES (:nom, :type, :idRoom)");
-            $stmt->bindValue(':nom', $objet->getNom());
-            $stmt->bindValue(':type', $objet->getType());
+            $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix, idRoom) VALUES (:description, :modele3dPath, :prix, :idRoom)");
+            $stmt->bindValue(':description', $objet->getDescription());
+            $stmt->bindValue(':modele3dPath', $objet->getModele3dPath());
+            $stmt->bindValue(':prix', $objet->getPrix());
             $stmt->bindValue(':idRoom', $objet->getIdRoom(), PDO::PARAM_INT);
 
             return $stmt->execute();

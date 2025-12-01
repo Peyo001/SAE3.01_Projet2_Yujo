@@ -1,4 +1,5 @@
 <?php
+require_once 'Dao.class.php';
 /**
  * Classe SignalementDao
  * 
