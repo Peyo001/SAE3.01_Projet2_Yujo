@@ -21,8 +21,8 @@
          * 
          * Ce constructeur initialise la connexion à la base de données en utilisant la classe Database.
          */
-        public function __construct() {
-            $this->conn = Database::getInstance()->getConnection();
+        public function __construct(PDO $conn) {
+            $this->conn = $conn;
         }
 
         //DESTRUCTEUR
