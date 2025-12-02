@@ -1,7 +1,26 @@
 <?php
-
+/**
+ * Class ControllerPost
+ * 
+ * Ce contrôleur gère les opérations liées aux posts, telles que l'affichage de la liste des posts,
+ * l'affichage d'un post spécifique, l'insertion de nouveaux posts et la suppression de
+ * 
+ * Exemple d'utilisation :
+ * $controllerPost = new ControllerPost($loader, $twig);
+ * $controllerPost->lister();
+ * $controllerPost->afficher();
+ */
 class ControllerPost extends Controller
 {
+    /**
+     * Constructeur du contrôleur des posts.
+     * 
+     * Initialise la classe `ControllerPost` en passant les objets Twig `Environment` et `FilesystemLoader`
+     * au constructeur de la classe parente `Controller`.
+     * 
+     * @param \Twig\Loader\FilesystemLoader $loader L'objet loader pour la gestion des fichiers Twig.
+     * @param \Twig\Environment $twig L'objet Twig pour le rendu des templates.
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
     {
         parent::__construct($loader, $twig);
@@ -23,6 +42,15 @@ class ControllerPost extends Controller
         ]);
     }
 
+    /**
+     * Affiche un post spécifique.
+     * 
+     * Cette méthode affiche un post spécifique en récupérant son identifiant (`id`) passé dans l'URL.
+     * Si le post est trouvé, la vue `post.twig` est rendue avec les
+     * détails du post.
+     * 
+     * @return void
+     */
     public function afficher(): void
     {
         if (!isset($_GET['id'])) {
@@ -43,7 +71,13 @@ class ControllerPost extends Controller
         ]);
     }
 
-
+    /**
+     * Affiche le formulaire d'insertion d'un nouveau post.
+     * 
+     * Cette méthode affiche le formulaire permettant à l'utilisateur d'ajouter un nouveau post.
+     * 
+     * @return void
+     */
     public function afficherFormulaireInsertion(): void
     {
         echo $this->getTwig()->render('ajout_post.twig', [
@@ -51,6 +85,17 @@ class ControllerPost extends Controller
         ]);
     }
 
+
+    /**
+     * Traite le formulaire d'insertion d'un nouveau post.
+     * 
+     * Cette méthode traite les données soumises via le formulaire d'insertion de post.
+     * Elle crée un nouvel objet `Post`, l'enregistre dans la base de données via le DAO,
+     * puis redirige vers la liste des posts.
+     * 
+     * @return void
+     * @throws Exception Si une erreur survient lors de la création du post.
+     */
     public function traiterFormulaireInsertion(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -91,6 +136,16 @@ class ControllerPost extends Controller
         }
     }
 
+
+    /**
+     * Supprime un post spécifique.
+     * 
+     * Cette méthode supprime un post spécifique en récupérant son identifiant (`id`) passé dans l'URL.
+     * Après la suppression, elle redirige vers la liste des posts.
+     * 
+     * @return void
+     * 
+     */
     public function supprimer(): void
     {
 
