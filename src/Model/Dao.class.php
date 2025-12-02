@@ -1,4 +1,15 @@
 <?php
+/**
+ * Classe de base pour les objets d'accès aux données (DAO).
+ * 
+ * Cette classe fournit une connexion PDO à la base de données et des méthodes
+ * d'encapsulation pour gérer cette connexion.
+ * 
+ * Exemple d'utilisation :
+ * $dao = new Dao($pdo);
+ * $conn = $dao->getConn();
+ *
+ */
 
 class Dao {
     // ATTRIBUT
