@@ -1,14 +1,38 @@
 <?php
-
+/**
+ * Contrôleur pour la gestion des utilisateurs (inscription, connexion, déconnexion, profil).
+ * Utilise les classes métiers et DAO appropriées pour interagir avec la base de données
+ * et afficher les vues correspondantes.
+ * 
+ * Exemple d'utilisation :
+ * $controllerUtilisateur = new ControllerUtilisateur($loader, $twig);
+ * $controllerUtilisateur->afficherFormulaireInscription();
+ * $controllerUtilisateur->traiterInscription();
+ */
 class ControllerUtilisateur extends Controller
 {
+    /**
+     * Constructeur du contrôleur des utilisateurs.
+     * 
+     * Initialise la classe `ControllerUtilisateur` en passant les objets Twig `Environment` et `FilesystemLoader`
+     * au constructeur de la classe parente `Controller`.
+     * 
+     * @param \Twig\Loader\FilesystemLoader $loader L'objet loader pour la gestion des fichiers Twig.
+     * @param \Twig\Environment $twig L'objet Twig pour le rendu des templates.
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
     {
         parent::__construct($loader, $twig);
     }
 
-    // --- INSCRIPTION ---
-
+    /**
+     * Affiche le formulaire d'inscription.
+     * 
+     * Cette méthode rend la vue `inscription.twig` pour permettre à un nouvel utilisateur
+     * de s'inscrire.
+     * 
+     * @return void
+     */
     public function afficherFormulaireInscription(): void
     {
         echo $this->getTwig()->render('inscription.twig', [
@@ -16,6 +40,15 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
+    /**
+     * Traite le formulaire d'inscription.
+     * 
+     * Cette méthode récupère les données soumises via le formulaire d'inscription,
+     * crée un nouvel objet `Utilisateur`, le sécurise (hachage du mot de passe),
+     * et l'enregistre dans la base de données via le DAO `UtilisateurDao`.
+     * 
+     * @return void
+     */
     public function traiterInscription(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -69,8 +102,15 @@ class ControllerUtilisateur extends Controller
         }
     }
 
-    // --- CONNEXION ---
-
+    
+    /**
+     * Affiche le formulaire de connexion.
+     * 
+     * Cette méthode rend la vue `connexion.twig` pour permettre à un utilisateur
+     * de se connecter.
+     * 
+     * @return void
+     */
     public function connexion(): void // Affiche le formulaire
     {
         // Si déjà connecté, on renvoie à l'accueil
@@ -84,6 +124,15 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
+    /**
+     * Traite le formulaire de connexion.
+     * 
+     * Cette méthode récupère les données soumises via le formulaire de connexion,
+     * vérifie les informations d'identification de l'utilisateur, et crée une session
+     * si la connexion est réussie.
+     * 
+     * @return void
+     */
     public function traiterConnexion(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -121,8 +170,14 @@ class ControllerUtilisateur extends Controller
         }
     }
 
-    // --- DÉCONNEXION ---
-
+    /**
+     * Déconnecte l'utilisateur en détruisant la session.
+     * 
+     * Cette méthode vide la session actuelle et redirige l'utilisateur
+     * vers la page de connexion ou l'accueil.
+     * 
+     * @return void
+     */
     public function deconnexion(): void
     {
         // On vide la session
@@ -134,7 +189,14 @@ class ControllerUtilisateur extends Controller
         exit;
     }
     
-    // --- PROFIL (Bonus) ---
+    /**
+     * Affiche le profil de l'utilisateur connecté.
+     * 
+     * Cette méthode vérifie si un utilisateur est connecté, récupère ses informations
+     * depuis la base de données, et rend la vue `profil.twig` avec ces informations.
+     * 
+     * @return void
+     */
     public function afficherProfil(): void
     {
          if (!isset($_SESSION['idUtilisateur'])) {
