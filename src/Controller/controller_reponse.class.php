@@ -1,5 +1,15 @@
 <?php
-
+/** 
+ * Class    ControllerReponse
+ * 
+ * Ce contrôleur gère les opérations liées aux réponses, telles que l'affichage de la liste des réponses,
+ * l'affichage d'une réponse spécifique, l'insertion de nouvelles réponses.
+ * 
+ * Exemple d'utilisation :
+ * $controllerReponse = new ControllerReponse($loader, $twig);  
+ * $controllerReponse->lister();
+ * $controllerReponse->afficher();
+ */
 class ControllerReponse extends Controller
 {
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
@@ -8,7 +18,12 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * LISTE DES RÉPONSES
+     * Cette méthode liste toutes les réponses.
+     * 
+     * Elle récupère toutes les réponses de la base de données en utilisant le DAO `ReponseDao`
+     * et rend la vue `liste_reponse.twig` avec les réponses à afficher.
+     * 
+     * @return void
      */
     public function lister(): void
     {
@@ -22,7 +37,12 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * AFFICHER UNE RÉPONSE
+     * Affiche une réponse spécifique.
+     * 
+     * Cette méthode affiche une réponse spécifique en récupérant son identifiant (`idReponse`) passé dans l'URL.
+     * Si la réponse est trouvée, la vue `reponse.twig` est rendue avec les détails de la réponse.
+     * 
+     * @return void
      */
     public function afficher(): void
     {
@@ -45,7 +65,11 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * FORMULAIRE AJOUT RÉPONSE
+     * Affiche le formulaire d'insertion d'une nouvelle réponse.
+     * 
+     * Cette méthode affiche le formulaire permettant à l'utilisateur d'ajouter une nouvelle réponse.
+     * 
+     * @return void
      */
 
     public function afficherFormulaireInsertion(): void
@@ -56,7 +80,13 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * TRAITEMENT DU FORMULAIRE
+     * Traite le formulaire d'insertion d'une nouvelle réponse.
+     * 
+     * Cette méthode traite les données soumises via le formulaire d'insertion de réponse.
+     * Elle crée un nouvel objet `Reponse`, l'enregistre dans la base de données via le DAO,
+     * puis redirige vers la liste des réponses.
+     * 
+     * @return void
      */
     public function traiterFormulaireInsertion(): void
     {
