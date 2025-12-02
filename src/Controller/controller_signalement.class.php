@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Contrôleur pour la gestion des signalements.
+ * 
+ * Cette classe gère les actions liées aux signalements, telles que l'affichage,
+ * la création, la modification et la suppression des signalements.
+ * 
+ */
 class ControllerSignalement extends Controller
 {
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
@@ -8,7 +14,12 @@ class ControllerSignalement extends Controller
     }
 
     /**
-     * LISTE DES SIGNALEMENTS
+     * Liste tous les signalements.
+     * 
+     * Cette méthode récupère tous les signalements de la base de données en utilisant le DAO `SignalementDao`
+     * et rend la vue `liste_signalement.twig` avec les signalements à afficher.    
+     * 
+     * @return void
      */
     public function lister(): void
     {
@@ -22,7 +33,12 @@ class ControllerSignalement extends Controller
     }
 
     /**
-     * AFFICHER UN SIGNALEMENT
+     * Affiche un signalement spécifique.
+     * 
+     * Cette méthode affiche un signalement spécifique en récupérant son identifiant (`id`) passé dans l'URL.
+     * Si le signalement est trouvé, la vue `signalement.twig` est rendue avec les détails du signalement.
+     * 
+     * @return void
      */
     public function afficher(): void
     {
@@ -46,7 +62,11 @@ class ControllerSignalement extends Controller
     }
 
     /**
-     * FORMULAIRE AJOUT SIGNALEMENT
+     * Affiche le formulaire d'insertion d'un nouveau signalement.
+     * 
+     * Cette méthode affiche le formulaire permettant à l'utilisateur d'ajouter un nouveau signalement.
+     * 
+     * @return void
      */
     public function afficherFormulaireInsertion(): void
     {
@@ -56,7 +76,12 @@ class ControllerSignalement extends Controller
     }
 
     /**
-     * TRAITEMENT DU FORMULAIRE
+     * Traitement du formulaire d'insertion d'un nouveau signalement.
+     * 
+     * Cette méthode traite les données soumises via le formulaire d'insertion de signalement.
+     * Elle crée un nouvel objet `Signalement`, l'enregistre dans la base de données
+     * 
+     * @return void
      */
     public function traiterFormulaireInsertion(): void
     {

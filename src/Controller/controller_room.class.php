@@ -1,11 +1,12 @@
-<!-- Controller pour la classe Room -->
-
-<!-- La classe Room intéragit avec :
-        - la page d'accueil (quand un utilisateur post une room ou en modifie une, il peut apparaître sur notre page d'accueil)
-        - la page de profil (un utilisateur peut accéder à sa room depuis sa page d'accueil)
-        - la page de personnalisation d'une room car on a besoin de la room pour pouvoir la modifier -->
 
 <?php
+    /**
+     * Contrôleur pour la gestion des rooms.
+     * 
+     * Cette classe gère les actions liées aux rooms, telles que l'affichage,
+     * la création, la modification et la suppression des rooms.
+     * 
+     */
     class ControllerRoom extends Controller {
         public function __construct(\Twig\Environment $twig, \Twig\Loader\FilesystemLoader $loader) {
             parent::__construct($twig, $loader);
@@ -34,7 +35,16 @@
             ]);
         }
 
-        public function lister() {
+        /**
+         * Liste les rooms, éventuellement filtrées par créateur.
+         * 
+         * Si un identifiant de créateur (`idCreateur`) est fourni dans les paramètres GET,
+         * cette méthode récupère les rooms créées par cet utilisateur. Sinon, elle récupère
+         * toutes les rooms.
+         * 
+         * @return void
+         */
+        public function lister() :void{
             $idCreateur = isset($_GET['idCreateur']) ? $_GET['idCreateur'] : null;            
             $managerRoom = new RoomDao($this->getPdo());
 
@@ -53,8 +63,17 @@
                 'idCreateur' => $idCreateur
             ]);
         }
-
-        public function creer() {
+        
+        /**
+         * Crée une nouvelle room.
+         * 
+         * Cette méthode gère la création d'une nouvelle room. Si le formulaire est soumis en méthode `POST`,
+         * elle récupère les données, crée un objet `Room` et l'insère dans la base de données via le DAO.
+         * Ensuite, l'utilisateur est redirigé vers la liste des rooms.
+         * 
+         * @return void
+         */
+        public function creer() :void{
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 echo $this->getTwig()->render('Fichier twig (Ex:room_create.twig)');
                 return;
@@ -80,7 +99,18 @@
             exit;
         }
 
-        public function modifier() {
+        /**
+         * Modifie une room existante.
+         * 
+         * Cette méthode permet de modifier une room existante. Si l'ID de la room est passé dans l'URL,
+         * le formulaire de modification est affiché. Si le formulaire est soumis en `POST`,
+         * les données sont récupérées, la room est mise à jour dans la base de données et l'utilisateur est redirigé vers la page de la room.
+         * 
+         * @return void
+         * 
+         */
+        public function modifier() :void
+        {
             $idRoom = $_GET['idRoom'] ?? null;
 
             if (!$idRoom) {
@@ -110,7 +140,16 @@
             exit;
         }
 
-        public function supprimer() {
+        /**
+         * Supprime une room existante.
+         * 
+         * Cette méthode permet de supprimer une room existante. Si l'ID de la room est passé dans l'URL,
+         * la room est supprimée de la base de données et l'utilisateur est redirigé vers la liste des rooms.
+         * 
+         * @return void
+         */
+        public function supprimer() :void
+        {
             $idRoom = $_GET['idRoom'] ?? null;
 
             if (!$idRoom) {
