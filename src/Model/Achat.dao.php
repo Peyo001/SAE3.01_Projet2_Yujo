@@ -55,6 +55,27 @@ class AchatDao extends Dao
     }
 
     /**
+     * Récupère tous les achats effectués par un utilisateur spécifique.
+     * 
+     * Cette méthode recherche tous les achats associés à un identifiant d'utilisateur donné.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur dont les achats doivent être récupérés.
+     * @return Achat[] Tableau contenant les objets Achat associés à l'utilisateur.
+     */
+    public function findParUtilisateur(int $idUtilisateur): array
+    {
+        $achats = [];
+        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $achat = new Achat($row['idObjet'], $row['dateAchat'], $row['idUtilisateur']);
+            $achats[] = $achat;
+        }
+        return $achats;
+    }
+
+    /**
      * Insère un nouvel achat dans la base de données.
      * 
      * Cette méthode permet d'ajouter un nouvel achat pour un utilisateur.
