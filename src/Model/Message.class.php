@@ -11,7 +11,7 @@
 class Message {
     // ATTRIBUTS
     // Identifiant unique du message
-    private $id;
+    private $idMessage;
     // Contenu du message
     private $contenu;
     // Date d'envoi du message
