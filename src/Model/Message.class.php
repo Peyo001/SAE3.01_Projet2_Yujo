@@ -6,7 +6,7 @@
  * Elle inclut des propriétés pour l'identifiant du message, le contenu,
  * 
  * Exemple d'utilisation :
- * $message = new Message($id, $content, $senderId, $receiverId, $timestamp);
+ * $message = new Message($idMessage, $contenu, $dateEnvoi, $idGroupe, $idUtilisateur);
  */
 class Message {
     // ATTRIBUTS
@@ -31,8 +31,8 @@ class Message {
      * @param int $idGroupe Identifiant du groupe associé au message.
      * @param int $idUtilisateur Identifiant de l'utilisateur ayant envoyé le message.
      */
-    public function __construct($id, $contenu, $dateEnvoi, $idGroupe, $idUtilisateur) {
-        $this->id = $id;
+    public function __construct($idMessage, $contenu, $dateEnvoi, $idGroupe, $idUtilisateur) {
+        $this->idMessage = $idMessage;
         $this->contenu = $contenu;
         $this->dateEnvoi = $dateEnvoi;
         $this->idGroupe = $idGroupe;
@@ -55,8 +55,8 @@ class Message {
      * 
      * @return int Identifiant du message.
      */
-    public function getId() {
-        return $this->id;
+    public function getIdMessage() {
+        return $this->idMessage;
     }
 
     /**
