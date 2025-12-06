@@ -73,10 +73,10 @@ class ControllerSignalement extends Controller
             return;
         }
 
-        $signalement = new Signalement($idPost, $raison);
+        $signalement = new Signalement(null, $raison);
 
         $manager = new SignalementDao($this->getPdo());
-        $succes = $manager->insert($signalement);
+        $succes = $manager->insererSignalement($signalement);
 
         if ($succes) {
             header('Location: index.php?controleur=signalement&methode=lister');

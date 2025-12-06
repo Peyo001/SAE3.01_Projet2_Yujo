@@ -72,16 +72,10 @@ class ControllerPost extends Controller
             return;
         }
 
-        $post = new Post();
-        $post->setContenu($contenu);
-        $post->setTypePost($typePost);
-        $post->setIdAuteur($idAuteur);
-        $post->setIdRoom($idRoom);
-        
-        $post->setDatePublication(date('Y-m-d H:i:s'));
+        $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
 
         $manager = new PostDao($this->getPdo());
-        $succes = $manager->createPost($post);
+        $succes = $manager->insererPost($post);
 
         if ($succes) {
             header('Location: index.php?controleur=post&methode=lister');
@@ -102,7 +96,7 @@ class ControllerPost extends Controller
         }
 
         $manager = new PostDao($this->getPdo());
-        $manager->deletePost($idPost);
+        $manager->supprimerPost($idPost);
 
 
         header('Location: index.php?controleur=post&methode=lister');
