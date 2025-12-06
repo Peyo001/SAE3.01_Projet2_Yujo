@@ -12,7 +12,7 @@ class ControllerReponse extends Controller
      */
     public function lister(): void
     {
-        $dao = new ReponseDao();
+        $dao = new ReponseDao($this->getPdo());
         $reponses = $dao->findAll();
 
         echo $this->getTwig()->render('liste_reponse.twig', [
@@ -60,7 +60,7 @@ class ControllerReponse extends Controller
      */
     public function traiterFormulaireInsertion(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'REPONSE') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?controleur=reponse&methode=afficherFormulaireInsertion');
             exit;
         }
@@ -77,7 +77,7 @@ class ControllerReponse extends Controller
 
         $reponse = new Reponse(null, $dateReponse, $contenu, $idAuteur, $idPost);
         $manager = new ReponseDao($this->getPdo());
-        $success = $manager->insert($reponse);
+        $success = $manager->insererReponse($reponse);
 
         if ($success) {
             header('Location: index.php?controleur=reponse&methode=lister');
