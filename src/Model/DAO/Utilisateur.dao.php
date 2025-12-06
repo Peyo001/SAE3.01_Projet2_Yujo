@@ -84,6 +84,41 @@ class UtilisateurDao extends Dao
     }
 
     /**
+     * Récupère un utilisateur par son email.
+     * 
+     * Cette méthode permet de récupérer un utilisateur spécifique en fonction de son email.
+     * 
+     * @param string $email L'email de l'utilisateur à récupérer.
+     * @return Utilisateur|null Retourne un objet `Utilisateur` si trouvé, sinon `null`.
+     */
+    public function findByEmail(string $email): ?Utilisateur
+    {
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE email = :email");
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Utilisateur(
+                $row['nom'],
+                $row['prenom'],
+                $row['dateNaissance'],
+                $row['genre'],
+                $row['pseudo'],
+                $row['email'],
+                $row['motDePasse'],
+                $row['typeCompte'],
+                (bool)$row['estPremium'],
+                $row['dateInscription'],
+                (int)$row['yuPoints'],
+                (int)$row['idUtilisateur'],
+                $row['personnalisation']
+            );
+        }
+        return null;
+    }
+
+    /**
      * Crée un nouvel utilisateur dans la base de données.
      * 
      * Cette méthode permet d'insérer un nouvel utilisateur dans la table `UTILISATEUR` en utilisant les informations de l'objet `Utilisateur`.

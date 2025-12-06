@@ -2,7 +2,9 @@
 /**
  * Classe ControllerFactory
  * 
- * Cette classe est une fabrique de controlleurs. Elle permet de créer des instances de coontrolleurs en fonction de leurs noms.
+ * Cette classe est une fabrique de controlleurs. Elle permet de créer des instances de controlleurs en fonction de leurs noms.
+ * instanciation dynamique des controlleurs avec Twig pour le rendu des templates.
+ * 
  * 
  * Exemple d'utilsation :
  * $controller = ControllerFactory::getController('Home', $loader, $twig);

@@ -78,15 +78,15 @@ class ControllerGroupe extends Controller
             return;
         }
 
-        $groupe = new Groupe(null, $nom, $description, $dateCreation, []);
+        $groupe = new Groupe($nom, $description, $dateCreation, [], null);
 
         $manager = new GroupeDao($this->getPdo());
 
-        $succes = $manager->EnregistrerGroupe($groupe);
+        $succes = $manager->insererGroupe($groupe);
 
         if ($succes) {
             if ($groupe->getIdGroupe() !== null) {
-                 $manager->AjouterMembre($groupe, $idCreateur, $dateCreation);
+                 $manager->ajouterMembre($groupe, $idCreateur, $dateCreation);
             }
 
             header('Location: index.php?controleur=groupe&methode=lister');
@@ -119,7 +119,7 @@ class ControllerGroupe extends Controller
         $groupe = $manager->find($idGroupe);
 
         if ($groupe) {
-            $manager->AjouterMembre($groupe, $idUtilisateur, $dateAjout);
+            $manager->ajouterMembre($groupe, $idUtilisateur, $dateAjout);
         }
 
         header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);

@@ -7,8 +7,8 @@
 
 <?php
     class ControllerRoom extends Controller {
-        public function __construct(\Twig\Environment $twig, \Twig\Loader\FilesystemLoader $loader) {
-            parent::__construct($twig, $loader);
+        public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
+            parent::__construct($loader, $twig);
         }
 
         public function afficher() {
@@ -27,9 +27,7 @@
             }
 
             // Génération de la vue
-            $template = $this->getTwig()->load('fichier twig de la room (Ex:room.twig)');
-
-            echo $template->render([
+            echo $this->getTwig()->render('room.twig', [
                 'room' => $room
             ]);
         }
@@ -46,9 +44,7 @@
             }
 
             // Généralisation de la vue
-            $template = $this->getTwig()->load('fichier twig (Ex:rooms_list.twig');
-
-            echo $template->render([
+            echo $this->getTwig()->render('rooms_list.twig', [
                 'rooms' => $rooms,
                 'idCreateur' => $idCreateur
             ]);
@@ -56,7 +52,7 @@
 
         public function creer() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('Fichier twig (Ex:room_create.twig)');
+                echo $this->getTwig()->render('room_create.twig');
                 return;
             }
 
@@ -68,15 +64,16 @@
                 null,
                 $nom,
                 $visibilite,
-                date('YYYY-mm-dd'),
+                date('Y-m-d'),
                 0,
-                $idCreateur
+                $idCreateur,
+                null
             );
 
             $managerRoom = new RoomDao($this->getPdo());
-            $managerRoom->createRoom($room);
+            $managerRoom->insererRoom($room);
 
-            header("(Ex:Location: index.php?controller=room&action=lister)");
+            header("Location: index.php?controleur=room&methode=lister");
             exit;
         }
 
@@ -95,7 +92,7 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('(Ex:room_edit.twig)', [
+                echo $this->getTwig()->render('room_edit.twig', [
                     'room' => $room
                 ]);
                 return;
@@ -104,9 +101,9 @@
             $room->setNom($_POST['nom']);
             $room->setVisibilite($_POST['visibilite']);
 
-            $managerRoom->updateRoom($room);
+            $managerRoom->update($room);
 
-            header("(Ex:Location: index.php?controller=room&action=afficher&idRoom=)".$idRoom);
+            header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
             exit;
         }
 
@@ -118,9 +115,9 @@
             }
 
             $managerRoom = new RoomDao($this->getPdo());
-            $managerRoom->deleteRoom($idRoom);
+            $managerRoom->supprimerRoom($idRoom);
 
-            header("(Ex:Location: index.php?controller=room&action=lister)");
+            header("Location: index.php?controleur=room&methode=lister");
             exit;
         }
     }
