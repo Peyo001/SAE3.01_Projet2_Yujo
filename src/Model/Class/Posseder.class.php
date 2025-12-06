@@ -23,10 +23,10 @@ class Posseder {
      * @param ?string $datePossession Date de possession (peut être nulle).
      */
 
-    public function __construct(int $idObjet, int $idUtilisateur) {
+    public function __construct(int $idObjet, int $idUtilisateur, ?string $dateAjout = null) {
         $this->idObjet = $idObjet;
         $this->idUtilisateur = $idUtilisateur;
-        $this->dateAjout = null;
+        $this->dateAjout = $dateAjout;
     }
 
     //ENCAPSULATION 
