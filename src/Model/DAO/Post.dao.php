@@ -1,4 +1,5 @@
 <?php
+require_once "Dao.class.php";
 /**
  * Classe PostDao
  * 
@@ -20,7 +21,7 @@ class PostDao extends Dao
      * @param Post $post L'objet `Post` à insérer dans la base de données.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function createPost(Post $post): bool
+    public function insererPost(Post $post): bool
     {
         $stmt = $this->conn->prepare("
             INSERT INTO POST (contenu, typePost, datePublication, idAuteur, idRoom)
@@ -43,6 +44,7 @@ class PostDao extends Dao
         return $success;
     }
 
+    
     /**
      * Supprime un post de la base de données.
      * 
@@ -52,13 +54,14 @@ class PostDao extends Dao
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     // Supprimer un post
-    public function deletePost(int $idPost): bool
+    public function supprimerPost(int $idPost): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM POST WHERE idPost = :idPost");
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
+    
     /**
      * Trouve un post dans la base de données par son identifiant.
      * 
@@ -72,11 +75,20 @@ class PostDao extends Dao
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-
         $stmt->execute();
-
-        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
-        return $stmt->fetch() ?: null;
+        
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['datePublication'],
+                (int)$row['idAuteur'],
+                (int)$row['idRoom']
+            );
+        }
+        return null;
     }
 
     /**
@@ -90,11 +102,22 @@ class PostDao extends Dao
      */
     public function findPostsByAuteur(int $idAuteur): array
     {
-    $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
-    $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
-    $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
-    $stmt->execute();
-    return $stmt->fetchAll() ?: [];
+        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
+        $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $posts = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['datePublication'],
+                (int)$row['idAuteur'],
+                (int)$row['idRoom']
+            );
+        }
+        return $posts;
     }
 
    /**
@@ -107,8 +130,18 @@ class PostDao extends Dao
     public function findAll(): array
     {
         $stmt = $this->conn->query("SELECT * FROM POST");
-        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
-        return $stmt->fetchAll() ?: [];
+        $posts = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['datePublication'],
+                (int)$row['idAuteur'],
+                (int)$row['idRoom']
+            );
+        }
+        return $posts;
     }
     
     /**
@@ -124,9 +157,20 @@ class PostDao extends Dao
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idRoom = :idRoom ORDER BY datePublication DESC");
         $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
-        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
         $stmt->execute();
-        return $stmt->fetchAll() ?: [];
+        
+        $posts = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['datePublication'],
+                (int)$row['idAuteur'],
+                (int)$row['idRoom']
+            );
+        }
+        return $posts;
     }
 }
 

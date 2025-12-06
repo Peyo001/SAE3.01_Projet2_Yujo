@@ -45,7 +45,7 @@ class SanctionDao extends Dao
      * @param int $idSignalement Identifiant du signalement à récupérer.
      * @return Sanction|null Retourne un objet `Sanction` si trouvé, sinon null.
      */
-    public function find(int $idSignalement): ?Sanction {
+    public function findByIdSignalement(int $idSignalement): ?Sanction {
         $stmt = $this->conn->prepare("SELECT idSignalement, idUtilisateur, idPost, dateSignalement, statut FROM SIGNALER WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $idSignalement, PDO::PARAM_INT);
         $stmt->execute();
@@ -70,7 +70,7 @@ class SanctionDao extends Dao
      * @param Sanction $sanction L'objet `Sanction` à insérer.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function insert(Sanction $sanction): bool {
+    public function insererSanction(Sanction $sanction): bool {
         $stmt = $this->conn->prepare("INSERT INTO SIGNALER (idSignalement, idUtilisateur, idPost, dateSignalement, statut) VALUES (:idSignalement, :idUtilisateur, :idPost, :dateSignalement, :statut)");
         $stmt->bindValue(':idSignalement', $sanction->getIdSignalement(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $sanction->getIdUtilisateur(), PDO::PARAM_INT);
@@ -80,6 +80,7 @@ class SanctionDao extends Dao
         return $stmt->execute();
     }
 
+   
      /**
      * Supprime une sanction de la base de données.
      * 
@@ -88,9 +89,10 @@ class SanctionDao extends Dao
      * @param int $idSignalement Identifiant de la sanction à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function delete(int $idSignalement): bool {
+    public function supprimerSanction(int $idSignalement): bool {
         $stmt = $this->conn->prepare("DELETE FROM SIGNALER WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $idSignalement, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
 }

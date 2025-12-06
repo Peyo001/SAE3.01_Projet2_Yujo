@@ -28,11 +28,14 @@
         // Nombre de visites de la room
         private ?int $nbVisit;
 
-        // Identifiant de l'utilisateur qui a créé la room (ce champ sera modifié)
-        private ?int $idCreateur;   // incorrect il faut enlever et créer une classe Créer
+        // Identifiant de l'utilisateur qui a créé la room
+        private ?int $idCreateur;
 
-        // attribut métier
-        private ?array $objets = [];    // liste d'objets présents dans la room
+        // Personnalisation de la room (texte/JSON)
+        private ?string $personnalisation = null;
+
+        // Objets présents dans la room
+        private array $objets = [];
 
         //CONSTRUCTEUR 
         /**
@@ -47,13 +50,14 @@
          * @param ?int $nbVisit Nombre de visites de la room (peut être nul si non défini).
          * @param ?int $idCreateur Identifiant du créateur de la room (peut être nul si non défini).
          */
-        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur) {
+        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur, ?string $personnalisation = null) {
             $this->setIdRoom($idRoom);
             $this->setNom($nom);
             $this->setVisibilite($visibilite);
             $this->setDateCreation($dateCreation);
             $this->setNbVisit($nbVisit);
             $this->setIdCreateur($idCreateur);
+            $this->setPersonnalisation($personnalisation);
         }
 
 
@@ -110,6 +114,13 @@
          */
         public function getIdCreateur(): ?int {
             return $this->idCreateur;
+        }
+
+        /**
+         * Récupère la personnalisation de la room.
+         */
+        public function getPersonnalisation(): ?string {
+            return $this->personnalisation;
         }
 
         /**
@@ -178,6 +189,13 @@
         }
 
         /**
+         * Définit la personnalisation de la room.
+         */
+        public function setPersonnalisation(?string $personnalisation): void {
+            $this->personnalisation = $personnalisation;
+        }
+
+        /**
          * Définit la liste des objets présents dans la room.
          * 
          * @param array $objets La liste des objets à définir.
@@ -186,14 +204,5 @@
             $this->objets = $objets;
         }
 
-        /**
-         * Ajoute un objet à la room.
-         * 
-         * Cette méthode permet d'ajouter un objet à la liste des objets présents dans la room.
-         * 
-         * @param Objet $objet L'objet à ajouter à la room.
-         */
-        public function addObjet(Objet $objet): void {
-            $this->objets[] = $objet;
-        }
+    
     }

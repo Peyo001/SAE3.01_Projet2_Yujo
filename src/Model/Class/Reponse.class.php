@@ -27,6 +27,28 @@ class Reponse
     private ?int $idPost;
 
 
+    //CONSTRUCTEUR
+    /**
+     * Constructeur de la classe Reponse.
+     * 
+     * Ce constructeur initialise un objet `Reponse` avec les valeurs spécifiées pour l'id, la date, le contenu, l'auteur et le post.
+     * 
+     * @param ?int $idReponse Identifiant de la réponse (peut être nul si non défini).
+     * @param ?string $dateReponse Date de la réponse (peut être nulle si non définie).
+     * @param ?string $contenu Contenu de la réponse (peut être nul si non défini).
+     * @param ?int $idAuteur Identifiant de l'auteur de la réponse (peut être nul si non défini).
+     * @param ?int $idPost Identifiant du post auquel la réponse appartient (peut être nul si non défini).
+     */
+    public function __construct(?int $idReponse = null, ?string $dateReponse = null, ?string $contenu = null, ?int $idAuteur = null, ?int $idPost = null)
+    {
+        $this->setId($idReponse);
+        $this->setDateReponse($dateReponse);
+        $this->setContenu($contenu);
+        $this->setIdAuteur($idAuteur);
+        $this->setIdPost($idPost);
+    }
+    
+
     //GETTERS ET SETTERS
     /**
      * Getter pour l'identifiant de la réponse.
@@ -118,25 +140,7 @@ class Reponse
         $this->idPost = $idPost;
     }
 
-    /**
-     * Constructeur de la classe Reponse.
-     * 
-     * Ce constructeur initialise un objet `Reponse` avec les valeurs spécifiées pour l'id, la date, le contenu, l'auteur et le post.
-     * 
-     * @param ?int $idReponse Identifiant de la réponse (peut être nul si non défini).
-     * @param ?string $dateReponse Date de la réponse (peut être nulle si non définie).
-     * @param ?string $contenu Contenu de la réponse (peut être nul si non défini).
-     * @param ?int $idAuteur Identifiant de l'auteur de la réponse (peut être nul si non défini).
-     * @param ?int $idPost Identifiant du post auquel la réponse appartient (peut être nul si non défini).
-     */
-    public function __construct(?int $idReponse = null, ?string $dateReponse = null, ?string $contenu = null, ?int $idAuteur = null, ?int $idPost = null)
-    {
-        $this->setId($idReponse);
-        $this->setDateReponse($dateReponse);
-        $this->setContenu($contenu);
-        $this->setIdAuteur($idAuteur);
-        $this->setIdPost($idPost);
-    }
+    
 
     /**
      * Affiche les détails de la réponse.

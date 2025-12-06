@@ -11,7 +11,7 @@
 class Utilisateur
 {
     // ATTRIBUTS
-    private int $idUtilisateur;// Identifiant unique de l'utilisateur
+    private ?int $idUtilisateur;// Identifiant unique de l'utilisateur
     private string $nom;// Nom de l'utilisateur
     private string $prenom;// Prénom de l'utilisateur
     private string $dateNaissance;// Date de naissance de l'utilisateur
@@ -32,7 +32,6 @@ class Utilisateur
      * 
      * Ce constructeur initialise un objet `Utilisateur` avec toutes ses propriétés définies.
      * 
-     * @param int $idUtilisateur Identifiant de l'utilisateur.
      * @param string $nom Nom de l'utilisateur.
      * @param string $prenom Prénom de l'utilisateur.
      * @param string $dateNaissance Date de naissance de l'utilisateur.
@@ -42,12 +41,12 @@ class Utilisateur
      * @param string $motDePasse Mot de passe de l'utilisateur.
      * @param string $typeCompte Type de compte (standard, premium).
      * @param bool $estPremium Statut premium (true ou false).
-     * @param ?string $dateInscription Date d'inscription (nullable).
+     * @param string $dateInscription Date d'inscription.
      * @param int $yuPoints Nombre de YuPoints de l'utilisateur.
-     * @param string $personnalisation Personnalisation du profil de l'utilisateur.
+     * @param ?int $idUtilisateur Identifiant de l'utilisateur (nullable).
+     * @param ?string $personnalisation Personnalisation du profil de l'utilisateur.
      */
     public function __construct(
-        ?int $idUtilisateur = null,
         string $nom,
         string $prenom,
         string $dateNaissance,
@@ -59,11 +58,11 @@ class Utilisateur
         bool $estPremium,
         string $dateInscription,
         int $yuPoints,
-        ?string $personnalisation
+        ?int $idUtilisateur = null,
+        ?string $personnalisation = null
     ) {
-        // C'est ici que tu avais sûrement oublié des lignes !
         $this->setIdUtilisateur($idUtilisateur);
-        $this->setNom($nom);                 // <--- C'était l'erreur (ligne manquante ?)
+        $this->setNom($nom);
         $this->setPrenom($prenom);
         $this->setDateNaissance($dateNaissance);
         $this->setGenre($genre);
@@ -248,9 +247,9 @@ class Utilisateur
     /**
      * Définit l'identifiant de l'utilisateur.
      * 
-     * @param int $idUtilisateur L'identifiant de l'utilisateur.
+     * @param ?int $idUtilisateur L'identifiant de l'utilisateur.
      */
-    public function setIdUtilisateur(int $idUtilisateur): void
+    public function setIdUtilisateur(?int $idUtilisateur): void
     {
         $this->idUtilisateur = $idUtilisateur;
     }

@@ -15,18 +15,6 @@ class SignalementDao extends Dao
 { 
 
     /**
-     * Définit la connexion à la base de données.
-     * 
-     * Cette méthode permet de définir une connexion PDO personnalisée.
-     * 
-     * @param PDO $conn La connexion à la base de données.
-     */
-    public function setConn(PDO $conn): void
-    {
-        $this->conn = $conn;
-    }
-
-    /**
      * Récupère tous les signalements de la base de données.
      * 
      * Cette méthode permet de récupérer tous les signalements présents dans la table `SIGNALEMENT`.
@@ -72,12 +60,14 @@ class SignalementDao extends Dao
      * @param Signalement $signalement L'objet `Signalement` à insérer dans la base de données.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function insert(Signalement $signalement): bool
+    public function insererSignalement(Signalement $signalement): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO SIGNALEMENT (raison) VALUES (:raison)");
         $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
     }
+
+    
     
     /**
      * Supprime un signalement de la base de données.
@@ -87,11 +77,12 @@ class SignalementDao extends Dao
      * @param int $idSignalement Identifiant du signalement à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function delete(int $id): bool
+    public function supprimerSignalement(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM SIGNALEMENT WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
 }
 ?>

@@ -14,7 +14,7 @@ class Groupe
 {
     // ATTRIBUTS
     // Identifiant unique du groupe
-    private int $idGroupe;
+    private ?int $idGroupe;
 
     // Nom du groupe
     private string $nomGroupe;
@@ -34,18 +34,18 @@ class Groupe
      * 
      * Ce constructeur initialise un objet Groupe avec les propriétés spécifiées.
      * 
-     * @param int $idGroupe Identifiant unique du groupe.
      * @param string $nomGroupe Nom du groupe.
      * @param ?string $descriptionGroupe Description du groupe (peut être nulle).
      * @param ?string $dateCreation Date de création du groupe (peut être nulle).
      * @param array $membres Liste des membres du groupe (par défaut un tableau vide).
+     * @param ?int $idGroupe Identifiant unique du groupe (nullable).
      */
     public function __construct(
-        ?int $idGroupe = null,
         string $nomGroupe,
         ?string $descriptionGroupe,
         ?string $dateCreation,
-        array $membres = []                                                                                                             
+        array $membres = [],
+        ?int $idGroupe = null
     ) {
         $this->setIdGroupe($idGroupe);
         $this->setNomGroupe($nomGroupe);
@@ -72,9 +72,9 @@ class Groupe
     /**
      * Récupère l'identifiant du groupe.
      * 
-     * @return int Identifiant du groupe.
+     * @return ?int Identifiant du groupe, ou null si non défini.
      */
-    public function getIdGroupe(): int
+    public function getIdGroupe(): ?int
     {
         return $this->idGroupe;
     }
@@ -126,9 +126,9 @@ class Groupe
     /**
      * Définit l'identifiant du groupe.
      * 
-     * @param int $idGroupe L'identifiant du groupe à définir.
+     * @param ?int $idGroupe L'identifiant du groupe à définir.
      */
-    public function setIdGroupe(int $idGroupe): void
+    public function setIdGroupe(?int $idGroupe): void
     {
         $this->idGroupe = $idGroupe;
     }

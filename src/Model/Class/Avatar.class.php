@@ -12,7 +12,7 @@
 class Avatar {
 
     //// Attributs de la classe Avatar, représentant les caractéristiques de l'avatar
-    private int $idAvatar;
+    private ?int $idAvatar;
     private string $nom;
     private string $genre;
     private string $dateCreation;
@@ -29,7 +29,6 @@ class Avatar {
      * 
      * Ce constructeur initialise un objet Avatar avec les propriétés spécifiées.
      * 
-     * @param int $idAvatar Identifiant unique de l'avatar.
      * @param string $nom Nom de l'avatar.
      * @param string $genre Genre de l'avatar (ex. "Masculin", "Féminin").
      * @param string $dateCreation Date de création de l'avatar.
@@ -38,8 +37,9 @@ class Avatar {
      * @param string $vetements Description des vêtements de l'avatar.
      * @param string $accessoires Description des accessoires de l'avatar.
      * @param int $idUtilisateur Identifiant de l'utilisateur ayant créé l'avatar.
+     * @param ?int $idAvatar Identifiant unique de l'avatar (nullable).
      */
-    public function __construct(int $idAvatar, string $nom, string $genre, string $dateCreation, string $CouleurPeau, string $CouleurCheveux, string $vetements, string $accessoires, int $idUtilisateur) {
+    public function __construct(string $nom, string $genre, string $dateCreation, string $CouleurPeau, string $CouleurCheveux, string $vetements, string $accessoires, int $idUtilisateur, ?int $idAvatar = null) {
         $this->idAvatar = $idAvatar;
         $this->nom = $nom;
         $this->genre = $genre;
@@ -148,9 +148,9 @@ class Avatar {
     /**
      * Définit l'identifiant de l'avatar.
      * 
-     * @param int $idAvatar L'identifiant de l'avatar à définir.
+     * @param ?int $idAvatar L'identifiant de l'avatar à définir.
      */
-    public function setIdAvatar(int $idAvatar): void {
+    public function setIdAvatar(?int $idAvatar): void {
         $this->idAvatar = $idAvatar;
     }
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'Dao.class.php';
+require_once "Dao.class.php";
 /**
  * 
  * Classe UtilisateurDao
@@ -32,7 +32,6 @@ class UtilisateurDao extends Dao
 
         if ($row) {
             return new Utilisateur(
-                $row['idUtilisateur'],
                 $row['nom'],
                 $row['prenom'],
                 $row['dateNaissance'],
@@ -44,6 +43,7 @@ class UtilisateurDao extends Dao
                 (bool)$row['estPremium'],
                 $row['dateInscription'],
                 (int)$row['yuPoints'],
+                (int)$row['idUtilisateur'],
                 $row['personnalisation']
             );
         }
@@ -59,13 +59,12 @@ class UtilisateurDao extends Dao
      */
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints FROM UTILISATEUR");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints,personnalisation FROM UTILISATEUR");
         $stmt->execute();
         $users = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $users[] = new Utilisateur(
-                $row['idUtilisateur'],
                 $row['nom'],
                 $row['prenom'],
                 $row['dateNaissance'],
@@ -77,7 +76,8 @@ class UtilisateurDao extends Dao
                 (bool)$row['estPremium'],
                 $row['dateInscription'],
                 (int)$row['yuPoints'],
-                $row['personnalisation'],
+                (int)$row['idUtilisateur'],
+                $row['personnalisation']
             );
         }
         return $users;
@@ -91,7 +91,7 @@ class UtilisateurDao extends Dao
      * @param Utilisateur $user L'objet `Utilisateur` à insérer dans la base de données.
      * @return bool Retourne `true` si l'insertion a réussi, sinon `false`.
      */
-    public function createUser(Utilisateur $user): bool
+    public function creerUtilisateur(Utilisateur $user): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO UTILISATEUR (nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation) VALUES (:nom, :prenom, :dateNaissance, :genre, :pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints, :personnalisation)");
         $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
@@ -108,6 +108,12 @@ class UtilisateurDao extends Dao
         $stmt->bindValue(':personnalisation', $user->getPersonnalisation(), PDO::PARAM_STR);
         return $stmt->execute();
     }
+
+    // Compatibilité : ancien nom
+    public function createUser(Utilisateur $user): bool
+    {
+        return $this->creerUtilisateur($user);
+    }
     
     /**
      * Supprime un utilisateur de la base de données.
@@ -117,11 +123,17 @@ class UtilisateurDao extends Dao
      * @param int $id L'identifiant de l'utilisateur à supprimer.
      * @return bool Retourne `true` si la suppression a réussi, sinon `false`.
      */
-    public function deleteUser(int $id): bool
+    public function supprimerUtilisateur(int $id): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM UTILISATEUR WHERE idUtilisateur = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
+    }
+
+    // Compatibilité : ancien nom
+    public function deleteUser(int $id): bool
+    {
+        return $this->supprimerUtilisateur($id);
     }
 }
 
