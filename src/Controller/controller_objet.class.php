@@ -21,11 +21,11 @@
          * Initialise la classe `ControllerObjet` en passant les objets Twig `Environment` et `FilesystemLoader`
          * au constructeur de la classe parente `Controller`.
          * 
-         * @param \Twig\Environment $twig L'objet Twig pour le rendu des templates.
          * @param \Twig\Loader\FilesystemLoader $loader L'objet loader pour la gestion des fichiers Twig.
+         * @param \Twig\Environment $twig L'objet Twig pour le rendu des templates.
          */
-        public function __construct(\Twig\Environment $twig, \Twig\Loader\FilesystemLoader $loader) {
-            parent::__construct($twig, $loader);
+        public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
+            parent::__construct($loader, $twig);
         }
 
         /**
@@ -47,7 +47,7 @@
                 $objets = $managerObjet->findAll();
             }
 
-            echo $this->getTwig()->render('(Ex:objets_list.twig)', [
+            echo $this->getTwig()->render('objets_list.twig', [
                 'objets' => $objets,
                 'idRoom' => $idRoom
             ]);
@@ -72,7 +72,7 @@
                 die("Objet introuvable.");
             }
 
-            echo $this->getTwig()->render('(Ex:objet.twig)', [
+            echo $this->getTwig()->render('objet.twig', [
                 'objet' => $objet
             ]);
         }
@@ -91,7 +91,7 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('(Ex:objet_create.twig)', [
+                echo $this->getTwig()->render('objet_create.twig', [
                     'idRoom' => $idRoom
                 ]);
                 return;
@@ -104,9 +104,9 @@
 
             $objet = new Objet(null, $description, $modele3dPath, $prix, $idRoom);
             $managerObjet = new ObjetDao($this->getPdo());
-            $managerObjet->createObjet($objet);
+            $managerObjet->insererObjet($objet);
 
-            header("(Ex:Location: index.php?controller=room&action=afficher&idRoom=)".$idRoom);
+            header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
             exit;
         }
 
@@ -130,7 +130,7 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('(Ex:objet_edit.twig)', [
+                echo $this->getTwig()->render('objet_edit.twig', [
                     'objet' => $objet
                 ]);
                 return;
@@ -140,8 +140,8 @@
             $objet->setModele3dPath($_POST['modele3dPath']);
             $objet->setPrix((int)$_POST['prix']);
 
-            $managerObjet->updateObjet($objet);
-            header("(Ex:Location: index.php?controller=objet&action=afficher&idObjet=)".$idObjet);
+            $managerObjet->mettreAJourObjet($objet);
+            header("Location: index.php?controleur=objet&methode=afficher&idObjet=".$idObjet);
             exit;
         }
 
@@ -166,10 +166,10 @@
 
             $idRoom = $objet->getIdRoom();
 
-            $managerObjet->deleteObjet($idObjet);
+            $managerObjet->supprimerObjet($idObjet);
 
             // Retour à la room
-            header("(Ex:Location: index.php?controller=room&action=afficher&idRoom=)".$idRoom);
+            header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
             exit;
         }
     }

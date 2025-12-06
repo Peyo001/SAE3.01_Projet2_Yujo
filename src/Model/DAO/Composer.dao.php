@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ ."DAO.php";
+require_once "Dao.class.php";
 
 /**
  * Classe DAO pour la table COMPOSER

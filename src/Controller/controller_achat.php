@@ -57,7 +57,7 @@ class ControllerAchat extends Controller
     public function listerParUtilisateur(int $idUtilisateur): void
     {
         $manager = new AchatDao($this->getPdo());
-        $achats = $manager->findParUtilisateur($idUtilisateur);
+        $achats = $manager->findByUtilisateur($idUtilisateur);
 
         echo $this->getTwig()->render('liste_achats.twig', [
             'achats' => $achats,
@@ -81,7 +81,7 @@ class ControllerAchat extends Controller
         }
 
         $manager = new AchatDao($this->getPdo());
-        $achat = $manager->find($id);
+        $achat = $manager->findByIdObjet($id);
 
         if (!$achat) {
             echo "Cet achat n'existe pas.";

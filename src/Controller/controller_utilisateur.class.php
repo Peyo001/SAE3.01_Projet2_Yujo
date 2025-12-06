@@ -45,10 +45,9 @@ class ControllerUtilisateur extends Controller
 
         // 4. Création de l'objet (ID à null car auto-increment)
         $user = new Utilisateur(
-            null, 
             $nom, $prenom, $dateNaiss, $genre, $pseudo, $email, 
             $mdpHache, // On envoie le mot de passe crypté
-            $typeCompte, $estPremium, $dateInscription, $yuPoints, $personnalisation
+            $typeCompte, $estPremium, $dateInscription, $yuPoints, null, $personnalisation
         );
 
         // 5. Enregistrement
@@ -57,7 +56,7 @@ class ControllerUtilisateur extends Controller
         // Idéalement, il faudrait vérifier ici si l'email existe déjà (findByEmail)
         // Pour faire simple, on tente l'insertion directement
         try {
-            $succes = $manager->createUser($user);
+            $succes = $manager->creerUtilisateur($user);
             
             if ($succes) {
                 // Redirection vers la connexion après succès
