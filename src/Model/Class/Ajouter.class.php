@@ -11,11 +11,12 @@
  * 
  */
 class Ajouter {
-    // Propriété représentant l'identifiant de l'objet à ajouter.
-    private int $idObjet;
-
+    
     // Propriété représentant l'identifiant de l'utilisateur ajoutant l'objet.
     private int $idUtilisateur;
+
+    // Propriété représentant l'identifiant de l'objet à ajouter.
+    private int $idObjet;
 
     // Propriété représentant la date d'ajout de l'objet.
     private string $dateAjout;

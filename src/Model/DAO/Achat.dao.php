@@ -1,4 +1,5 @@
 <?php
+require_once "Dao.class.php";
 /**
  * Classe AchatDao
  * 
@@ -22,16 +23,13 @@ class AchatDao extends Dao
      * @param int $idObjet Identifiant de l'objet à rechercher.
      * @return Achat|null Retourne un objet Achat si trouvé, sinon null.
      */
-    public function find(int $idObjet): ?Achat
-    {
+    public function findByIdObjet(int $idObjet): ?Achat{
         $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
-        $stmt->bindValue(':dateAchat', $idObjet, PDO::PARAM_STR);
-        $stmt->bindValue(':idUtilisateur', $idObjet, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Achat($row['idObjet'], $row['dateAchat'], $row['idUtilisateur']);
+            return new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
         }
         return null;
     }
@@ -48,7 +46,7 @@ class AchatDao extends Dao
         $achats = [];
         $stmt = $this->conn->query("SELECT * FROM ACHETER");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat($row['idObjet'], $row['dateAchat'], $row['idUtilisateur']);
+            $achat = new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
             $achats[] = $achat;
         }
         return $achats;
@@ -62,14 +60,14 @@ class AchatDao extends Dao
      * @param int $idUtilisateur Identifiant de l'utilisateur dont les achats doivent être récupérés.
      * @return Achat[] Tableau contenant les objets Achat associés à l'utilisateur.
      */
-    public function findParUtilisateur(int $idUtilisateur): array
+    public function findByUtilisateur(int $idUtilisateur): array
     {
         $achats = [];
         $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat($row['idObjet'], $row['dateAchat'], $row['idUtilisateur']);
+            $achat = new Achat($row['idUtilisateur'], $row['idObjet'], $row['dateAchat']);
             $achats[] = $achat;
         }
         return $achats;
@@ -83,7 +81,10 @@ class AchatDao extends Dao
      * @param Achat $achat L'objet Achat à insérer dans la base de données.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function insert(Achat $achat): bool
+    /**
+     * Insère un nouvel achat.
+     */
+    public function insererAchat(Achat $achat): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO ACHETER (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
         $stmt->bindValue(':idObjet', $achat->getIdObjet(), PDO::PARAM_INT);
@@ -101,10 +102,17 @@ class AchatDao extends Dao
      * @param int $idObjet Identifiant de l'objet dont l'achat doit être supprimé.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function delete(int $idObjet): bool
+    /**
+     * Supprime un achat.
+     */
+    public function supprimerAchat(int $idObjet, ?int $idUtilisateur = null): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet");
+        $sql = "DELETE FROM ACHETER WHERE idObjet = :idObjet" . ($idUtilisateur !== null ? " AND idUtilisateur = :idUtilisateur" : "");
+        $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        if ($idUtilisateur !== null) {
+            $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        }
         return $stmt->execute();
     }
 }

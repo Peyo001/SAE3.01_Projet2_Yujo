@@ -1,4 +1,5 @@
 <?php
+require_once "Dao.class.php";
 /**
  * Classe GroupeDao
  * 
@@ -53,11 +54,11 @@ class GroupeDao extends Dao
         if ($row) {
             $membres = $this->getMembres($idGroupe);
             return new Groupe(
-                $row['idGroupe'],
                 $row['nomGroupe'],
                 $row['description'],
                 $row['dateCreationGroupe'],
-                $membres
+                $membres,
+                (int)$row['idGroupe']
             );
         }
         return null;
@@ -79,11 +80,11 @@ class GroupeDao extends Dao
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $membres = $this->getMembres($row['idGroupe']);
             $groupes[] = new Groupe(
-                $row['idGroupe'],
                 $row['nomGroupe'],
                 $row['description'],
                 $row['dateCreationGroupe'],
-                $membres
+                $membres,
+                (int)$row['idGroupe']
             );
         }
 
@@ -98,7 +99,7 @@ class GroupeDao extends Dao
      * @param Groupe $groupe L'objet Groupe à insérer dans la base de données.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function insert(Groupe $groupe): bool
+    public function insererGroupe(Groupe $groupe): bool
     {
         $stmt = $this->conn->prepare("
             INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe) 
@@ -116,6 +117,7 @@ class GroupeDao extends Dao
         return $res;
     }
 
+   
      /**
      * Supprime un groupe de la base de données.
      * 
@@ -124,13 +126,14 @@ class GroupeDao extends Dao
      * @param int $idGroupe L'identifiant du groupe à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function delete(int $idGroupe): bool
+    public function supprimerGroupe(int $idGroupe): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM GROUPE WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
+    
      /**
      * Ajoute un membre au groupe.
      * 
@@ -141,7 +144,7 @@ class GroupeDao extends Dao
      * @param string $dateAjout La date d'ajout du membre au groupe.
      * @return bool Retourne true si l'ajout a réussi, sinon false.
      */
-    public function insertMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
+    public function ajouterMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
     {
         if ($groupe->estMembre($idUtilisateur)) {
             return false; 
@@ -152,5 +155,7 @@ class GroupeDao extends Dao
         $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
         return $stmt->execute(); 
     }
+
+    
 }
 ?>

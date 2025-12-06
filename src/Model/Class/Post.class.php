@@ -35,9 +35,23 @@ class Post
     /**
      * Constructeur de la classe Post.
      * 
-     * Ce constructeur est vide et est principalement utilisé pour l'instanciation via PDO::FETCH_CLASS.
+     * Ce constructeur initialise un objet `Post` avec les valeurs spécifiées pour les propriétés.
+     * 
+     * @param ?int $idPost Identifiant du post (peut être nul si non défini).
+     * @param ?string $contenu Contenu du post (peut être nul si non défini).
+     * @param ?string $typePost Type du post (peut être nul si non défini).
+     * @param ?string $datePublication Date de publication du post (peut être nul si non défini).
+     * @param ?int $idAuteur Identifiant de l'auteur du post (peut être nul si non défini).
+     * @param ?int $idRoom Identifiant de la room où le post est publié (peut être nul si non défini).  
      */
-    public function __construct() {} // constructeur vide pour PDO::FETCH_CLASS
+    public function __construct(?int $idPost, ?string $contenu, ?string $typePost, ?string $datePublication, ?int $idAuteur, ?int $idRoom) {
+        $this->setIdPost($idPost);
+        $this->setContenu($contenu);
+        $this->setTypePost($typePost);
+        $this->setDatePublication($datePublication);
+        $this->setIdAuteur($idAuteur);
+        $this->setIdRoom($idRoom);
+    }
 
     // Getters
     /**
@@ -86,9 +100,9 @@ class Post
     /**
      * Définit l'identifiant du post.
      * 
-     * @param int $idPost L'identifiant du post à définir.
+     * @param ?int $idPost L'identifiant du post à définir.
      */
-    public function setIdPost(int $idPost): void { $this->idPost = $idPost; }
+    public function setIdPost(?int $idPost): void { $this->idPost = $idPost; }
     
     /**
      * Définit le contenu du post.
@@ -111,7 +125,18 @@ class Post
      */
     public function setDatePublication(string $datePublication): void { $this->datePublication = $datePublication; }
 
+
+    /**
+     * Définit l'identifiant de l'auteur du post.
+     * 
+     * @param int $idAuteur L'identifiant de l'auteur à définir.
+     */
     public function setIdAuteur(int $idAuteur): void { $this->idAuteur = $idAuteur; }
 
+    /**
+     * Définit l'identifiant de la room où le post est publié.
+     * 
+     * @param int $idRoom L'identifiant de la room à définir.
+     */
     public function setIdRoom(int $idRoom): void { $this->idRoom = $idRoom; }
 }

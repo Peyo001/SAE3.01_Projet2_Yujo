@@ -19,20 +19,7 @@
         private ?string $modele3dPath;
         // Prix de l'objet
         private ?int $prix;
-        // Identifiant de la room dans laquelle l'objet est disponible (clé étrangère vers Room)
-        private ?int $idRoom;   //clé étrangère vers Room
-
-        public function __construct(?int $idObjet, ?string $description, ?string $modele3dPath, ?int $prix, ?int $idRoom) {
-            $this->setIdObjet($idObjet);
-            $this->setDescription($description);
-            $this->setModele3dPath($modele3dPath);
-            $this->setPrix($prix);
-            $this->setIdRoom($idRoom);
-        }
-
-
-        // Getters
-
+    
         /**
          * Constructeur de la classe Objet.
          * 
@@ -43,6 +30,21 @@
          * @param ?string $modele3dPath Chemin vers le modèle 3D de l'objet (peut être nul si non défini).
          * @param ?int $prix Prix de l'objet (peut être nul si non défini).
          * @param ?int $idRoom Identifiant de la room dans laquelle l'objet est disponible (peut être nul si non défini).
+         */
+        public function __construct(?int $idObjet, ?string $description, ?string $modele3dPath, ?int $prix, ?int $idRoom) {
+            $this->setIdObjet($idObjet);
+            $this->setDescription($description);
+            $this->setModele3dPath($modele3dPath);
+            $this->setPrix($prix);
+        }
+
+
+        // Getters
+
+        /**
+         * Récupère l'identifiant de l'objet.
+         * 
+         * @return ?int L'identifiant de l'objet, ou null si non défini.
          */
         public function getIdObjet(): ?int {
             return $this->idObjet;
@@ -67,24 +69,13 @@
         }
 
         /**
-         * Récupère le chemin vers le modèle 3D de l'objet.
-         * 
-         * @return ?string Le chemin du fichier modèle 3D de l'objet, ou null si non défini.
-         */
-        public function getPrix(): ?int {
-            return $this->prix;
-        }
-
-        /**
          * Récupère le prix de l'objet.
          * 
          * @return ?int Le prix de l'objet, ou null si non défini.
          */
-        public function getIdRoom(): ?int {
-            return $this->idRoom;
+        public function getPrix(): ?int {
+            return $this->prix;
         }
-
-
         // Setters
 
         /**
@@ -123,12 +114,4 @@
             $this->prix = $prix;
         }   
 
-        /**
-         * Définit l'identifiant de la room dans laquelle l'objet est disponible.
-         * 
-         * @param ?int $idRoom L'identifiant de la room à définir.
-         */
-        public function setIdRoom(?int $idRoom): void {
-            $this->idRoom = $idRoom;
-        }
     }

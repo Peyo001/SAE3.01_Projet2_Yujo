@@ -1,4 +1,5 @@
 <?php
+require_once "Dao.class.php";
 /**
  * Classe ReponseDao
  * 
@@ -42,7 +43,7 @@ class ReponseDao extends Dao
         $sql = "SELECT * FROM REPONSE WHERE idPost = :idPost";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
-        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Post::class);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Reponse::class);
         $stmt->execute();
         return $stmt->fetchAll() ?: [];
     }
@@ -79,10 +80,8 @@ class ReponseDao extends Dao
      * @param Reponse $response L'objet `Reponse` contenant les informations à insérer.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    public function createResponse(Reponse $response): bool
-    {
-        $stmt = $this->conn->prepare("INSERT INTO REPONSE (idReponse, dateRepoonse, contenu, idAuteur, idPost) VALUES (:idReponse, :dateReponse, :contenu, :idAuteur, :idPost)");
-        $stmt->bindValue(':idReponse', $response->getId(), PDO::PARAM_INT);
+    public function insererReponse(Reponse $response): bool {
+        $stmt = $this->conn->prepare("INSERT INTO REPONSE (dateReponse, contenu, idAuteur, idPost) VALUES (:dateReponse, :contenu, :idAuteur, :idPost)");
         $stmt->bindValue(':dateReponse', $response->getDateReponse(), PDO::PARAM_STR);
         $stmt->bindValue(':contenu', $response->getContenu(), PDO::PARAM_STR);
         $stmt->bindValue(':idAuteur', $response->getIdAuteur(), PDO::PARAM_INT);
@@ -91,6 +90,7 @@ class ReponseDao extends Dao
         return $stmt->execute();
     }
 
+    
     /**
      * Supprime une réponse de la base de données.
      * 
@@ -99,11 +99,12 @@ class ReponseDao extends Dao
      * @param int $id Identifiant de la réponse à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function deleteResponse(int $id): bool{
+    public function supprimerReponse(int $id): bool{
         $stmt = $this->conn->prepare("DELETE FROM REPONSE WHERE idReponse = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
+    
 
 }

@@ -1,5 +1,5 @@
 <?php
-
+require_once "Dao.class.php";
 /**
  * Classe MessageDAO
  * 
@@ -12,23 +12,8 @@
  * $messageDAO = new MessageDAO($pdo);
  * $message = $messageDAO->findById(1);
  */
-class MessageDAO {
+class MessageDAO extends Dao{
 
-    // ATTRIBUTS
-    // Instance PDO pour la connexion à la base de données
-    private $pdo;
-
-    // CONSTRUCTEUR
-    /**
-     * Constructeur de la classe MessageDAO.
-     * 
-     * Ce constructeur initialise un objet MessageDAO avec une connexion PDO.
-     * 
-     * @param PDO $pdo Instance PDO pour la connexion à la base de données.
-     */
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
-    }
 
     // MÉTHODES
     /**
@@ -37,9 +22,10 @@ class MessageDAO {
      * @param int $id Identifiant du message.
      * @return Message|null L'objet Message correspondant ou null si non trouvé.
      */
-    public function findById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM message WHERE idMessage = :id");
-        $stmt->execute(['id' => $id]);
+    public function findByIdMessage(int $id): ?Message {
+        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idMessage = :id");
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
         $row = $stmt->fetch();
 
         if ($row) {
@@ -61,9 +47,10 @@ class MessageDAO {
      * @param int $idGroupe Identifiant du groupe.
      * @return array Tableau d'objets Message.
      */
-    public function findByIdGroupe($idGroupe) {
-        $stmt = $this->pdo->prepare("SELECT * FROM message WHERE idGroupe = :idGroupe");
-        $stmt->execute(['idGroupe' => $idGroupe]);
+    public function findByIdGroupe(int $idGroupe): array {
+        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idGroupe = :idGroupe");
+        $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
+        $stmt->execute();
         $messages = [];
 
         while ($row = $stmt->fetch()) {
@@ -84,8 +71,8 @@ class MessageDAO {
      * 
      * @return array Tableau d'objets Message.
      */
-    public function findAll() {
-        $stmt = $this->pdo->query("SELECT * FROM message");
+    public function findAll(): array {
+        $stmt = $this->conn->query("SELECT * FROM MESSAGE");
         $messages = [];
 
         while ($row = $stmt->fetch()) {
@@ -106,18 +93,18 @@ class MessageDAO {
      * 
      * @param Message $message L'objet Message à sauvegarder.
      */
-    public function sauvegarderMessage(Message $message) {
+    public function insererMessage(Message $message): void {
         if ($message->getIdMessage() === null) {
-            $stmt = $this->pdo->prepare("INSERT INTO message (contenu, dateEnvoi, idGroupe, idUtilisateur) VALUES (:contenu, :dateEnvoi, :idGroupe, :idUtilisateur)");
+            $stmt = $this->conn->prepare("INSERT INTO MESSAGE (contenu, dateEnvoi, idGroupe, idUtilisateur) VALUES (:contenu, :dateEnvoi, :idGroupe, :idUtilisateur)");
             $stmt->execute([
                 'contenu' => $message->getContenu(),
                 'dateEnvoi' => $message->getDateEnvoi(),
                 'idGroupe' => $message->getIdGroupe(),
                 'idUtilisateur' => $message->getIdUtilisateur()
             ]);
-            $message->setIdMessage($this->pdo->lastInsertId());
+            $message->setIdMessage((int)$this->conn->lastInsertId());
         } else {
-            $stmt = $this->pdo->prepare("UPDATE message SET contenu = :contenu, dateEnvoi = :dateEnvoi, idGroupe = :idGroupe, idUtilisateur = :idUtilisateur WHERE idMessage = :idMessage");
+            $stmt = $this->conn->prepare("UPDATE MESSAGE SET contenu = :contenu, dateEnvoi = :dateEnvoi, idGroupe = :idGroupe, idUtilisateur = :idUtilisateur WHERE idMessage = :idMessage");
             $stmt->execute([
                 'contenu' => $message->getContenu(),
                 'dateEnvoi' => $message->getDateEnvoi(),
@@ -132,8 +119,8 @@ class MessageDAO {
      * 
      * @param Message $message L'objet Message à supprimer.
      */
-    public function supprimerMessage(Message $message) {
-        $stmt = $this->pdo->prepare("DELETE FROM message WHERE idMessage = :idMessage");
+    public function supprimerMessage(Message $message): void {
+        $stmt = $this->conn->prepare("DELETE FROM MESSAGE WHERE idMessage = :idMessage");
         $stmt->execute(['idMessage' => $message->getIdMessage()]);
     }
 

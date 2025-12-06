@@ -1,4 +1,5 @@
 <?php
+require_once "Dao.class.php";
 /**
  * Classe AvatarDao
  * 
@@ -22,10 +23,9 @@ class AvatarDao extends Dao
      */
     public function findAll(): array {
         $avatars = [];
-        $stmt = $this->conn->query("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM avatar");
+        $stmt = $this->conn->query("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $avatar = new Avatar(
-                $row['idAvatar'],
                 $row['nom'],
                 $row['genre'],
                 $row['dateCreation'],
@@ -33,7 +33,8 @@ class AvatarDao extends Dao
                 $row['CouleurCheveux'],
                 $row['vetements'],
                 $row['accessoires'],
-                $row['idUtilisateur']
+                (int)$row['idUtilisateur'],
+                (int)$row['idAvatar']
             );
             $avatars[] = $avatar;
         }
@@ -48,14 +49,13 @@ class AvatarDao extends Dao
      * @param int $idAvatar L'identifiant de l'avatar à récupérer.
      * @return Avatar|null Retourne un objet Avatar si l'avatar est trouvé, sinon null.
      */
-    public function find(int $idAvatar): ?Avatar {
+    public function findByIdAvatar(int $idAvatar): ?Avatar {
         $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             return new Avatar(
-                $row['idAvatar'],
                 $row['nom'],
                 $row['genre'],
                 $row['dateCreation'],
@@ -63,7 +63,8 @@ class AvatarDao extends Dao
                 $row['CouleurCheveux'],
                 $row['vetements'],
                 $row['accessoires'],
-                $row['idUtilisateur']
+                (int)$row['idUtilisateur'],
+                (int)$row['idAvatar']
             );
         }
         return null;
@@ -78,9 +79,8 @@ class AvatarDao extends Dao
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
 
-    public function insert(Avatar $avatar): bool {
-        $stmt = $this->conn->prepare("INSERT INTO avatar (idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur) VALUES (:idAvatar, :nom, :genre, :dateCreation, :CouleurPeau, :CouleurCheveux, :vetements, :accessoires, :idUtilisateur)");
-        $stmt->bindValue(':idAvatar', $avatar->getIdAvatar(), PDO::PARAM_INT);
+    public function insererAvatar(Avatar $avatar): bool {
+        $stmt = $this->conn->prepare("INSERT INTO AVATAR (nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur) VALUES (:nom, :genre, :dateCreation, :CouleurPeau, :CouleurCheveux, :vetements, :accessoires, :idUtilisateur)");
         $stmt->bindValue(':nom', $avatar->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':genre', $avatar->getGenre(), PDO::PARAM_STR);
         $stmt->bindValue(':dateCreation', $avatar->getDateCreation(), PDO::PARAM_STR);
@@ -89,9 +89,14 @@ class AvatarDao extends Dao
         $stmt->bindValue(':vetements', $avatar->getVetements(), PDO::PARAM_STR);
         $stmt->bindValue(':accessoires', $avatar->getAccessoires(), PDO::PARAM_STR);
         $stmt->bindValue(':idUtilisateur', $avatar->getIdUtilisateur(), PDO::PARAM_INT);
-        return $stmt->execute();
+        $result = $stmt->execute();
+        if ($result) {
+            $avatar->setIdAvatar((int)$this->conn->lastInsertId());
+        }
+        return $result;
     }
 
+   
     /**
      * Supprime un avatar de la base de données.
      * 
@@ -100,11 +105,12 @@ class AvatarDao extends Dao
      * @param int $idAvatar L'identifiant de l'avatar à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function delete(int $idAvatar): bool {
-        $stmt = $this->conn->prepare("DELETE FROM avatar WHERE idAvatar = :idAvatar");
+    public function supprimerAvatar(int $idAvatar): bool {
+        $stmt = $this->conn->prepare("DELETE FROM AVATAR WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
+  
     
 }

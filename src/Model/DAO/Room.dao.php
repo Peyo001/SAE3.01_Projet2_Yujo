@@ -1,6 +1,5 @@
 <?php
-require_once 'Dao.class.php';
-require_once 'Objet.class.php';
+require_once "Dao.class.php";
     /**
      * Classe RoomDao
      * 
@@ -25,7 +24,7 @@ require_once 'Objet.class.php';
          * @return Room|null Retourne un objet `Room` si trouvé, sinon null.
          */
         public function find(int $id): ?Room {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, personnalisation, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,7 +36,8 @@ require_once 'Objet.class.php';
                     $row['visibilite'],
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
-                    (int)$row['idCreateur']
+                    (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -54,7 +54,7 @@ require_once 'Objet.class.php';
          * @return Room[] Tableau d'objets `Room` représentant toutes les rooms.
          */ 
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, personnalisation, dateCreation, nbVisit, idCreateur FROM ROOM");
             $stmt->execute();
             $rooms = [];
 
@@ -65,7 +65,8 @@ require_once 'Objet.class.php';
                     $row['visibilite'],
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
-                    (int)$row['idCreateur']
+                    (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
                 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -84,7 +85,7 @@ require_once 'Objet.class.php';
          * @return Room[] Tableau des rooms créées par l'utilisateur spécifié.
          */
         public function findByCreateur(int $id): array {
-            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idCreateur = :id");
+            $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, personnalisation, dateCreation, nbVisit, idCreateur FROM ROOM WHERE idCreateur = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
@@ -95,6 +96,7 @@ require_once 'Objet.class.php';
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
+                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur']
@@ -127,6 +129,7 @@ require_once 'Objet.class.php';
                     $row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
+                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     $row['nbVisit'],
                     $row['idCreateur']
@@ -158,6 +161,7 @@ require_once 'Objet.class.php';
                     $row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
+                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     $row['nbVisit'],
                     $row['idCreateur']
@@ -178,16 +182,20 @@ require_once 'Objet.class.php';
          * @param Room $room L'objet `Room` contenant les nouvelles informations.
          * @return bool Retourne true si la mise à jour a réussi, sinon false.
          */
-        public function updateRoom(Room $room): bool {
-            $stmt = $this->conn->prepare("UPDATE ROOM SET nom = :nom, visibilite = :visibilite, nbVisit = :nbVisit WHERE idRoom = :idRoom");
+        public function update(Room $room): bool {
+            $stmt = $this->conn->prepare("UPDATE ROOM SET nom = :nom, visibilite = :visibilite, personnalisation = :personnalisation, nbVisit = :nbVisit WHERE idRoom = :idRoom");
 
             $stmt->bindValue(':idRoom', $room->getIdRoom(), PDO::PARAM_INT);
             $stmt->bindValue(':nom', $room->getNom());
             $stmt->bindValue(':visibilite', $room->getVisibilite());
+            $stmt->bindValue(':personnalisation', $room->getPersonnalisation());
             $stmt->bindValue(':nbVisit', $room->getNbVisit(), PDO::PARAM_INT);
 
             return $stmt->execute();
         }
+
+        // Compatibilité : ancien nom
+        public function updateRoom(Room $room): bool { return $this->update($room); }
 
         /**
          * Récupère tous les objets associés à une room spécifique.
@@ -198,19 +206,23 @@ require_once 'Objet.class.php';
          * @return Objet[] Tableau des objets présents dans la room.
          */
         public function findObjetsByRoom(int $idRoom): array {
-            $stmt = $this->conn->prepare("SELECT * FROM OBJET WHERE idRoom = :idRoom");
-            $stmt->bindParam(':idRoom', $idRoom);
+            $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix, p.idRoom
+                    FROM OBJET o
+                    INNER JOIN POSSEDER p ON p.idObjet = o.idObjet
+                    WHERE p.idRoom = :idRoom";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
             $stmt->execute();
 
             $objets = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $objets[] = new Objet(
-                    $row['idObjet'],
+                    (int)$row['idObjet'],
                     $row['description'],
                     $row['modele3dPath'],
-                    $row['prix'],
-                    $row['idRoom']
+                    (int)$row['prix'],
+                    (int)$row['idRoom']
                 );
             }
 
@@ -224,12 +236,13 @@ require_once 'Objet.class.php';
          * 
          * @param int $idRoom L'identifiant de la room dont le nombre de visites doit être incrémenté.
          */
-        public function incrementVisit(int $idRoom): void {
+        public function incrementerVisite(int $idRoom): void {
             $stmt = $this->conn->prepare("UPDATE ROOM SET nbVisit = nbVisit + 1 WHERE idRoom = :idRoom");
             $stmt->bindParam(':idRoom', $idRoom);
             $stmt->execute();
         }
 
+        
         /**
         * Ajoute un objet à une room.
         * 
@@ -238,16 +251,27 @@ require_once 'Objet.class.php';
         * @param Objet $objet L'objet à ajouter à la room.
         * @return bool Retourne true si l'ajout a réussi, sinon false.
         */
-        public function addObjetToRoom(Objet $objet): bool {
-            $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix, idRoom) VALUES (:description, :modele3dPath, :prix, :idRoom)");
-            $stmt->bindValue(':description', $objet->getDescription());
-            $stmt->bindValue(':modele3dPath', $objet->getModele3dPath());
-            $stmt->bindValue(':prix', $objet->getPrix());
-            $stmt->bindValue(':idRoom', $objet->getIdRoom(), PDO::PARAM_INT);
+        public function addObjetToRoom(Objet $objet, int $idRoom): bool {
+            // Crée l'objet s'il n'existe pas encore
+            if ($objet->getIdObjet() === null) {
+                $stmtObjet = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix) VALUES (:description, :modele3dPath, :prix)");
+                $stmtObjet->bindValue(':description', $objet->getDescription());
+                $stmtObjet->bindValue(':modele3dPath', $objet->getModele3dPath());
+                $stmtObjet->bindValue(':prix', $objet->getPrix());
+                if (!$stmtObjet->execute()) {
+                    return false;
+                }
+                $objet->setIdObjet((int)$this->conn->lastInsertId());
+            }
+
+            $stmt = $this->conn->prepare("INSERT INTO POSSEDER (idRoom, idObjet) VALUES (:idRoom, :idObjet)");
+            $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+            $stmt->bindValue(':idObjet', $objet->getIdObjet(), PDO::PARAM_INT);
 
             return $stmt->execute();
         }
 
+        
         /**
          * Supprime tous les objets d'une room.
          * 
@@ -256,11 +280,14 @@ require_once 'Objet.class.php';
          * @param int $idRoom L'identifiant de la room dont les objets doivent être supprimés.
          * @return bool Retourne true si la suppression a réussi, sinon false.
          */
-        public function removeObjectsFromRoom(int $idRoom): bool {
-            $stmt = $this->conn->prepare("DELETE FROM OBJET WHERE idRoom = :idRoom");
-            $stmt->bindParam(':idRoom', $idRoom);
+        public function supprimerObjetsDeRoom(int $idRoom): bool {
+            $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idRoom = :idRoom");
+            $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
             return $stmt->execute();
         }
+
+        // Compatibilité : ancien nom
+        public function removeObjectsFromRoom(int $idRoom): bool { return $this->supprimerObjetsDeRoom($idRoom); }
 
         /**
          * Crée une nouvelle room dans la base de données.
@@ -270,17 +297,23 @@ require_once 'Objet.class.php';
          * @param Room $room L'objet `Room` à insérer dans la base de données.
          * @return bool Retourne true si l'insertion a réussi, sinon false.
          */
-        public function createRoom(Room $room): bool {
-            $stmt = $this->conn->prepare("INSERT INTO ROOM (idRoom, nom, visibilite, dateCreation, nbVisit, idCreateur) VALUES (:idRoom, :nom, :visibilite, :dateCreation, :nbVisit, :idCreateur)");
-            $stmt->bindValue(':idRoom', $room->getIdRoom(), PDO::PARAM_INT);
+        public function creerRoom(Room $room): bool {
+            $stmt = $this->conn->prepare("INSERT INTO ROOM (nom, visibilite, personnalisation, idCreateur) VALUES (:nom, :visibilite, :personnalisation, :idCreateur)");
             $stmt->bindValue(':nom', $room->getNom(), PDO::PARAM_STR);
             $stmt->bindValue(':visibilite', $room->getVisibilite(), PDO::PARAM_STR);
-            $stmt->bindValue(':dateCreation', $room->getDateCreation(), PDO::PARAM_STR);
-            $stmt->bindValue(':nbVisit', $room->getNbVisit(), PDO::PARAM_INT);
+            $stmt->bindValue(':personnalisation', $room->getPersonnalisation());
             $stmt->bindValue(':idCreateur', $room->getIdCreateur(), PDO::PARAM_INT);
 
-            return $stmt->execute();
+            $result = $stmt->execute();
+            if ($result) {
+                $room->setIdRoom((int)$this->conn->lastInsertId());
+            }
+
+            return $result;
         }
+
+        // Compatibilité : ancien nom
+        public function createRoom(Room $room): bool { return $this->creerRoom($room); }
         
         /**
         * Supprime une room de la base de données.
@@ -290,11 +323,14 @@ require_once 'Objet.class.php';
         * @param int $id L'identifiant de la room à supprimer.
         * @return bool Retourne true si la suppression a réussi, sinon false.
         */
-        public function deleteRoom(int $id): bool {
+        public function supprimerRoom(int $id): bool {
             $stmt = $this->conn->prepare("DELETE FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();
         }
+
+        // Compatibilité : ancien nom
+        public function deleteRoom(int $id): bool { return $this->supprimerRoom($id); }
     }
 ?>
