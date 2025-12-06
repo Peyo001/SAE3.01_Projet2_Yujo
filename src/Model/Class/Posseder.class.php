@@ -12,7 +12,7 @@
  */
 class Posseder {
     private int $idObjet;
-    private int $idUtilisateur;
+    private int $idRoom;
     private ?string $dateAjout;
 
      /**
