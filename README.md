@@ -51,11 +51,16 @@ Rejoignez Yujo et redécouvrez ce que signifie être vraiment connecté.
 ```
 SAE3.01_Projet2_Yujo/
 │
-├── config/           # Fichiers de configuration
-├── public/           # Point d’entrée de l’application (index.php)
-├── src/              # Code source (DAO, modèles, contrôleurs)
-├── view/        # Templates Twig
-├── tests/            # Tests unitaires
+├── config/           # Config app + base (config.json, BaseDonnée.sql, twig.php)
+├── public/           # Entrée web (index.php, assets)
+├── src/
+│   ├── Controller/   # Contrôleurs MVC
+│   ├── Model/
+│   │   ├── Class/    # Modèles métier (entités)
+│   │   └── DAO/      # Accès données (DAOs)
+│   └── View/         # Templates Twig
+├── vendor/           # Dépendances Composer
+├── tests/            # Tests (console + dashboard web)
 └── README.md         # Documentation
 ```
 

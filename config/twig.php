@@ -1,6 +1,6 @@
 <?php
-//ajout de l’autoload de composer
-require_once '../vendor/autoload.php';
+//ajout de l'autoload de composer
+require_once __DIR__ . '/../vendor/autoload.php';
 //ajout de la classe IntlExtension et creation de l’alias IntlExtension
 //use Twig\Extra\Intl\IntlExtension;
 //initialisation twig : chargement du dossier contenant les templates
