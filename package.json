@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Peyo001/SAE3.01_Projet2_Yujo#readme",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.8"
+    "bootstrap": "^5.3.8",
+    "three.js": "^0.77.1"
   }
 }
