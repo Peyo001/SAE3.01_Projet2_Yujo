@@ -1,0 +1,441 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Personnaliser mon Avatar{% endblock %}
+
+{% block css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 30px;
+    }
+
+    .preview {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 30px;
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .preview-body {
+        width: 100%;
+        height: 100%;
+        background: #ffd1a3;
+        position: relative;
+    }
+
+    .preview-head {
+        width: 80px;
+        height: 80px;
+        background: #ffd1a3;
+        border-radius: 50%;
+        position: absolute;
+        top: 40px;
+        left: 60px;
+    }
+
+    .preview-hair {
+        width: 90px;
+        height: 50px;
+        background: #4a2511;
+        border-radius: 50% 50% 0 0;
+        position: absolute;
+        top: 30px;
+        left: 55px;
+    }
+
+    .preview-clothes {
+        width: 120px;
+        height: 80px;
+        background: #3498db;
+        position: absolute;
+        bottom: 20px;
+        left: 40px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .option-group {
+        margin-bottom: 25px;
+    }
+
+    .option-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .option-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .option-value {
+        font-size: 18px;
+        color: #667eea;
+        font-weight: bold;
+        min-width: 150px;
+        text-align: center;
+    }
+
+    .btn-nav {
+        background: #667eea;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-nav:hover {
+        background: #5568d3;
+        transform: scale(1.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .message {
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    /* Couleurs de peau */
+    .skin-clair { background: #ffd1a3 !important; }
+    .skin-mat { background: #d4a574 !important; }
+    .skin-fonce { background: #8b5a3c !important; }
+    .skin-bronze { background: #c19a6b !important; }
+    .skin-olive { background: #baa587 !important; }
+
+    /* Couleurs de cheveux */
+    .hair-brun { background: #4a2511 !important; }
+    .hair-blond { background: #f4d03f !important; }
+    .hair-noir { background: #1a1a1a !important; }
+    .hair-roux { background: #d84315 !important; }
+    .hair-chatain { background: #6d4c41 !important; }
+    .hair-blanc { background: #e0e0e0 !important; }
+
+    /* Couleurs de vêtements */
+    .clothes-tshirt { background: #3498db !important; }
+    .clothes-pull { background: #e74c3c !important; }
+    .clothes-veste { background: #2c3e50 !important; }
+    .clothes-chemise { background: #ffffff !important; border: 2px solid #ddd; }
+    .clothes-hoodie { background: #95a5a6 !important; }
+    .clothes-debardeur { background: #f39c12 !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🎨 Personnaliser mon Avatar</h1>
+
+    {% if message is defined %}
+    <div class="message success">{{ message }}</div>
+    {% endif %}
+
+    {% if error is defined %}
+    <div class="message error">{{ error }}</div>
+    {% endif %}
+
+    <!-- Prévisualisation -->
+    <div class="preview">
+        <div class="preview-body" id="preview-body">
+            <div class="preview-hair" id="preview-hair"></div>
+            <div class="preview-head" id="preview-head"></div>
+            <div class="preview-clothes" id="preview-clothes"></div>
+        </div>
+    </div>
+
+    <form method="POST" action="index.php?controleur=avatar&methode=saveAvatar" id="avatar-form">
+        
+        <!-- Genre -->
+        <div class="option-group">
+            <label class="option-label">Genre</label>
+            <div class="option-control">
+                <button type="button" class="btn-nav" onclick="changeOption('genre', -1)">◀</button>
+                <span class="option-value" id="genre-display">Masculin</span>
+                <button type="button" class="btn-nav" onclick="changeOption('genre', 1)">▶</button>
+            </div>
+            <input type="hidden" name="genre" id="genre" value="Masculin">
+        </div>
+
+        <!-- Couleur de peau -->
+        <div class="option-group">
+            <label class="option-label">Couleur de peau</label>
+            <div class="option-control">
+                <button type="button" class="btn-nav" onclick="changeOption('skin', -1)">◀</button>
+                <span class="option-value" id="skin-display">Clair</span>
+                <button type="button" class="btn-nav" onclick="changeOption('skin', 1)">▶</button>
+            </div>
+            <input type="hidden" name="couleurPeau" id="skin" value="Clair">
+        </div>
+
+        <!-- Couleur de cheveux -->
+        <div class="option-group">
+            <label class="option-label">Couleur de cheveux</label>
+            <div class="option-control">
+                <button type="button" class="btn-nav" onclick="changeOption('hair', -1)">◀</button>
+                <span class="option-value" id="hair-display">Brun</span>
+                <button type="button" class="btn-nav" onclick="changeOption('hair', 1)">▶</button>
+            </div>
+            <input type="hidden" name="couleurCheveux" id="hair" value="Brun">
+        </div>
+
+        <!-- Vêtements -->
+        <div class="option-group">
+            <label class="option-label">Vêtements</label>
+            <div class="option-control">
+                <button type="button" class="btn-nav" onclick="changeOption('clothes', -1)">◀</button>
+                <span class="option-value" id="clothes-display">T-shirt</span>
+                <button type="button" class="btn-nav" onclick="changeOption('clothes', 1)">▶</button>
+            </div>
+            <input type="hidden" name="vetements" id="clothes" value="T-shirt">
+        </div>
+
+        <!-- Accessoires -->
+        <div class="option-group">
+            <label class="option-label">Accessoires</label>
+            <div class="option-control">
+                <button type="button" class="btn-nav" onclick="changeOption('accessories', -1)">◀</button>
+                <span class="option-value" id="accessories-display">Aucun</span>
+                <button type="button" class="btn-nav" onclick="changeOption('accessories', 1)">▶</button>
+            </div>
+            <input type="hidden" name="accessoires" id="accessories" value="Aucun">
+        </div>
+
+        <!-- Nom de l'avatar -->
+        <div class="form-group">
+            <label for="nom">Nom de l'avatar</label>
+            <input type="text" name="nom" id="nom" value="{{ avatar ? avatar.nom : '' }}" 
+                   placeholder="Mon super avatar" required minlength="2" maxlength="50">
+        </div>
+
+        <button type="submit" class="btn-save">💾 Sauvegarder mon avatar</button>
+    </form>
+</div>
+
+<script>
+// Options disponibles
+const options = {
+    genre: ["Masculin", "Féminin", "Neutre"],
+    skin: ["Clair", "Mat", "Foncé", "Bronze", "Olive"],
+    hair: ["Brun", "Blond", "Noir", "Roux", "Châtain", "Blanc"],
+    clothes: ["T-shirt", "Pull", "Veste", "Chemise", "Hoodie", "Débardeur"],
+    accessories: ["Aucun", "Lunettes", "Chapeau", "Boucles d'oreilles", "Casquette", "Bandana"]
+};
+
+// Index actuels
+let currentIndex = {
+    genre: 0,
+    skin: 0,
+    hair: 0,
+    clothes: 0,
+    accessories: 0
+};
+
+// Classes CSS
+const cssClasses = {
+    skin: {
+        "Clair": "skin-clair",
+        "Mat": "skin-mat",
+        "Foncé": "skin-fonce",
+        "Bronze": "skin-bronze",
+        "Olive": "skin-olive"
+    },
+    hair: {
+        "Brun": "hair-brun",
+        "Blond": "hair-blond",
+        "Noir": "hair-noir",
+        "Roux": "hair-roux",
+        "Châtain": "hair-chatain",
+        "Blanc": "hair-blanc"
+    },
+    clothes: {
+        "T-shirt": "clothes-tshirt",
+        "Pull": "clothes-pull",
+        "Veste": "clothes-veste",
+        "Chemise": "clothes-chemise",
+        "Hoodie": "clothes-hoodie",
+        "Débardeur": "clothes-debardeur"
+    }
+};
+
+function changeOption(type, direction) {
+    const optionArray = options[type];
+    currentIndex[type] = (currentIndex[type] + direction + optionArray.length) % optionArray.length;
+    
+    const value = optionArray[currentIndex[type]];
+    document.getElementById(type + '-display').textContent = value;
+    document.getElementById(type).value = value;
+    
+    updatePreview();
+}
+
+function updatePreview() {
+    const skin = options.skin[currentIndex.skin];
+    const hair = options.hair[currentIndex.hair];
+    const clothes = options.clothes[currentIndex.clothes];
+    
+    const headEl = document.getElementById('preview-head');
+    const bodyEl = document.getElementById('preview-body');
+    const hairEl = document.getElementById('preview-hair');
+    const clothesEl = document.getElementById('preview-clothes');
+    
+    // Réinitialiser les classes
+    headEl.className = 'preview-head';
+    bodyEl.className = 'preview-body';
+    hairEl.className = 'preview-hair';
+    clothesEl.className = 'preview-clothes';
+    
+    // Appliquer les nouvelles classes
+    if (cssClasses.skin[skin]) {
+        headEl.classList.add(cssClasses.skin[skin]);
+        bodyEl.classList.add(cssClasses.skin[skin]);
+    }
+    if (cssClasses.hair[hair]) {
+        hairEl.classList.add(cssClasses.hair[hair]);
+    }
+    if (cssClasses.clothes[clothes]) {
+        clothesEl.classList.add(cssClasses.clothes[clothes]);
+    }
+}
+
+// Initialisation au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    {% if avatar %}
+        // Charger l'avatar existant
+        const genreIdx = options.genre.indexOf('{{ avatar.genre }}');
+        const skinIdx = options.skin.indexOf('{{ avatar.couleurPeau }}');
+        const hairIdx = options.hair.indexOf('{{ avatar.couleurCheveux }}');
+        const clothesIdx = options.clothes.indexOf('{{ avatar.vetements }}');
+        const accessoriesIdx = options.accessories.indexOf('{{ avatar.accessoires }}');
+        
+        if (genreIdx !== -1) {
+            currentIndex.genre = genreIdx;
+            document.getElementById('genre-display').textContent = '{{ avatar.genre }}';
+            document.getElementById('genre').value = '{{ avatar.genre }}';
+        }
+        if (skinIdx !== -1) {
+            currentIndex.skin = skinIdx;
+            document.getElementById('skin-display').textContent = '{{ avatar.couleurPeau }}';
+            document.getElementById('skin').value = '{{ avatar.couleurPeau }}';
+        }
+        if (hairIdx !== -1) {
+            currentIndex.hair = hairIdx;
+            document.getElementById('hair-display').textContent = '{{ avatar.couleurCheveux }}';
+            document.getElementById('hair').value = '{{ avatar.couleurCheveux }}';
+        }
+        if (clothesIdx !== -1) {
+            currentIndex.clothes = clothesIdx;
+            document.getElementById('clothes-display').textContent = '{{ avatar.vetements }}';
+            document.getElementById('clothes').value = '{{ avatar.vetements }}';
+        }
+        if (accessoriesIdx !== -1) {
+            currentIndex.accessories = accessoriesIdx;
+            document.getElementById('accessories-display').textContent = '{{ avatar.accessoires }}';
+            document.getElementById('accessories').value = '{{ avatar.accessoires }}';
+        }
+    {% endif %}
+    
+    updatePreview();
+});
+
+// Validation du formulaire
+document.getElementById('avatar-form').addEventListener('submit', function(e) {
+    const nom = document.getElementById('nom').value.trim();
+    if (nom.length < 2 || nom.length > 50) {
+        e.preventDefault();
+        alert('Le nom doit contenir entre 2 et 50 caractères');
+        return false;
+    }
+});
+
+// Support des touches fléchées
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        changeOption('genre', 1);
+    } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        changeOption('genre', -1);
+    }
+});
+</script>
+{% endblock %}
