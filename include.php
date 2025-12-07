@@ -1,5 +1,10 @@
 <?php
 
+// Démarre la session si elle n'est pas déjà active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Charge l'autoload Composer et les configurations de base
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config/config.php';
