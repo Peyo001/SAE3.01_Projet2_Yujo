@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ room.getNom() }} - Yujo</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container-room {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(229, 50, 130, 0.3);
+        }
+
+        .room-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            color: #ff0080;
+        }
+
+        .room-header p {
+            margin: 0;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .room-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-control {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #e53282, #ff0080);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-control:hover {
+            background: linear-gradient(135deg, #d41470, #e60070);
+            box-shadow: 0 5px 20px rgba(229, 50, 130, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* 3D Room Container */
+        .room-wrapper {
+            perspective: 1500px;
+            margin-bottom: 40px;
+        }
+
+        .room-3d {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            margin: 0 auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(5deg) rotateY(-10deg);
+            transition: transform 0.5s ease;
+        }
+
+        .room-3d.interactive {
+            transform: rotateX(10deg) rotateY(0deg);
+        }
+
+        /* Room Walls - Fixed positioning */
+        .room-wall {
+            position: absolute;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wall-front {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a2a4e, #4a2a7e);
+            border: 2px solid rgba(255, 0, 128, 0.3);
+            transform: translateZ(200px);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .wall-left {
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a3e, #2a2a4e);
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: rotateY(90deg) translateZ(200px);
+            border: 2px solid rgba(255, 0, 128, 0.2);
+            transform-origin: left center;
+        }
+
+        .wall-right {
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(135deg, #2a2a4e, #1a1a3e);
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: rotateY(-90deg) translateZ(200px);
+            border: 2px solid rgba(255, 0, 128, 0.2);
+            transform-origin: right center;
+        }
+
+        .wall-ceiling {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #16213e, #1a1a2e);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotateX(90deg) translateZ(200px);
+            border: 2px solid rgba(255, 0, 128, 0.2);
+            transform-origin: top center;
+        }
+
+        .wall-floor {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transform: rotateX(-90deg) translateZ(200px);
+            border: 2px solid rgba(255, 0, 128, 0.2);
+            transform-origin: bottom center;
+        }
+
+        /* Grid Container inside Room */
+        .room-grid {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .grid-slot {
+            background: rgba(255, 0, 128, 0.1);
+            border: 2px dashed rgba(229, 50, 130, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: grab;
+            transition: all 0.3s ease;
+            min-height: 80px;
+        }
+
+        .grid-slot:hover {
+            background: rgba(255, 0, 128, 0.2);
+            border-color: rgba(229, 50, 130, 1);
+            box-shadow: 0 0 20px rgba(229, 50, 130, 0.3);
+        }
+
+        .grid-slot.drag-over {
+            background: rgba(255, 0, 128, 0.3);
+            border-color: #ff0080;
+            box-shadow: 0 0 30px rgba(229, 50, 130, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Objets */
+        .objet {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e53282, #ff0080);
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.3s ease;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(229, 50, 130, 0.3);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .objet:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(229, 50, 130, 0.5);
+        }
+
+        .objet.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            z-index: 1000;
+            transform: scale(1.1);
+        }
+
+        .objet-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .objet-name {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+            word-break: break-word;
+        }
+
+        /* Sidebar - Objects Library */
+        .objects-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(229, 50, 130, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .objects-panel h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ff0080;
+        }
+
+        .objects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .object-item {
+            background: linear-gradient(135deg, #2a2a4e, #4a2a7e);
+            border: 2px solid rgba(229, 50, 130, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: all 0.3s ease;
+            text-align: center;
+            user-select: none;
+        }
+
+        .object-item:hover {
+            border-color: rgba(229, 50, 130, 1);
+            background: linear-gradient(135deg, #3a3a5e, #5a3a8e);
+            box-shadow: 0 0 20px rgba(229, 50, 130, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .object-item.dragging-source {
+            opacity: 0.5;
+        }
+
+        .object-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .object-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #aaa;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(229, 50, 130, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .info-panel h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ff0080;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #aaa;
+        }
+
+        .info-value {
+            color: #ff0080;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .room-3d {
+                height: 400px;
+            }
+
+            .room-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                gap: 8px;
+                padding: 15px;
+            }
+
+            .room-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .room-controls {
+                width: 100%;
+            }
+
+            .btn-control {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-room">
+    <!-- Header -->
+    <div class="room-header">
+        <div>
+            <h1>{{ room.getNom() }}</h1>
+            <p>Créée par <strong>{{ room.getDescription() }}</strong></p>
+        </div>
+        <div class="room-controls">
+            <button class="btn-control" onclick="toggleEditMode()">✏️ Éditer</button>
+            <button class="btn-control" onclick="resetRoom()">↻ Réinitialiser</button>
+            <button class="btn-control" onclick="saveRoom()">💾 Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- 3D Room -->
+    <div class="room-wrapper">
+        <div class="room-3d" id="room3D">
+            <!-- Walls & Floor -->
+            <div class="wall-ceiling"></div>
+            <div class="wall-floor"></div>
+            <div class="wall-left"></div>
+            <div class="wall-right"></div>
+            <div class="wall-front">
+                <!-- Grid with Objects -->
+                <div class="room-grid" id="roomGrid">
+                    {% for i in 0..15 %}
+                        <div class="grid-slot" data-slot="{{ i }}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Objects Library -->
+    <div class="objects-panel">
+        <h3>📦 Objets Disponibles</h3>
+        <div class="objects-list" id="objectsList">
+            <div class="object-item" draggable="true" data-object-name="Chaise">
+                <div class="object-icon">🪑</div>
+                <div class="object-label">Chaise</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Table">
+                <div class="object-icon">🛏️</div>
+                <div class="object-label">Table</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Lampe">
+                <div class="object-icon">💡</div>
+                <div class="object-label">Lampe</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Plante">
+                <div class="object-icon">🌿</div>
+                <div class="object-label">Plante</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Tableau">
+                <div class="object-icon">🖼️</div>
+                <div class="object-label">Tableau</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Tapis">
+                <div class="object-icon">🧵</div>
+                <div class="object-label">Tapis</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Miroir">
+                <div class="object-icon">🪞</div>
+                <div class="object-label">Miroir</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Canapé">
+                <div class="object-icon">🛋️</div>
+                <div class="object-label">Canapé</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Bureau">
+                <div class="object-icon">🖥️</div>
+                <div class="object-label">Bureau</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Bibliothèque">
+                <div class="object-icon">📚</div>
+                <div class="object-label">Bibliothèque</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Télévision">
+                <div class="object-icon">📺</div>
+                <div class="object-label">Télévision</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Horloge">
+                <div class="object-icon">🕰️</div>
+                <div class="object-label">Horloge</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Plante Grasse">
+                <div class="object-icon">🌵</div>
+                <div class="object-label">Plante Grasse</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Fleur">
+                <div class="object-icon">🌸</div>
+                <div class="object-label">Fleur</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Coussin">
+                <div class="object-icon">🪡</div>
+                <div class="object-label">Coussin</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Étagère">
+                <div class="object-icon">🗂️</div>
+                <div class="object-label">Étagère</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Lampadaire">
+                <div class="object-icon">🏮</div>
+                <div class="object-label">Lampadaire</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Vase">
+                <div class="object-icon">🏺</div>
+                <div class="object-label">Vase</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Guitare">
+                <div class="object-icon">🎸</div>
+                <div class="object-label">Guitare</div>
+            </div>
+            <div class="object-item" draggable="true" data-object-name="Piano">
+                <div class="object-icon">🎹</div>
+                <div class="object-label">Piano</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <h3>ℹ️ Informations Room</h3>
+        <div class="info-item">
+            <span class="info-label">ID Room :</span>
+            <span class="info-value">{{ room.getIdRoom() }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Objets placés :</span>
+            <span class="info-value" id="objectCount">0</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Thème :</span>
+            <span class="info-value">Minimaliste</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Dernier accès :</span>
+            <span class="info-value">Aujourd'hui</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let draggedElement = null;
+    let draggedSource = null;
+    const roomData = {};
+
+    // Drag & Drop Logic
+    document.querySelectorAll('.object-item').forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            draggedElement = e.target.closest('.object-item');
+            draggedSource = 'library';
+            draggedElement.classList.add('dragging-source');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', draggedElement.innerHTML);
+        });
+
+        item.addEventListener('dragend', (e) => {
+            draggedElement.classList.remove('dragging-source');
+            draggedElement = null;
+        });
+    });
+
+    // Slot Drop Logic
+    document.querySelectorAll('.grid-slot').forEach(slot => {
+        slot.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            slot.classList.add('drag-over');
+        });
+
+        slot.addEventListener('dragleave', (e) => {
+            slot.classList.remove('drag-over');
+        });
+
+        slot.addEventListener('drop', (e) => {
+            e.preventDefault();
+            slot.classList.remove('drag-over');
+
+            if (draggedElement && draggedSource === 'library') {
+                const objectName = draggedElement.getAttribute('data-object-name');
+                const icon = draggedElement.querySelector('.object-icon').textContent;
+
+                // Remove existing object if any
+                const existing = slot.querySelector('.objet');
+                if (existing) existing.remove();
+
+                // Add new object
+                const objet = document.createElement('div');
+                objet.className = 'objet';
+                objet.innerHTML = `
+                    <div class="objet-icon">${icon}</div>
+                    <div class="objet-name">${objectName}</div>
+                `;
+                objet.draggable = true;
+
+                // Allow object to be dragged between slots
+                objet.addEventListener('dragstart', (e) => {
+                    draggedElement = objet;
+                    draggedSource = 'room';
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                slot.appendChild(objet);
+                updateObjectCount();
+                saveRoomData();
+            }
+        });
+    });
+
+    function updateObjectCount() {
+        const count = document.querySelectorAll('.objet').length;
+        document.getElementById('objectCount').textContent = count;
+    }
+
+    function toggleEditMode() {
+        const room = document.getElementById('room3D');
+        room.classList.toggle('interactive');
+    }
+
+    function saveRoom() {
+        saveRoomData();
+        alert('✅ Room sauvegardée !');
+    }
+
+    function saveRoomData() {
+        const slots = {};
+        document.querySelectorAll('.grid-slot').forEach((slot, index) => {
+            const objet = slot.querySelector('.objet');
+            if (objet) {
+                slots[index] = {
+                    name: objet.querySelector('.objet-name').textContent,
+                    icon: objet.querySelector('.objet-icon').textContent
+                };
+            }
+        });
+
+        console.log('Room data saved:', slots);
+        // TODO: Envoyer au backend via AJAX
+        // fetch('index.php?controleur=room&methode=sauvegarder', {
+        //     method: 'POST',
+        //     body: JSON.stringify(slots)
+        // });
+    }
+
+    function resetRoom() {
+        if (confirm('⚠️ Êtes-vous sûr ? Cette action est irréversible.')) {
+            document.querySelectorAll('.grid-slot').forEach(slot => {
+                const objet = slot.querySelector('.objet');
+                if (objet) objet.remove();
+            });
+            updateObjectCount();
+        }
+    }
+
+    // Initialize
+    updateObjectCount();
+</script>
+
+<script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
