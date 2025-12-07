@@ -111,6 +111,67 @@ class AvatarDao extends Dao
         return $stmt->execute();
     }
 
+    /**
+     * Récupère l'avatar d'un utilisateur spécifique.
+     * 
+     * Cette méthode exécute une requête pour récupérer l'avatar associé à un utilisateur.
+     * 
+     * @param int $idUtilisateur L'identifiant de l'utilisateur.
+     * @return Avatar|null Retourne un objet Avatar si trouvé, sinon null.
+     */
+    public function findByUtilisateur(int $idUtilisateur): ?Avatar {
+        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR WHERE idUtilisateur = :idUtilisateur LIMIT 1");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new Avatar(
+                $row['nom'],
+                $row['genre'],
+                $row['dateCreation'],
+                $row['CouleurPeau'],
+                $row['CouleurCheveux'],
+                $row['vetements'],
+                $row['accessoires'],
+                (int)$row['idUtilisateur'],
+                (int)$row['idAvatar']
+            );
+        }
+        return null;
+    }
+
+    /**
+     * Crée un nouvel avatar dans la base de données.
+     * 
+     * Alias de insererAvatar pour correspondre aux conventions de nommage du contrôleur.
+     * 
+     * @param Avatar $avatar L'objet Avatar à créer.
+     * @return bool Retourne true si la création a réussi, sinon false.
+     */
+    public function creerAvatar(Avatar $avatar): bool {
+        return $this->insererAvatar($avatar);
+    }
+
+    /**
+     * Met à jour un avatar existant dans la base de données.
+     * 
+     * Cette méthode met à jour toutes les propriétés d'un avatar.
+     * 
+     * @param Avatar $avatar L'objet Avatar avec les nouvelles valeurs.
+     * @return bool Retourne true si la mise à jour a réussi, sinon false.
+     */
+    public function mettreAJourAvatar(Avatar $avatar): bool {
+        $stmt = $this->conn->prepare("UPDATE AVATAR SET nom = :nom, genre = :genre, CouleurPeau = :CouleurPeau, CouleurCheveux = :CouleurCheveux, vetements = :vetements, accessoires = :accessoires WHERE idAvatar = :idAvatar");
+        $stmt->bindValue(':nom', $avatar->getNom(), PDO::PARAM_STR);
+        $stmt->bindValue(':genre', $avatar->getGenre(), PDO::PARAM_STR);
+        $stmt->bindValue(':CouleurPeau', $avatar->getCouleurPeau(), PDO::PARAM_STR);
+        $stmt->bindValue(':CouleurCheveux', $avatar->getCouleurCheveux(), PDO::PARAM_STR);
+        $stmt->bindValue(':vetements', $avatar->getVetements(), PDO::PARAM_STR);
+        $stmt->bindValue(':accessoires', $avatar->getAccessoires(), PDO::PARAM_STR);
+        $stmt->bindValue(':idAvatar', $avatar->getIdAvatar(), PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
   
     
 }

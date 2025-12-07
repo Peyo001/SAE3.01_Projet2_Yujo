@@ -1,0 +1,150 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Mon Avatar{% endblock %}
+
+{% block css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .avatar-display-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    .avatar-title {
+        color: #667eea;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+
+    .avatar-preview-large {
+        width: 300px;
+        height: 300px;
+        margin: 0 auto 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .info-value {
+        color: #667eea;
+        font-weight: 700;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #f5576c, #e74c3c);
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="avatar-display-container">
+    {% if avatar %}
+        <h1 class="avatar-title">{{ avatar.nom }} 👤</h1>
+
+        <div class="avatar-preview-large">
+            <!-- Affichage de l'avatar (simplifié) -->
+            <div style="font-size: 100px;">🧑‍🎨</div>
+        </div>
+
+        <div class="avatar-info">
+            <div class="info-row">
+                <span class="info-label">Genre:</span>
+                <span class="info-value">{{ avatar.genre }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Couleur de peau:</span>
+                <span class="info-value">{{ avatar.couleurPeau }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Couleur de cheveux:</span>
+                <span class="info-value">{{ avatar.couleurCheveux }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Vêtements:</span>
+                <span class="info-value">{{ avatar.vetements }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Accessoires:</span>
+                <span class="info-value">{{ avatar.accessoires }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Créé le:</span>
+                <span class="info-value">{{ avatar.dateCreation }}</span>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="index.php?controleur=avatar&methode=showCustomizer" class="btn btn-edit">✏️ Modifier</a>
+            <a href="index.php?controleur=avatar&methode=supprimerAvatar" class="btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre avatar ?')">🗑️ Supprimer</a>
+        </div>
+    {% else %}
+        <h1 class="avatar-title">Aucun avatar</h1>
+        <p>Vous n'avez pas encore créé d'avatar.</p>
+        <a href="index.php?controleur=avatar&methode=showCustomizer" class="btn btn-edit">🎨 Créer mon avatar</a>
+    {% endif %}
+</div>
+{% endblock %}
