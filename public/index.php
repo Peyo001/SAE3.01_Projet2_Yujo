@@ -32,8 +32,8 @@ try
     //Gestion de la page index.php sans paramètres
     if ($controllerName == '' && $methode == '')
     {
-        $controllerName = "Utilisateur"; //controleur de la page d'accueil 
-        $methode = "afficherFormulaireInscription"; //methode afficher de la page d'accueil
+        $controllerName = "Utilisateur"; //contrôleur utilisateur 
+        $methode = "connexion"; //methode affichant le formulaire de connexion
     }
     else
     {
