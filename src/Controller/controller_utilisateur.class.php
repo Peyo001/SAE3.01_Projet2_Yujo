@@ -60,7 +60,7 @@ class ControllerUtilisateur extends Controller
             
             if ($succes) {
                 // Redirection vers la connexion après succès
-                header('Location: index.php?controleur=utilisateur&methode=connexion');
+                header('Location: index.php?controleur=accueil&methode=afficher');
                 exit;
             }
         } catch (Exception $e) {
@@ -74,7 +74,7 @@ class ControllerUtilisateur extends Controller
     {
         // Si déjà connecté, on renvoie à l'accueil
         if (isset($_SESSION['idUtilisateur'])) {
-            header('Location: index.php');
+            echo $this->getTwig()->render('accueil.twig');  
             exit;
         }
 
@@ -108,7 +108,7 @@ class ControllerUtilisateur extends Controller
             $_SESSION['typeCompte'] = $user->getTypeCompte();
             
             // Redirection vers l'accueil ou le fil d'actu
-            header('Location: index.php?controleur=post&methode=lister');
+            header('Location: index.php?controleur=accueil&methode=afficher');
             exit;
 
         } else {
@@ -146,4 +146,5 @@ class ControllerUtilisateur extends Controller
         
         echo $this->getTwig()->render('profil.twig', ['user' => $user]);
     }
+    
 }
