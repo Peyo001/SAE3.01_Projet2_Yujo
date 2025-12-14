@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     {% block css %}{% endblock %}
 </head>
 <body>
@@ -19,13 +20,18 @@
 
 <footer class="bottom-nav">
     <nav>
-        <a href="#"><img src="../public/assets/icons/person_3_blanc.svg" class="person-3-blanc"></a>
-        <a href="#"><img src="../public/assets/icons/person_blanc.svg" class="person-blanc"></a>
-        <a href="#"><img src="../public/assets/icons/logo_yujo.png" class="logo-yujo"></a>
+        <a href="index.php?controleur=groupe&methode=lister"><img src="../public/assets/icons/person_3_blanc.svg" class="person-3-blanc"></a>
+        <a href="index.php?controleur=utilisateur&methode=afficher"><img src="../public/assets/icons/person_blanc.svg" class="person-blanc"></a>
+
+        <a href="index.php?controleur=accueil&methode=afficher">
+            <img src="../public/assets/icons/logo_yujo.png" class="logo-yujo">
+        </a>
+
         <a href="#"><img src="../public/assets/icons/shop_blanc.svg" class="shop-blanc"></a>
         <a href="#"><img src="../public/assets/icons/settings_blanc.svg" class="settings-blanc"></a>
     </nav>
 </footer>
+
 
 </body>
 </html>
