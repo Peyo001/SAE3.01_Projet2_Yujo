@@ -11,44 +11,52 @@
 <section class="amis-section">
     <h2>Connaissances</h2>
     <div class="amis-slider">
-        {% for ami in amis %}
-            <div class="ami">
-                <div class="avatar">
-                    <img src="../public/assets/icons/person_noir.svg" class="ami-icon">
+        {% if amis is defined and amis|length > 0 %}
+            {% for ami in amis %}
+                <div class="ami">
+                    <div class="avatar">
+                        <img src="../public/assets/icons/person_noir.svg" class="ami-icon">
+                    </div>
+                    <p>{{ utilisateurs[ami.idUtilisateur2]|default('Utilisateur inconnu') }}</p>
                 </div>
-                <p>{{ utilisateurs[ami.idUtilisateur2] }}</p>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p>Aucun ami pour le moment.</p>
+        {% endif %}
     </div>
 </section>
 
 <section class="discover-section">
     <h2>À découvrir</h2>
 
-    {% for post in posts %}
-        <article class="card">
-            <div class="card-header">
-                <div class="avatar avatar-small">
-                <img src="../public/assets/icons/person_noir.svg" class="ami-icon-small">
-                </div>
-                <p>{{ utilisateurs[post.idAuteur] }}</p>
-            </div>
-
-            {% if post.typePost == 'quiz' %}
-                <button class="btn big">{{ post.contenu }}</button>
-
-            {% elseif post.typePost == 'room' %}
-                <img class="room-preview" src="/assets/room.png">
-                <div class="room-actions">
-                    <button class="btn secondary">Visiter</button>
-                    <button class="btn secondary">Nom room</button>
+    {% if posts is defined and posts|length > 0 %}
+        {% for post in posts %}
+            <article class="card">
+                <div class="card-header">
+                    <div class="avatar avatar-small">
+                        <img src="../public/assets/icons/person_noir.svg" class="ami-icon-small">
+                    </div>
+                    <p>{{ utilisateurs[post.idAuteur]|default('Auteur inconnu') }}</p>
                 </div>
 
-            {% else %}
-                <p>{{ post.contenu }}</p>
-            {% endif %}
-        </article>
-    {% endfor %}
+                {% if post.typePost == 'quiz' %}
+                    <button class="btn big">{{ post.contenu }}</button>
+
+                {% elseif post.typePost == 'room' %}
+                    <img class="room-preview" src="/assets/room.png">
+                    <div class="room-actions">
+                        <button class="btn secondary">Visiter</button>
+                        <button class="btn secondary">Nom room</button>
+                    </div>
+
+                {% else %}
+                    <p>{{ post.contenu }}</p>
+                {% endif %}
+            </article>
+        {% endfor %}
+    {% else %}
+        <p>Aucun post pour le moment.</p>
+    {% endif %}
 </section>
 
 {% endblock %}
