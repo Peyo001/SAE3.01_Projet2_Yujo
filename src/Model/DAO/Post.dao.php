@@ -172,6 +172,44 @@ class PostDao extends Dao
         }
         return $posts;
     }
+
+    /**
+ * Récupère tous les posts publiés par un ensemble d'auteurs.
+ *
+ * @param int[] $ids Tableau des idUtilisateur des auteurs
+ * @return Post[] Tableau des objets Post
+ */
+public function findByAuteurs(array $ids): array
+{
+    if (empty($ids)) {
+        return []; // Aucun auteur, on retourne un tableau vide
+    }
+
+    // Crée une liste de placeholders pour la requête SQL (?,?,?)
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+    $stmt = $this->conn->prepare(
+        "SELECT * FROM POST WHERE idAuteur IN ($placeholders) ORDER BY datePublication DESC"
+    );
+
+    // Exécute avec les IDs des auteurs
+    $stmt->execute($ids);
+
+    $posts = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $posts[] = new Post(
+            (int)$row['idPost'],
+            $row['contenu'],
+            $row['typePost'],
+            $row['datePublication'],
+            (int)$row['idAuteur'],
+            (int)$row['idRoom']
+        );
+    }
+
+    return $posts;
 }
+}
+?>
 
 
