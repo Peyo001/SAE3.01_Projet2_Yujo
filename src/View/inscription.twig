@@ -175,28 +175,32 @@
         </div>
 
         <div class="card-body">
-            <form action="index.php?controleur=utilisateur&methode=traiterInscription" method="post" >
+            <form action="index.php?controleur=utilisateur&methode=traiterInscription" method="post">
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="nom">Nom</label>
-                        <input type="text" id="nom" name="nom" class="form-control" placeholder="Votre nom" required>
+                        <input type="text" id="nom" name="nom" class="form-control" placeholder="Votre nom" required
+                               value="{{ donnees.nom|default('') }}">
                     </div>
 
                     <div class="form-group">
                         <label for="prenom">Prénom</label>
-                        <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Votre prénom" required>
+                        <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Votre prénom" required
+                               value="{{ donnees.prenom|default('') }}">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="pseudo">Pseudo</label>
-                    <input type="text" id="pseudo" name="pseudo" class="form-control" placeholder="Choisissez un pseudo unique" required>
+                    <input type="text" id="pseudo" name="pseudo" class="form-control" placeholder="Choisissez un pseudo unique" required
+                           value="{{ donnees.pseudo|default('') }}">
                 </div>
 
                 <div class="form-group">
                     <label for="email">Adresse Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="exemple@email.com" required>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="exemple@email.com" required
+                           value="{{ donnees.email|default('') }}">
                 </div>
 
                 <div class="form-group">
@@ -207,16 +211,17 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="date_naissance">Date de naissance</label>
-                        <input type="date" id="date_naissance" name="date_naissance" class="form-control" required>
+                        <input type="date" id="date_naissance" name="date_naissance" class="form-control" required
+                               value="{{ donnees.date_naissance|default('') }}">
                     </div>
 
                     <div class="form-group">
                         <label for="genre">Genre</label>
                         <select id="genre" name="genre" class="form-control" required>
                             <option value="" selected disabled>Sélectionnez...</option>
-                            <option value="Autre">Autre</option>
-                            <option value="Homme">Homme</option>
-                            <option value="Femme">Femme</option>
+                            <option value="Autre" {% if donnees.genre is defined and donnees.genre == 'Autre' %}selected{% endif %}>Autre</option>
+                            <option value="Homme" {% if donnees.genre is defined and donnees.genre == 'Homme' %}selected{% endif %}>Homme</option>
+                            <option value="Femme" {% if donnees.genre is defined and donnees.genre == 'Femme' %}selected{% endif %}>Femme</option>
                         </select>
                     </div>
                 </div>
@@ -225,13 +230,25 @@
 
             </form>
 
+            {% if erreurs is defined and erreurs is not empty %}
+        
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msgs in erreurs %}
+                        <li> {{ msgs }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <div class="form-footer">
                 <p>Déjà un compte ? 
                     <a href="index.php?controleur=utilisateur&methode=connexion">Se connecter</a>
                 </p>
             </div>
         </div>
-    </div>
+    </div> 
 </div>
 
 <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
