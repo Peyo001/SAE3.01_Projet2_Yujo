@@ -105,9 +105,9 @@ class AvatarDao extends Dao
      * @param int $idAvatar L'identifiant de l'avatar à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    public function supprimerAvatar(int $idAvatar): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AVATAR WHERE idAvatar = :idAvatar");
-        $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);
+    public function supprimerAvatar(int $idUtilisateur): bool {
+        $stmt = $this->conn->prepare("DELETE FROM AVATAR WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
