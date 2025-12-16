@@ -119,6 +119,39 @@ class UtilisateurDao extends Dao
     }
 
     /**
+     * Récupère un utilisateur par son pseudo.
+     * 
+     * @param string $pseudo Le pseudo à rechercher
+     * @return Utilisateur|null Retourne l'utilisateur si trouvé, sinon null
+     */
+    public function findByPseudo(string $pseudo): ?Utilisateur
+    {
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE pseudo = :pseudo");
+        $stmt->bindValue(':pseudo', $pseudo, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Utilisateur(
+                $row['nom'],
+                $row['prenom'],
+                $row['dateNaissance'],
+                $row['genre'],
+                $row['pseudo'],
+                $row['email'],
+                $row['motDePasse'],
+                $row['typeCompte'],
+                (bool)$row['estPremium'],
+                $row['dateInscription'],
+                (int)$row['yuPoints'],
+                (int)$row['idUtilisateur'],
+                $row['personnalisation']
+            );
+        }
+        return null;
+    }
+
+    /**
      * Crée un nouvel utilisateur dans la base de données.
      * 
      * Cette méthode permet d'insérer un nouvel utilisateur dans la table `UTILISATEUR` en utilisant les informations de l'objet `Utilisateur`.
