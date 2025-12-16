@@ -43,9 +43,18 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
+    /**
+     * @brief Traite les données d'inscription utilisateur.
+     * 
+     * Valide les données du formulaire, crée un nouvel utilisateur et l'enregistre dans la base de données.
+     * En cas de succès, redirige vers la page de connexion.
+     * En cas d'erreurs de validation, réaffiche le formulaire avec les messages d'erreur.
+     * 
+     * @return void
+     */
     public function traiterInscription(): void
     {
-
+        // Définition des règles de validation
         $reglesValidation = [
             'nom' => [
                 'obligatoire' => false,
@@ -163,8 +172,14 @@ class ControllerUtilisateur extends Controller
         }
     }
 
-    // --- CONNEXION ---
-
+    
+    /**
+     * @brief Affiche le formulaire de connexion utilisateur.
+     * 
+     * Rend la vue 'connexion.twig' avec le menu actif sur 'connexion'.
+     * 
+     * @return void
+     */
     public function connexion(): void // Affiche le formulaire
     {
         // Si déjà connecté, on renvoie à l'accueil
@@ -215,8 +230,12 @@ class ControllerUtilisateur extends Controller
         }
     }
 
-    // --- DÉCONNEXION ---
-
+    /**
+     * @brief Déconnecte l'utilisateur en détruisant la session.
+     * Redirige ensuite vers la page de connexion.
+     * 
+     * @return void
+     */
     public function deconnexion(): void
     {
         // On vide la session
