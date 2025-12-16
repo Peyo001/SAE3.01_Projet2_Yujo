@@ -8,35 +8,39 @@
  * messages d'erreur standardisés pour chaque type de validation échouée.
  * 
  * Exemple d'utilisation :
- * $regles = [
- *   'username' => [
- *     'obligatoire' => true,
- *    'type' => 'string',
- *    'longueur_min' => 3,
- *   'longueur_max' => 20
- * ],
- * 
- * 'email' => [
- *   'obligatoire' => true,
- *  'format' => FILTER_VALIDATE_EMAIL
- * ],
- * 
- * 'age' => [
- *  'type' => 'integer',
- * 'plage_min' => 18,
- * 'plage_max' => 99
- * ]
+ * $reglesValidation = [
+ *          'nom' => [
+ *              'obligatoire' => false,
+ *              'type' => 'string',
+ *               'longueur_min' => 1,
+ *               'longueur_max' => 100,
+ *                // Lettres, accents, apostrophes et traits d'union
+ *               'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/'
+ *               
+ *           ],
+ *           'prenom' => [
+ *               'obligatoire' => true,
+ *               'type' => 'string',
+ *               'longueur_min' => 1,
+ *               'longueur_max' => 100,
+ * *               // Lettres et caractères accentués uniquement
+ *               'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/' 
+ *           ],
  * 
  * ];   
  * 
  * $validator = new Validator($regles);
- * $donnees = validateur->valider($_POST);
+ * $donnees = $validator->valider($_POST);
+ * $erreurs = $validator->getMessagesErreurs();
  * if ($donnees) {  
  *   // Données valides, procéder au traitement
  * } else {
  *   $erreurs = $validator->getMessagesErreurs();
  * }
  */
+
+
+  
 class Validator
 {
     private array $regles; // Les règles de validation à vérifier
@@ -145,7 +149,17 @@ class Validator
                     }
                     break;
                 case 'format':
-                    if (is_string($parametre) && !preg_match($parametre, $valeur))
+                    // Gestion des dates via DateTime::createFromFormat
+                    if (($regles['type'] ?? '') === 'date' && is_string($parametre)) {
+                        $dt = \DateTime::createFromFormat($parametre, $valeur);
+                        $errors = \DateTime::getLastErrors();
+                        if (!$dt || ($errors['warning_count'] ?? 0) > 0 || ($errors['error_count'] ?? 0) > 0) {
+                            $this->messagesErreurs[] = "Le format du champ $champ est invalide.";
+                            $estValide = false;
+                        }
+                    }
+                    // Regex : on exige un délimiteur (ex : /.../)
+                    elseif (is_string($parametre) && substr($parametre, 0, 1) === '/' && !preg_match($parametre, $valeur))
                     {
                         $this->messagesErreurs[] = "Le format du champ $champ est invalide.";
                         $estValide = false;
