@@ -425,7 +425,7 @@ FodyWeavers.xsd
 /vendor/
 
 # Fichiers de configuration
-/config 
+/config
 /config/config.json
 
 /node_modules
