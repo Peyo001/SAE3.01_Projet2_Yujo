@@ -1,16 +1,43 @@
 <?php
-
+/** 
+ * ControllerUtilisateur gère les actions liées aux utilisateurs telles que l'inscription,
+ * la connexion, la déconnexion et l'affichage du profil.
+ * 
+ * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+ * Utilise Twig pour le rendu des vues.
+ * Utilise la classe Validator pour la validation des données.
+ * 
+ * Exemples d'utilisation :
+ * $controller = new ControllerUtilisateur($loader, $twig); 
+ * $controller->afficherFormulaireInscription(); // Affiche le formulaire d'inscription
+ * $controller->traiterInscription(); // Traite les données d'inscription
+ */
 class ControllerUtilisateur extends Controller
-{
+{   
+    /**
+     * @brief Constructeur de la classe ControllerUtilisateur.
+     *
+     * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de templates Twig.
+     * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues.
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
     {
         parent::__construct($loader, $twig);
     }
 
-    // --- INSCRIPTION ---
+    
 
+
+    /**
+     * @brief Affiche le formulaire d'inscription utilisateur.
+     * 
+     * Rend la vue 'inscription.twig' avec le menu actif sur 'inscription'.
+     * 
+     * @return void
+     */
     public function afficherFormulaireInscription(): void
     {
+
         echo $this->getTwig()->render('inscription.twig', [
             'menu' => 'inscription'
         ]);
@@ -18,8 +45,76 @@ class ControllerUtilisateur extends Controller
 
     public function traiterInscription(): void
     {
+
+        $reglesValidation = [
+            'nom' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_min' => 2,
+                'longueur_max' => 1150,
+                 // Lettres, accents, apostrophes et traits d'union
+                'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/'
+                
+            ],
+            'prenom' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 2,
+                'longueur_max' => 150,
+                // Lettres et caractères accentués uniquement
+                'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/' 
+            ],
+            'pseudo' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 3,
+                'longueur_max' => 150,
+                // Lettres, chiffres et underscores uniquement
+                'format' => '/^[a-zA-Z0-9_]+$/' 
+            ],
+            'email' => [
+                'obligatoire' => true,
+                'type' => 'email',
+                'longueur_max' => 255,
+                'format' => FILTER_VALIDATE_EMAIL // Utilisation du filtre PHP pour valider l'email
+            ],
+            'password' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 8,
+                'longueur_max' => 64,
+                // Au moins une majuscule, une minuscule, un chiffre et un caractère spécial
+                'format' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+            'date_naissance' => [
+                'obligatoire' => true,
+                'type' => 'date',
+                'format' => 'Y-m-d' // Format de date attendu
+            ],
+            'genre' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'valeurs_acceptables' => ['Homme', 'Femme', 'Autre']
+            ],
+        ];
+
+        // vérification de la méthode pour acquerir les données
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php');
+            exit;
+        }
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        
+        if (!$donneesValides){
+            // Il y a des erreurs de validation
+            echo $this->getTwig()->render('inscription.twig', [
+                'menu' => 'inscription',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST // Pour pré-remplir le formulaire avec les données saisies
+            ]);
             exit;
         }
 
