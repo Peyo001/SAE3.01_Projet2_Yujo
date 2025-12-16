@@ -209,16 +209,7 @@ class ControllerUtilisateur extends Controller
      */
     public function connexion(): void // Affiche le formulaire
     {
-<<<<<<< Updated upstream
-        // Si déjà connecté, on renvoie à l'accueil
-        if (isset($_SESSION['idUtilisateur'])) {
-            header('Location: index.php?controleur=accueil&methode=afficher');
-            exit;
-        }
-
-=======
         $dejaConnecte = isset($_SESSION['idUtilisateur']);
->>>>>>> Stashed changes
         echo $this->getTwig()->render('connexion.twig', [
             'menu' => 'connexion',
             'deja_connecte' => $dejaConnecte,
