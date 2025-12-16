@@ -157,8 +157,27 @@ class ControllerUtilisateur extends Controller
         // 5. Enregistrement
         $manager = new UtilisateurDao($this->getPdo());
         
-        // Idéalement, il faudrait vérifier ici si l'email existe déjà (findByEmail)
-        // Pour faire simple, on tente l'insertion directement
+        // Vérification si pseudo ou email existe déjà
+        $pseudoExiste = $manager->findByPseudo($pseudo) !== null;
+        $emailExiste = $manager->findByEmail($email) !== null;
+    
+        if ($pseudoExiste || $emailExiste) {
+            $erreurs = [];
+            if ($pseudoExiste) {
+                $erreurs[] = "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.";
+            }
+            if ($emailExiste) {
+                $erreurs[] = "Cet email est déjà associé à un compte.";
+            }
+            
+            echo $this->getTwig()->render('inscription.twig', [
+                'menu' => 'inscription',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+        // Si l'email et le pseudo sont uniques, on essaie de créer l'utilisateur
         try {
             $succes = $manager->creerUtilisateur($user);
             
@@ -166,9 +185,17 @@ class ControllerUtilisateur extends Controller
                 // Redirection vers la connexion après succès
                 header('Location: index.php?controleur=utilisateur&methode=connexion');
                 exit;
+            } else {
+                throw new Exception("Erreur lors de la création de l'utilisateur.");
+                $erreurs = ["Une erreur est survenue lors de l'inscription. Veuillez réessayer."];
             }
         } catch (Exception $e) {
-            echo "Erreur lors de l'inscription (Email ou Pseudo peut-être déjà pris).";
+            echo $this->getTwig()->render('inscription.twig', [
+                'menu' => 'inscription',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
         }
     }
 

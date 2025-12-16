@@ -161,7 +161,7 @@ class Validator
                     // Regex : on exige un délimiteur (ex : /.../)
                     elseif (is_string($parametre) && substr($parametre, 0, 1) === '/' && !preg_match($parametre, $valeur))
                     {
-                        $this->messagesErreurs[] = "Le format du champ $champ est invalide. Le mots de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.";
+                        $this->messagesErreurs[] = "Le format du champ $champ est invalide. ";
                         $estValide = false;
                     }
                     elseif ($parametre === FILTER_VALIDATE_EMAIL && !filter_var($valeur, FILTER_VALIDATE_EMAIL))
