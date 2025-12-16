@@ -1,0 +1,42 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Boutique{% endblock %}
+
+{% block content %}
+<div class="boutique-container">
+  <h1>Boutique</h1>
+
+  {% if user_connected %}
+    <p><strong>Vos YuPoints:</strong> {{ yuPoints is not null ? yuPoints : 'inconnu' }}</p>
+  {% else %}
+    <p>Veuillez vous connecter pour acheter des objets.</p>
+  {% endif %}
+
+  {% if message %}
+    <div class="alert">{{ message }}</div>
+  {% endif %}
+
+  <div class="objets-grid">
+    {% for objet in objets %}
+      <div class="objet-card">
+        <h3>Objet #{{ objet.getIdObjet() }}</h3>
+        <p>{{ objet.getDescription() }}</p>
+        <p><strong>Prix:</strong> {{ objet.getPrix() }} YuPoints</p>
+        {% set isOwned = ownedObjectIds is defined and (objet.getIdObjet() in ownedObjectIds) %}
+        {% if user_connected %}
+          {% if isOwned %}
+            <button type="button" disabled>Déjà possédé</button>
+          {% else %}
+            <form method="post" action="index.php?controleur=boutique&methode=acheter">
+              <input type="hidden" name="idObjet" value="{{ objet.getIdObjet() }}" />
+              <button type="submit">Acheter</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% else %}
+      <p>Aucun objet disponible.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
