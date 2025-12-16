@@ -209,14 +209,20 @@ class ControllerUtilisateur extends Controller
      */
     public function connexion(): void // Affiche le formulaire
     {
+<<<<<<< Updated upstream
         // Si déjà connecté, on renvoie à l'accueil
         if (isset($_SESSION['idUtilisateur'])) {
             header('Location: index.php?controleur=accueil&methode=afficher');
             exit;
         }
 
+=======
+        $dejaConnecte = isset($_SESSION['idUtilisateur']);
+>>>>>>> Stashed changes
         echo $this->getTwig()->render('connexion.twig', [
-            'menu' => 'connexion'
+            'menu' => 'connexion',
+            'deja_connecte' => $dejaConnecte,
+            'pseudo' => $dejaConnecte ? ($_SESSION['pseudo'] ?? '') : ''
         ]);
     }
 
@@ -238,6 +244,7 @@ class ControllerUtilisateur extends Controller
         // 1. Est-ce qu'on a trouvé un utilisateur ?
         // 2. Est-ce que le mot de passe correspond au hash en base ?
         if ($user && password_verify($password, $user->getMotDePasse())) {
+            session_regenerate_id(true);
             
             // SUCCÈS : ON CRÉE LA SESSION
             $_SESSION['idUtilisateur'] = $user->getIdUtilisateur();
@@ -267,6 +274,11 @@ class ControllerUtilisateur extends Controller
     {
         // On vide la session
         session_unset();
+        // Invalider le cookie de session côté client
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
         session_destroy();
 
         // On redirige vers l'accueil ou la connexion

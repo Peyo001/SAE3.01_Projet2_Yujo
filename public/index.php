@@ -33,7 +33,7 @@ try
     if ($controllerName == '' && $methode == '')
     {
         $controllerName = "Utilisateur"; //contrôleur utilisateur 
-        $methode = "connexion"; //methode affichant le formulaire de connexion
+        $methode = "connexion"; //methode affichant le formulaire d'inscription
     }
     else
     {

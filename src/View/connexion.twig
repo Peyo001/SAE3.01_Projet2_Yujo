@@ -164,6 +164,12 @@
         </div>
 
         <div class="card-body">
+            {% if deja_connecte %}
+                <div class="alert alert-info" role="alert">
+                    Vous êtes déjà connecté{% if pseudo %} en tant que <strong>{{ pseudo }}</strong>{% endif %}.
+                    <a href="index.php?controleur=utilisateur&methode=deconnexion" class="ml-2">Se déconnecter</a>
+                </div>
+            {% endif %}
             {% if error %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ error }}
