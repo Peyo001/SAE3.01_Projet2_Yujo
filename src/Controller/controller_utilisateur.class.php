@@ -211,7 +211,7 @@ class ControllerUtilisateur extends Controller
     {
         // Si déjà connecté, on renvoie à l'accueil
         if (isset($_SESSION['idUtilisateur'])) {
-            echo $this->getTwig()->render('accueil.twig');  
+            header('Location: index.php?controleur=accueil&methode=afficher');
             exit;
         }
 
