@@ -11,6 +11,9 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/src/Database/DataBase.php';
 require_once __DIR__ . '/config/twig.php';
 
+//Charge la classe de validation
+require_once __DIR__ . '/Validator.class.php';
+
 // Charge automatiquement toutes les classes métiers, DAO et controllers selon l'arborescence du projet
 $autoloadDirs = [
 	__DIR__ . '/src/Model/Class',
