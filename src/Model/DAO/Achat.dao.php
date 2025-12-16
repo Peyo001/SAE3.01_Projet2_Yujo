@@ -53,6 +53,22 @@ class AchatDao extends Dao
     }
 
     /**
+     * Retourne l'achat si l'utilisateur a déjà acheté cet objet.
+     */
+    public function findByObjetUtilisateur(int $idObjet, int $idUtilisateur): ?Achat
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur LIMIT 1");
+        $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
+        }
+        return null;
+    }
+
+    /**
      * Récupère tous les achats effectués par un utilisateur spécifique.
      * 
      * Cette méthode recherche tous les achats associés à un identifiant d'utilisateur donné.
@@ -67,7 +83,7 @@ class AchatDao extends Dao
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat($row['idUtilisateur'], $row['idObjet'], $row['dateAchat']);
+            $achat = new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
             $achats[] = $achat;
         }
         return $achats;
@@ -114,6 +130,22 @@ class AchatDao extends Dao
             $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         }
         return $stmt->execute();
+    }
+
+    /**
+     * Liste des idObjet déjà achetés par un utilisateur.
+     * @return int[]
+     */
+    public function listObjetsAchetesByUtilisateur(int $idUtilisateur): array
+    {
+        $stmt = $this->conn->prepare("SELECT idObjet FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        $ids = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $ids[] = (int)$row['idObjet'];
+        }
+        return $ids;
     }
 }
 ?>
