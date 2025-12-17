@@ -323,7 +323,7 @@ require_once "Dao.class.php";
         * @param int $id L'identifiant de la room à supprimer.
         * @return bool Retourne true si la suppression a réussi, sinon false.
         */
-        public function supprimerRoom(int $id): bool {
+        public function supprimerRoomByCreateur(int $id): bool {
             $stmt = $this->conn->prepare("DELETE FROM ROOM WHERE idCreateur = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
