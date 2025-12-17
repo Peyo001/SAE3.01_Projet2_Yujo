@@ -49,7 +49,7 @@ class ReponseDao extends Dao
     }
 
     public function findByAuteur(int $idAuteur): ?array {
-        $stmt = $this->conn->prepare("SELECT * FROM REPONSE WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
+        $stmt = $this->conn->prepare("SELECT * FROM REPONSE WHERE idAuteur = :idAuteur ORDER BY dateReponse DESC");
         $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
         $stmt->execute();
         

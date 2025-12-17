@@ -127,5 +127,19 @@ class AmiDao extends Dao
         return $stmt->execute();
     }
 
+    /**
+     * Supprime toute les relations d'amitié pour un utilisateur.
+     * 
+     * Cette méthode permet de supprimer toute les relations d'amitiés lorsqu'un utilisateur apparaît dans la base de données.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
+    public function supprimerParUtilisateur(int $idUtilisateur): bool {
+        $stmt = $this->conn->prepare("DELETE FROM AMI WHERE idUtilisateur1 = :id OR idUtilisateur2 = :id");
+        $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     
 }
