@@ -48,6 +48,24 @@ class ReponseDao extends Dao
         return $stmt->fetchAll() ?: [];
     }
 
+    public function findByAuteur(int $idAuteur): ?array {
+        $stmt = $this->conn->prepare("SELECT * FROM REPONSE WHERE idAuteur = :idAuteur ORDER BY dateReponse DESC");
+        $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $reponses = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $reponses[] = new Reponse(
+                (int)$row['idReponse'],
+                $row['contenu'],
+                $row['dateReponse'],
+                (int)$row['idPost'],
+                (int)$row['idAuteur']
+            );
+        }
+        return $reponses;
+    }
+
     /**
      * Récupère toutes les réponses de la base de données.
      * 
