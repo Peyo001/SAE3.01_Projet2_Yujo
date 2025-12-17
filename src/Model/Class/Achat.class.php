@@ -31,10 +31,10 @@ class Achat {
      * @param ?string $dateAchat Date de l'achat (peut être nulle).
      * @param int $idUtilisateur Identifiant de l'utilisateur ayant effectué l'achat.
      */
-    public function __construct(int $idObjet, ?string $dateAchat, int $idUtilisateur) {
+    public function __construct(int $idObjet, int $idUtilisateur, ?string $dateAchat) {
         $this->idObjet = $idObjet;
-        $this->dateAchat = $dateAchat;
         $this->idUtilisateur = $idUtilisateur;
+        $this->dateAchat = $dateAchat;
     }
 
     /**
