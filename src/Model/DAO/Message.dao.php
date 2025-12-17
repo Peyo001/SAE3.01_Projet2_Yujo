@@ -66,6 +66,30 @@ class MessageDAO extends Dao{
         return $messages;
     }
 
+    /** Trouve tous les messages d'un utilisateur donné.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @return array Tableau d'objets Message.
+     */
+    public function findByUtilisateur(int $idUtilisateur): array {
+        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        $messages = [];
+
+        while ($row = $stmt->fetch()) {
+            $messages[] = new Message(
+                $row['idMessage'],
+                $row['contenu'],
+                $row['dateEnvoi'],
+                $row['idGroupe'],
+                $row['idUtilisateur']
+            );
+        }
+
+        return $messages;
+    }
+
 
     /** Trouve tous les messages dans la base de données.
      * 
@@ -119,9 +143,10 @@ class MessageDAO extends Dao{
      * 
      * @param Message $message L'objet Message à supprimer.
      */
-    public function supprimerMessage(Message $message): void {
-        $stmt = $this->conn->prepare("DELETE FROM MESSAGE WHERE idMessage = :idMessage");
-        $stmt->execute(['idMessage' => $message->getIdMessage()]);
+    public function supprimerMessage(int $idUtilisateur): void {
+        $stmt = $this->conn->prepare("DELETE FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
     }
 
     
