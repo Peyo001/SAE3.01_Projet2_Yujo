@@ -2,8 +2,8 @@
 /**
  * Classe Posseder
  * 
- * Cette classe représente la relation de possession entre un utilisateur et un objet.
- * Elle permet de créer un objet Posseder et de l'utiliser avec les propriétés idObjet et idUtilisateur.
+ * Cette classe représente la relation de possession entre une room et un objet.
+ * Elle permet de créer un objet Posseder et de l'utiliser avec les propriétés idObjet et idRoom.
  * 
  * Exemple d'utilisation :
  * $posseder = new Posseder(1, 42);
@@ -19,13 +19,13 @@ class Posseder {
      * Constructeur de la classe Posseder.
      * 
      * @param int $idObjet Identifiant de l'objet.
-     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @param int $idRoom Identifiant de le la room.
      * @param ?string $datePossession Date de possession (peut être nulle).
      */
 
-    public function __construct(int $idObjet, int $idUtilisateur, ?string $dateAjout = null) {
+    public function __construct(int $idObjet, int $idRoom, ?string $dateAjout = null) {
         $this->idObjet = $idObjet;
-        $this->idUtilisateur = $idUtilisateur;
+        $this->idRoom = $idRoom;
         $this->dateAjout = $dateAjout;
     }
 
@@ -49,21 +49,21 @@ class Posseder {
     }
 
     /**
-     * Récupère l'identifiant de l'utilisateur possédant l'objet.
-     * @return int Identifiant de l'utilisateur possédant l'objet.
+     * Récupère l'identifiant de le la room possédant l'objet.
+     * @return int Identifiant de la room possédant l'objet.
      * 
     */
-    public function getIdUtilisateur(): int {
-        return $this->idUtilisateur;
+    public function getIdRoom(): int {
+        return $this->$idRoom;
     }
 
     /**
-     * Définit l'identifiant de l'utilisateur possédant l'objet.
-     * @param int $idUtilisateur Identifiant de l'utilisateur à définir.
+     * Définit l'identifiant de la room possédant l'objet.
+     * @param int $idRoom Identifiant de la room à définir.
      * 
     */
-    public function setIdUtilisateur(int $idUtilisateur): void {
-        $this->idUtilisateur = $idUtilisateur;
+    public function setIdRoom(int $idRoom): void {
+        $this->idRoom = $idRoom;
     }
 
     /**

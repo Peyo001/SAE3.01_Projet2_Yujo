@@ -1,0 +1,33 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Administration{% endblock %}
+
+{% block content %}
+
+<h1>Panel Administrateur</h1>
+
+<h2>Ajouter un objet</h2>
+<form method="post" action="index.php?controller=Admin&methode=ajouterObjet">
+    <input type="text" name="description" required>
+    <input type="text" name="modele3dPath" required>
+    <input type="number" name="prix" required>
+    <button type="submit">Ajouter</button>
+</form>
+
+<h2>Utilisateurs</h2>
+<table>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.idUtilisateur }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+            <a href="index.php?controller=Admin&methode=supprimerUtilisateur&id={{ user.idUtilisateur }}"
+               onclick="return confirm('Supprimer ?')">
+                Supprimer
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
