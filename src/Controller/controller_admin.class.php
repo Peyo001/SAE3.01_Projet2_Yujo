@@ -129,7 +129,7 @@
                             $room->getIdRoom(),
                             $posseder->getIdObjet()
                         );
-                        $roomDAO->supprimerRoom(
+                        $roomDAO->supprimerRoomByCreateur(
                             $idUtilisateur
                         );
                     }
