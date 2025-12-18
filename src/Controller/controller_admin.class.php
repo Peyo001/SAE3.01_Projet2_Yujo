@@ -32,7 +32,8 @@
                     null,
                     $_POST['description'],
                     $_POST['modele3dPath'],
-                    (int) $_POST['prix']
+                    (int) $_POST['prix'],
+                    null
                 );
 
                 $objetDAO->insererObjet($objet);
@@ -66,12 +67,12 @@
                 $amiDAO = new AmiDAO($pdo);
                 $amis = $amiDAO->supprimerParUtilisateur($idUtilisateur);
 
-                foreach ($amis as $ami) {
+                /*foreach ($amis as $ami) {
                     $amiDAO->supprimerAmi(
                         $ami->getIdUtilisateur1(),
                         $ami->getIdUtilisateur2()
                     );
-                }
+                }*/
 
                 // Supression de composer
                 $composerDAO = new ComposerDAO($pdo);

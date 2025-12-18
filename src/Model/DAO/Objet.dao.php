@@ -23,7 +23,7 @@ require_once "Dao.class.php";
          * @return Objet|null Retourne un objet `Objet` si trouvé, sinon null.
          */
         public function find(int $id): ?Objet {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJETS WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -48,7 +48,7 @@ require_once "Dao.class.php";
          * @return Objet[] Tableau des objets `Objet`.
          */
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJETS");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET");
             $stmt->execute();
             $objets = [];
 
@@ -74,7 +74,7 @@ require_once "Dao.class.php";
          */
         public function findByRoom(int $idRoom): array {
             $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix, p.idRoom
-                    FROM OBJETS o
+                    FROM OBJET o
                     INNER JOIN POSSEDER p ON p.idObjet = o.idObjet
                     WHERE p.idRoom = :idRoom";
             $stmt = $this->conn->prepare($sql);
@@ -102,7 +102,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la mise à jour a réussi, sinon false.
          */
         public function mettreAJourObjet(Objet $objet): bool {
-            $stmt = $this->conn->prepare("UPDATE OBJETS SET description = :description, modele3dPath = :modele3dPath, prix = :prix WHERE idObjet = :idObjet;");
+            $stmt = $this->conn->prepare("UPDATE OBJET SET description = :description, modele3dPath = :modele3dPath, prix = :prix WHERE idObjet = :idObjet;");
             $stmt->bindValue(':description', $objet->getDescription());
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath());
             $stmt->bindValue(':prix', $objet->getPrix(), PDO::PARAM_INT);
@@ -121,7 +121,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si l'insertion a réussi, sinon false.
          */
         public function insererObjet(Objet $objet): bool {
-            $stmt = $this->conn->prepare("INSERT INTO OBJETS (description, modele3dPath, prix) VALUES (:description, :modele3dPath, :prix)");
+            $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix) VALUES (:description, :modele3dPath, :prix)");
 
             $stmt->bindValue(':description', $objet->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath(), PDO::PARAM_STR);
@@ -143,7 +143,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la suppression a réussi, sinon false.
          */
         public function supprimerObjet(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM OBJETS WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("DELETE FROM OBJET WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();
