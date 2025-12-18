@@ -164,7 +164,7 @@ class UtilisateurDao extends Dao
         $stmt = $this->conn->prepare("INSERT INTO UTILISATEUR (nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation) VALUES (:nom, :prenom, :dateNaissance, :genre, :pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints, :personnalisation)");
         $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':prenom', $user->getPrenom(), PDO::PARAM_STR);
-        $stmt->bindValue(':dateNaissance', $user->getDateNaiss(), PDO::PARAM_STR);
+        $stmt->bindValue(':dateNaissance', $user->getDateNaissance(), PDO::PARAM_STR);
         $stmt->bindValue(':genre', $user->getGenre(), PDO::PARAM_STR);
         $stmt->bindValue(':pseudo', $user->getPseudo(), PDO::PARAM_STR);
         $stmt->bindValue(':email', $user->getEmail(), PDO::PARAM_STR);
@@ -175,12 +175,6 @@ class UtilisateurDao extends Dao
         $stmt->bindValue(':yuPoints', $user->getYuPoints(), PDO::PARAM_INT);
         $stmt->bindValue(':personnalisation', $user->getPersonnalisation(), PDO::PARAM_STR);
         return $stmt->execute();
-    }
-
-    // Compatibilité : ancien nom
-    public function createUser(Utilisateur $user): bool
-    {
-        return $this->creerUtilisateur($user);
     }
     
     /**
@@ -198,11 +192,33 @@ class UtilisateurDao extends Dao
         return $stmt->execute();
     }
 
-    // Compatibilité : ancien nom
-    public function deleteUser(int $id): bool
-    {
-        return $this->supprimerUtilisateur($id);
-    }
-}
+    /**
+     * Modifie les informations d'un utilisateur dans la base de données.
+     * 
+     * Cette méthode met à jour les informations d'un utilisateur dans la table `UTILISATEUR` en utilisant les données de l'objet `Utilisateur` passé en paramètre.
+     * 
+     * @param Utilisateur $user L'objet `Utilisateur` contenant les nouvelles informations.
+     * @return bool Retourne `true` si la mise à jour a réussi, sinon `false`.
+     */
 
+    public function modifierUtilisateur(Utilisateur $user): bool
+    {
+        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, dateNaissance = :dateNaissance, genre = :genre, pseudo = :pseudo, email = :email, motDePasse = :motDePasse, typeCompte = :typeCompte, estPremium = :estPremium, dateInscription = :dateInscription, yuPoints = :yuPoints, personnalisation = :personnalisation WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
+        $stmt->bindValue(':prenom', $user->getPrenom(), PDO::PARAM_STR);
+        $stmt->bindValue(':dateNaissance', $user->getDateNaissance(), PDO::PARAM_STR);
+        $stmt->bindValue(':genre', $user->getGenre(), PDO::PARAM_STR);
+        $stmt->bindValue(':pseudo', $user->getPseudo(), PDO::PARAM_STR);
+        $stmt->bindValue(':email', $user->getEmail(), PDO::PARAM_STR);
+        $stmt->bindValue(':motDePasse', $user->getMotDePasse(), PDO::PARAM_STR);
+        $stmt->bindValue(':typeCompte', $user->getTypeCompte(), PDO::PARAM_STR);
+        $stmt->bindValue(':estPremium', $user->getEstPremium(), PDO::PARAM_BOOL);
+        $stmt->bindValue(':dateInscription', $user->getDateInscription(), PDO::PARAM_STR);
+        $stmt->bindValue(':yuPoints', $user->getYuPoints(), PDO::PARAM_INT);
+        $stmt->bindValue(':personnalisation', $user->getPersonnalisation(), PDO::PARAM_STR);
+        $stmt->bindValue(':idUtilisateur', $user->getIdUtilisateur(), PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+    
+}
 ?>

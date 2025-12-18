@@ -1,0 +1,38 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Modification du profil {{utilisateur.nom}}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold" style="color: #3D3791;">Modification du profil</h1>
+            <p class="text-muted">Modifiez les informations de votre profil, {{ utilisateur.nom }}</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="index.php?controleur=utilisateur&methode=modifierProfil" method="POST">
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="nom" name="nom" value="{{ utilisateur.nom }}">
+                </div>
+                <div class="mb-3">
+                    <label for="prenom" class="form-label">Prénom</label>
+                    <input type="text" class="form-control" id="prenom" name="prenom" value="{{ utilisateur.prenom }}">
+                </div>
+                <div class="mb-3">
+                    <label for="pseudo" class="form-label">Pseudo</label>
+                    <input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ utilisateur.pseudo }}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ utilisateur.email }}">
+                </div>
+                <button type="submit" class="btn btn-primary" style="background-color: #e9407A;">Enregistrer les modifications</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

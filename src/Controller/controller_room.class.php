@@ -120,4 +120,10 @@
             header("Location: index.php?controleur=room&methode=lister");
             exit;
         }
+
+        public function rejoindre() {
+            
+            // A implémenter plus tard
+            exit;
+        }
     }
