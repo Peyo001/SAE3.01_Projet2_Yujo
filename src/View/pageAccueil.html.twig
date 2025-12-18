@@ -2,61 +2,76 @@
 
 {% block title %}Accueil{% endblock %}
 
-{% block css %}
-    <link rel="stylesheet" href="../public/css/style.css">
-{% endblock %}
-
 {% block content %}
+<div class="container mt-4">
 
-<section class="amis-section">
-    <h2>Connaissances</h2>
-    <div class="amis-slider">
-        {% if amis is defined and amis|length > 0 %}
+    <h4 class="mb-3">Connaissances</h4>
+
+    {% if amis is defined and amis|length > 0 %}
+        <div class="d-flex gap-3 overflow-auto mb-5">
             {% for ami in amis %}
-                <div class="ami">
-                    <div class="avatar">
-                        <img src="../public/assets/icons/person_noir.svg" class="ami-icon">
+                <div class="text-center">
+                    <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white mb-1"
+                         style="width:60px;height:60px;">
                     </div>
-                    <p>{{ utilisateurs[ami.idUtilisateur2]|default('Utilisateur inconnu') }}</p>
+                    <small>
+                        {{ utilisateurs[ami.idUtilisateur2].pseudo|default('Utilisateur inconnu') }}
+                    </small>
                 </div>
             {% endfor %}
-        {% else %}
-            <p>Aucun ami pour le moment.</p>
-        {% endif %}
-    </div>
-</section>
+        </div>
+    {% else %}
+        <p class="text-muted mb-5">Aucun ami pour le moment.</p>
+    {% endif %}
 
-<section class="discover-section">
-    <h2>À découvrir</h2>
+    <h4 class="mb-3content-center">À découvrir</h4>
 
     {% if posts is defined and posts|length > 0 %}
-        {% for post in posts %}
-            <article class="card">
-                <div class="card-header">
-                    <div class="avatar avatar-small">
-                        <img src="../public/assets/icons/person_noir.svg" class="ami-icon-small">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+
+                {% for post in posts %}
+                    <div class="card mb-4">
+
+
+                        <div class="card-body d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                                 style="width:40px;height:40px;">
+                                
+                            </div>
+                            <strong>
+                                {{ utilisateurs[post.idAuteur].pseudo|default('Auteur inconnu') }}
+                            </strong>
+                        </div>
+
+                        <div class="card-body pt-0">
+
+                            {% if post.typePost == 'quiz' %}
+                                <button class="btn btn-primary w-100">
+                                    {{ post.contenu }}
+                                </button>
+
+                            {% elseif post.typePost == 'room' %}
+                                <img src="/assets/room.png" class="img-fluid rounded mb-2">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">Visiter</button>
+                                    <button class="btn btn-outline-secondary btn-sm">Nom room</button>
+                                </div>
+
+                            {% else %}
+                                <p class="mb-0">{{ post.contenu }}</p>
+                            {% endif %}
+
+                        </div>
+
                     </div>
-                    <p>{{ utilisateurs[post.idAuteur]|default('Auteur inconnu') }}</p>
-                </div>
+                {% endfor %}
 
-                {% if post.typePost == 'quiz' %}
-                    <button class="btn big">{{ post.contenu }}</button>
-
-                {% elseif post.typePost == 'room' %}
-                    <img class="room-preview" src="/assets/room.png">
-                    <div class="room-actions">
-                        <button class="btn secondary">Visiter</button>
-                        <button class="btn secondary">Nom room</button>
-                    </div>
-
-                {% else %}
-                    <p>{{ post.contenu }}</p>
-                {% endif %}
-            </article>
-        {% endfor %}
+            </div>
+        </div>
     {% else %}
-        <p>Aucun post pour le moment.</p>
+        <p class="text-muted">Aucun post pour le moment.</p>
     {% endif %}
-</section>
 
+</div>
 {% endblock %}
