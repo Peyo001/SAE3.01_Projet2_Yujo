@@ -277,8 +277,15 @@ class ControllerUtilisateur extends Controller
         exit;
     }
     
-    // --- PROFIL (Bonus) ---
-    public function afficherProfil(): void
+    /**
+     * @brief Affiche le profil de l'utilisateur connecté.
+     * 
+     * Récupère les informations de l'utilisateur depuis la base de données
+     * et rend la vue 'profil.twig' avec les données utilisateur.
+     * 
+     * @return void
+     */
+    public function afficher(): void
     {
          if (!isset($_SESSION['idUtilisateur'])) {
             header('Location: index.php?controleur=utilisateur&methode=connexion');
@@ -288,7 +295,34 @@ class ControllerUtilisateur extends Controller
         $manager = new UtilisateurDao($this->getPdo());
         $user = $manager->find($_SESSION['idUtilisateur']);
         
-        echo $this->getTwig()->render('profil.twig', ['user' => $user]);
+        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $user]);
     }
     
+    public function modifierProfil(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+        
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->find($_SESSION['idUtilisateur']);
+        
+        // Récupérer les nouvelles données du formulaire
+        $nouveauNom = $_POST['nom'] ?? $utilisateur->getNom();
+        $nouveauPrenom = $_POST['prenom'] ?? $utilisateur->getPrenom();
+        $nouveauPseudo = $_POST['pseudo'] ?? $utilisateur->getPseudo();
+        
+        // Mettre à jour l'objet utilisateur
+        $utilisateur->setNom($nouveauNom);
+        $utilisateur->setPrenom($nouveauPrenom);
+        $utilisateur->setPseudo($nouveauPseudo);
+        
+        // Enregistrer les modifications
+        $manager->modifierUtilisateur($utilisateur);
+        
+        // Rediriger vers le profil après modification
+        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $utilisateur]);
+        exit;
+    }
 }
