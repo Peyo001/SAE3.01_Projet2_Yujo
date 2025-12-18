@@ -6,6 +6,11 @@ class ControllerParametre extends Controller
         parent::__construct($loader, $twig);
     }
 
+    /**
+     * Affiche la page des paramètres utilisateur.
+     *
+     * Cette méthode récupère les informations de l'utilisateur connecté et les envoie à la vue pour affichage.
+     */
     public function afficherParametre(): void
     {
         // 1. Récupération de l'ID utilisateur via la session 
@@ -29,6 +34,11 @@ class ControllerParametre extends Controller
         ]);
     }
 
+    /**
+     * Modifie le profil de l'utilisateur connecté.
+     * 
+     * Cette méthode traite les données du formulaire de modification de profil, met à jour les informations de l'utilisateur dans la base de données, puis affiche la page des paramètres avec les informations mises à jour.
+     */
     public function modifierProfil(): void
     {
         // 1. Récupération de l'ID utilisateur via la session 
