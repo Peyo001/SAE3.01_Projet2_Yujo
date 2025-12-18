@@ -176,12 +176,6 @@ class UtilisateurDao extends Dao
         $stmt->bindValue(':personnalisation', $user->getPersonnalisation(), PDO::PARAM_STR);
         return $stmt->execute();
     }
-
-    // Compatibilité : ancien nom
-    public function createUser(Utilisateur $user): bool
-    {
-        return $this->creerUtilisateur($user);
-    }
     
     /**
      * Supprime un utilisateur de la base de données.
@@ -198,11 +192,14 @@ class UtilisateurDao extends Dao
         return $stmt->execute();
     }
 
-    // Compatibilité : ancien nom
-    public function deleteUser(int $id): bool
-    {
-        return $this->supprimerUtilisateur($id);
-    }
+    /**
+     * Modifie les informations d'un utilisateur dans la base de données.
+     * 
+     * Cette méthode met à jour les informations d'un utilisateur dans la table `UTILISATEUR` en utilisant les données de l'objet `Utilisateur` passé en paramètre.
+     * 
+     * @param Utilisateur $user L'objet `Utilisateur` contenant les nouvelles informations.
+     * @return bool Retourne `true` si la mise à jour a réussi, sinon `false`.
+     */
 
     public function modifierUtilisateur(Utilisateur $user): bool
     {
@@ -223,10 +220,5 @@ class UtilisateurDao extends Dao
         return $stmt->execute();
     }
     
-    // Compatibilité : ancien nom
-    public function updateUser(Utilisateur $user): bool
-    {
-        return $this->modifierUtilisateur($user);
-    }
 }
 ?>
