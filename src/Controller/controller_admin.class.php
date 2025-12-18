@@ -32,7 +32,8 @@
                     null,
                     $_POST['description'],
                     $_POST['modele3dPath'],
-                    (int) $_POST['prix']
+                    (int) $_POST['prix'],
+                    null
                 );
 
                 $objetDAO->insererObjet($objet);
