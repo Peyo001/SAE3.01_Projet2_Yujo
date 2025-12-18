@@ -6,7 +6,7 @@ class ControllerParametre extends Controller
         parent::__construct($loader, $twig);
     }
 
-    public function afficher(): void
+    public function afficherParametre(): void
     {
         // 1. Récupération de l'ID utilisateur via la session 
         $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
