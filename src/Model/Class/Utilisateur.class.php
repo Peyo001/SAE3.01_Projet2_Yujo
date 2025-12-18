@@ -133,7 +133,7 @@ class Utilisateur
      * 
      * @return string La date de naissance de l'utilisateur.
      */
-    public function getDateNaiss(): string
+    public function getDateNaissance(): string
     {
         return $this->dateNaissance;
     }
