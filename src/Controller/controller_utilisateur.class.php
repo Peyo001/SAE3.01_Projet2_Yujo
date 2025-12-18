@@ -285,7 +285,24 @@ class ControllerUtilisateur extends Controller
      * 
      * @return void
      */
-    public function afficher(): void
+    public function afficherProfil(): void
+    {
+         if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+        
+        $manager = new UtilisateurDao($this->getPdo());
+        $manager2 = new PostDao($this->getPdo());
+        $manager3 = new AmiDao($this->getPdo());
+        $amis = $manager3->findAmis($_SESSION['idUtilisateur']);
+        $user = $manager->find($_SESSION['idUtilisateur']);
+        $posts = $manager2->findPostsByAuteur($user->getIdUtilisateur() );
+        
+        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $user, 'posts' => $posts, 'amis' => $amis]);
+    }
+    
+    public function afficherCompte(): void
     {
          if (!isset($_SESSION['idUtilisateur'])) {
             header('Location: index.php?controleur=utilisateur&methode=connexion');
@@ -295,9 +312,9 @@ class ControllerUtilisateur extends Controller
         $manager = new UtilisateurDao($this->getPdo());
         $user = $manager->find($_SESSION['idUtilisateur']);
         
-        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $user]);
+        echo $this->getTwig()->render('compte.twig', ['utilisateur' => $user]);
     }
-    
+
     public function modifierProfil(): void
     {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -322,7 +339,7 @@ class ControllerUtilisateur extends Controller
         $manager->modifierUtilisateur($utilisateur);
         
         // Rediriger vers le profil après modification
-        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $utilisateur]);
+        echo $this->getTwig()->render('compte.twig', ['utilisateur' => $utilisateur]);
         exit;
     }
 }
