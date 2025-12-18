@@ -66,12 +66,12 @@
                 $amiDAO = new AmiDAO($pdo);
                 $amis = $amiDAO->supprimerParUtilisateur($idUtilisateur);
 
-                foreach ($amis as $ami) {
+                /*foreach ($amis as $ami) {
                     $amiDAO->supprimerAmi(
                         $ami->getIdUtilisateur1(),
                         $ami->getIdUtilisateur2()
                     );
-                }
+                }*/
 
                 // Supression de composer
                 $composerDAO = new ComposerDAO($pdo);
