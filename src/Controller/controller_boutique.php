@@ -105,11 +105,18 @@ class ControllerBoutique extends Controller
 		try {
 			$pdo->beginTransaction();
 
-			// Déduire les YuPoints
-			$stmt = $pdo->prepare('UPDATE UTILISATEUR SET yuPoints = yuPoints - :prix WHERE idUtilisateur = :idUtilisateur');
-			$stmt->bindValue(':prix', $prix, PDO::PARAM_INT);
-			$stmt->bindValue(':idUtilisateur', (int)$idUtilisateur, PDO::PARAM_INT);
-			$stmt->execute();
+			// Déduire les YuPoints (via DAO)
+			$ok = $utilisateurDao->decrementerYuPoints((int)$idUtilisateur, (int)$prix);
+			if (!$ok) {
+				$pdo->rollBack();
+				echo $this->getTwig()->render('boutique.twig', [
+					'objets' => $objetDao->findAll(),
+					'yuPoints' => $solde,
+					'user_connected' => $idUtilisateur,
+					'message' => 'Solde insuffisant pour cet achat.'
+				]);
+				return;
+			}
 
 			// Enregistrer l'achat
 			$achat = new Achat($idObjet, date('Y-m-d H:i:s'), (int)$idUtilisateur);
@@ -130,6 +137,52 @@ class ControllerBoutique extends Controller
 			'user_connected' => $idUtilisateur,
 			'ownedObjectIds' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
 			'message' => 'Achat effectué avec succès!'
+		]);
+	}
+
+	/**
+	 * Ajoute des YuPoints au solde utilisateur (pack prédéfinis).
+	 * Attendu: POST pack in [100, 500, 1000].
+	 */
+	public function acheterPoints(): void
+	{
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			header('Location: index.php?controleur=boutique&methode=afficher');
+			exit;
+		}
+
+		$idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+		if (!$idUtilisateur) {
+			echo "Vous devez être connecté pour acheter des YuPoints.";
+			return;
+		}
+
+		$pack = isset($_POST['pack']) ? (int)$_POST['pack'] : 0;
+		$packsAutorises = [100, 500, 1000];
+		if (!in_array($pack, $packsAutorises, true)) {
+			echo "Pack invalide.";
+			return;
+		}
+
+		$utilisateurDao = new UtilisateurDao($this->getPdo());
+		$objetDao = new ObjetDao($this->getPdo());
+		$achatDao = new AchatDao($this->getPdo());
+
+		$ok = $utilisateurDao->incrementerYuPoints((int)$idUtilisateur, $pack);
+		if (!$ok) {
+			echo "Impossible de créditer les YuPoints.";
+			return;
+		}
+
+		$user = $utilisateurDao->find((int)$idUtilisateur);
+		$solde = $user ? $user->getYuPoints() : null;
+
+		echo $this->getTwig()->render('boutique.twig', [
+			'objets' => $objetDao->findAll(),
+			'yuPoints' => $solde,
+			'utilisateurConnecte' => $idUtilisateur,
+			'objetPossedeParID' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
+			'message' => "+" . $pack . " YuPoints ajoutés à votre solde."
 		]);
 	}
 }

@@ -3,39 +3,80 @@
 {% block title %}Boutique{% endblock %}
 
 {% block content %}
-<div class="boutique-container">
-  <h1>Boutique</h1>
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h3 m-0">Boutique</h1>
+    {% if user_connected %}
+      <span class="badge text-bg-primary">YuPoints: {{ yuPoints is not null ? yuPoints : 'inconnu' }}</span>
+    {% endif %}
+  </div>
 
-  {% if user_connected %}
-    <p><strong>Vos YuPoints:</strong> {{ yuPoints is not null ? yuPoints : 'inconnu' }}</p>
-  {% else %}
-    <p>Veuillez vous connecter pour acheter des objets.</p>
+  {% if not user_connected %}
+    <div class="alert alert-info" role="alert">
+      Veuillez vous connecter pour acheter des objets.
+    </div>
   {% endif %}
 
   {% if message %}
-    <div class="alert">{{ message }}</div>
+    <div class="alert alert-warning" role="alert">{{ message }}</div>
   {% endif %}
 
-  <div class="objets-grid">
+  {% if user_connected %}
+  <div class="card mb-4 border-primary">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Acheter des YuPoints</h5>
+      <form method="post" action="index.php?controleur=boutique&methode=acheterPoints" class="row g-2 align-items-center">
+        <div class="col-auto">
+          <select class="form-select" name="pack">
+            <option value="100">+100 YuPoints</option>
+            <option value="500">+500 YuPoints</option>
+            <option value="1000">+1000 YuPoints</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-outline-primary">Ajouter au solde</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row g-3">
     {% for objet in objets %}
-      <div class="objet-card">
-        <h3>Objet #{{ objet.getIdObjet() }}</h3>
-        <p>{{ objet.getDescription() }}</p>
-        <p><strong>Prix:</strong> {{ objet.getPrix() }} YuPoints</p>
-        {% set isOwned = ownedObjectIds is defined and (objet.getIdObjet() in ownedObjectIds) %}
-        {% if user_connected %}
-          {% if isOwned %}
-            <button type="button" disabled>Déjà possédé</button>
-          {% else %}
-            <form method="post" action="index.php?controleur=boutique&methode=acheter">
-              <input type="hidden" name="idObjet" value="{{ objet.getIdObjet() }}" />
-              <button type="submit">Acheter</button>
-            </form>
-          {% endif %}
-        {% endif %}
+      {% set isOwned = ownedObjectIds is defined and (objet.getIdObjet() in ownedObjectIds) %}
+      {% set canAfford = (yuPoints is not null) and (yuPoints >= objet.getPrix()) %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Objet #{{ objet.getIdObjet() }}</h5>
+            <p class="card-text text-muted mb-2">{{ objet.getDescription() }}</p>
+            <div class="mb-3">
+              <span class="badge text-bg-secondary">Prix: {{ objet.getPrix() }} YuPoints</span>
+            </div>
+
+            <div class="mt-auto">
+              {% if user_connected %}
+                {% if isOwned %}
+                  <button type="button" class="btn btn-outline-secondary w-100" disabled>Déjà possédé</button>
+                {% else %}
+                  <form method="post" action="index.php?controleur=boutique&methode=acheter" class="d-grid gap-2">
+                    <input type="hidden" name="idObjet" value="{{ objet.getIdObjet() }}" />
+                    <button type="submit" class="btn btn-primary" {% if not canAfford %}disabled{% endif %}>
+                      {% if canAfford %}Acheter{% else %}Solde insuffisant{% endif %}
+                    </button>
+                  </form>
+                {% endif %}
+              {% else %}
+                <button type="button" class="btn btn-outline-primary w-100" disabled>Connectez-vous pour acheter</button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
       </div>
     {% else %}
-      <p>Aucun objet disponible.</p>
+      <div class="col-12">
+        <div class="alert alert-light border" role="alert">Aucun objet disponible.</div>
+      </div>
     {% endfor %}
   </div>
 </div>
