@@ -219,6 +219,29 @@ class UtilisateurDao extends Dao
         $stmt->bindValue(':idUtilisateur', $user->getIdUtilisateur(), PDO::PARAM_INT);
         return $stmt->execute();
     }
-    
+
+    /**
+     * Incrémente le solde de YuPoints d'un utilisateur.
+     */
+    public function incrementerYuPoints(int $idUtilisateur, int $delta): bool
+    {
+        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET yuPoints = yuPoints + :delta WHERE idUtilisateur = :id");
+        $stmt->bindValue(':delta', $delta, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
+     * Décrémente le solde de YuPoints si le solde est suffisant.
+     * Retourne true si la mise à jour a eu lieu, false sinon.
+     */
+    public function decrementerYuPoints(int $idUtilisateur, int $montant): bool
+    {
+        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET yuPoints = yuPoints - :montant WHERE idUtilisateur = :id AND yuPoints >= :montant");
+        $stmt->bindValue(':montant', $montant, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
 }
 ?>
