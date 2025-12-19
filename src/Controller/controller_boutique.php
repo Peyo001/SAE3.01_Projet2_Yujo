@@ -23,20 +23,20 @@ class ControllerBoutique extends Controller
 
 		$yuPoints = null;
 		$idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
-		$ownedObjectIds = [];
+		$objetPossedeParID = [];
 		if ($idUtilisateur) {
 			$utilisateurDao = new UtilisateurDao($this->getPdo());
-			$user = $utilisateurDao->find((int)$idUtilisateur);
-			$yuPoints = $user ? $user->getYuPoints() : null;
+			$utilisateur = $utilisateurDao->find((int)$idUtilisateur);
+			$yuPoints = $utilisateur ? $utilisateur->getYuPoints() : null;
 			$achatDao = new AchatDao($this->getPdo());
-			$ownedObjectIds = $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur);
+			$objetPossedeParID = $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur);
 		}
 
 		echo $this->getTwig()->render('boutique.twig', [
 			'objets' => $objets,
 			'yuPoints' => $yuPoints,
-			'user_connected' => $idUtilisateur,
-			'ownedObjectIds' => $ownedObjectIds
+			'utilisateurConnecte' => $idUtilisateur,
+			'objetPossedeParID' => $objetPossedeParID
 		]);
 	}
 
@@ -68,15 +68,15 @@ class ControllerBoutique extends Controller
 		$achatDao = new AchatDao($this->getPdo());
 
 		$objet = $objetDao->find($idObjet);
-		$user = $utilisateurDao->find((int)$idUtilisateur);
+		$utilisateur = $utilisateurDao->find((int)$idUtilisateur);
 
-		if (!$objet || !$user) {
+		if (!$objet || !$utilisateur) {
 			echo "Utilisateur ou objet introuvable.";
 			return;
 		}
 
 		$prix = $objet->getPrix();
-		$solde = $user->getYuPoints();
+		$solde = $utilisateur->getYuPoints();
 
 		// Déjà acheté ?
 		$dejaAchete = $achatDao->findByObjetUtilisateur($idObjet, (int)$idUtilisateur);
@@ -84,7 +84,7 @@ class ControllerBoutique extends Controller
 			echo $this->getTwig()->render('boutique.twig', [
 				'objets' => $objetDao->findAll(),
 				'yuPoints' => $solde,
-				'user_connected' => $idUtilisateur,
+				'utilisateurConnecte' => $idUtilisateur,
 				'message' => 'Vous possédez déjà cet objet.'
 			]);
 			return;
@@ -94,7 +94,7 @@ class ControllerBoutique extends Controller
 			echo $this->getTwig()->render('boutique.twig', [
 				'objets' => $objetDao->findAll(),
 				'yuPoints' => $solde,
-				'user_connected' => $idUtilisateur,
+				'utilisateurConnecte' => $idUtilisateur,
 				'message' => 'Solde insuffisant pour cet achat.'
 			]);
 			return;
@@ -112,7 +112,7 @@ class ControllerBoutique extends Controller
 				echo $this->getTwig()->render('boutique.twig', [
 					'objets' => $objetDao->findAll(),
 					'yuPoints' => $solde,
-					'user_connected' => $idUtilisateur,
+					'utilisateurConnecte' => $idUtilisateur,
 					'message' => 'Solde insuffisant pour cet achat.'
 				]);
 				return;
@@ -134,8 +134,8 @@ class ControllerBoutique extends Controller
 		echo $this->getTwig()->render('boutique.twig', [
 			'objets' => $objetDao->findAll(),
 			'yuPoints' => $nouveauSolde,
-			'user_connected' => $idUtilisateur,
-			'ownedObjectIds' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
+			'utilisateurConnecte' => $idUtilisateur,
+			'objetPossedeParID' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
 			'message' => 'Achat effectué avec succès!'
 		]);
 	}
@@ -174,8 +174,8 @@ class ControllerBoutique extends Controller
 			return;
 		}
 
-		$user = $utilisateurDao->find((int)$idUtilisateur);
-		$solde = $user ? $user->getYuPoints() : null;
+		$utilisateur = $utilisateurDao->find((int)$idUtilisateur);
+		$solde = $utilisateur ? $utilisateur->getYuPoints() : null;
 
 		echo $this->getTwig()->render('boutique.twig', [
 			'objets' => $objetDao->findAll(),
