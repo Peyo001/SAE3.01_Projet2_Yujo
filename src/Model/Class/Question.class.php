@@ -3,10 +3,10 @@
  * Classe Question
  * 
  * Cette classe représente une question utilisée dans un quiz.
- * Elle permet de créer un objet Question et de l'utiliser avec les propriétés idQuestion, libelle est reponses.
+ * Elle permet de créer un objet Question et de l'utiliser avec les propriétés idQuestion, libelle.
  * 
  * Exemple d'utilisation :
- * $question = new Question(1, 'Quelle est la capitale de la France?', ['Paris', 'Londres', 'Berlin', 'Madrid']);
+ * $question = new Question(1, 'Quelle est la capitale de la France?');
  * echo $question->getLibelle(); // Affiche 'Quelle est la capitale de la France?'
  * 
  */
@@ -19,7 +19,7 @@ class Question
     // Libellé de la question
     private string $libelle;
 
-    // Réponses possibles à la question
+    // Tableau des réponses associées à la question
     private array $reponses = [];
 
     // CONSTRUCTEUR
@@ -30,12 +30,10 @@ class Question
      *
      * @param ?int $idQuestion Identifiant unique de la question.
      * @param string $libelle Libellé de la question.
-     * @param array $reponses Liste des réponses possibles à la question.
      */
-    public function __construct(?int $idQuestion, string $libelle, array $reponses) {
+    public function __construct(?int $idQuestion, string $libelle) {
         $this->setIdQuestion($idQuestion);
         $this->setLibelle($libelle);
-        $this->setReponses($reponses);
     }
 
     // DESTRUCTEUR
@@ -69,9 +67,9 @@ class Question
     }
 
     /**
-     * Récupère les réponses possibles à la question.
+     * Retourne la liste des réponses associées à la question.
      * 
-     * @return array Liste des réponses possibles.
+     * @return array La liste des réponses associées à la question.
      */
     public function getReponses(): array {
         return $this->reponses;
@@ -98,9 +96,9 @@ class Question
     }
 
     /**
-     * Définit les réponses possibles à la question.
+     * Définit la liste des réponses associées à la question.
      * 
-     * @param array $reponses Liste des réponses possibles à définir.
+     * @param array $reponses La liste des réponses à définir.
      */
     public function setReponses(array $reponses): void {
         $this->reponses = $reponses;
