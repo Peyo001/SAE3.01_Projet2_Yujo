@@ -28,6 +28,9 @@ class Quiz
     // Identifiant de la question associée au quiz
     private int $idQuestion;
 
+    // Identifiant du post associé au quiz
+    private int $idPost;
+
     // CONSTRUCTEUR
     /**
      * Constructeur de la classe Quiz.
@@ -39,19 +42,22 @@ class Quiz
      * @param ?string $description Description du quiz (peut être nulle).
      * @param bool $choixMultiples Indique si le quiz permet des choix multiples.
      * @param int $idQuestion Identifiant de la question associée au quiz.
+     * @param int $idPost Identifiant du post associé au quiz.
      */
     public function __construct(
         ?int $idQuiz,
         string $titre,
         ?string $description,
         bool $choixMultiples,
-        int $idQuestion
+        int $idQuestion,
+        int $idPost
     ) {
         $this->setIdQuiz($idQuiz);
         $this->setTitre($titre);
         $this->setDescription($description);
         $this->setChoixMultiples($choixMultiples);
         $this->setIdQuestion($idQuestion);
+        $this->setIdPost($idPost);
     }
 
     // DESTRUCTEUR
@@ -158,5 +164,13 @@ class Quiz
      */
     public function setIdQuestion(int $idQuestion): void {
         $this->idQuestion = $idQuestion;
+    }
+
+    /**
+     * Définit l'identifiant du post associé au quiz.
+     * 
+     * @param int $idPost Identifiant du post à définir.
+     */    public function setIdPost(int $idPost): void {
+        $this->idPost = $idPost;
     }
 }
