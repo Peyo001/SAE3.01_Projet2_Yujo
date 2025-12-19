@@ -180,8 +180,8 @@ class ControllerBoutique extends Controller
 		echo $this->getTwig()->render('boutique.twig', [
 			'objets' => $objetDao->findAll(),
 			'yuPoints' => $solde,
-			'user_connected' => $idUtilisateur,
-			'ownedObjectIds' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
+			'utilisateurConnecte' => $idUtilisateur,
+			'objetPossedeParID' => $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur),
 			'message' => "+" . $pack . " YuPoints ajoutés à votre solde."
 		]);
 	}
