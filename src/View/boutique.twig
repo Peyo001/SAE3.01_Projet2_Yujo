@@ -1,12 +1,10 @@
-{% extends "base_template.html.twig" %}
-
 {% block title %}Boutique{% endblock %}
 
 {% block content %}
 <div class="container py-4">
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h1 class="h3 m-0">Boutique</h1>
-    {% if user_connected %}
+    {% if utilisateurConnecte %}
       <span class="badge text-bg-primary">YuPoints: {{ yuPoints is not null ? yuPoints : 'inconnu' }}</span>
     {% endif %}
   </div>
@@ -21,7 +19,7 @@
     <div class="alert alert-warning" role="alert">{{ message }}</div>
   {% endif %}
 
-  {% if user_connected %}
+  {% if utilisateurConnecte %}
   <div class="card mb-4 border-primary">
     <div class="card-body">
       <h5 class="card-title mb-3">Acheter des YuPoints</h5>
@@ -43,7 +41,7 @@
 
   <div class="row g-3">
     {% for objet in objets %}
-      {% set isOwned = ownedObjectIds is defined and (objet.getIdObjet() in ownedObjectIds) %}
+      {% set estPossede = objetPossedeParID is defined and (objet.getIdObjet() in objetPossedeParID) %}
       {% set canAfford = (yuPoints is not null) and (yuPoints >= objet.getPrix()) %}
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card h-100 shadow-sm">
@@ -55,8 +53,8 @@
             </div>
 
             <div class="mt-auto">
-              {% if user_connected %}
-                {% if isOwned %}
+              {% if utilisateurConnecte %}
+                {% if estPossede %}
                   <button type="button" class="btn btn-outline-secondary w-100" disabled>Déjà possédé</button>
                 {% else %}
                   <form method="post" action="index.php?controleur=boutique&methode=acheter" class="d-grid gap-2">
