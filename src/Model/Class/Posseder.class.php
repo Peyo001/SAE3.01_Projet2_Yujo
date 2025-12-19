@@ -19,7 +19,7 @@ class Posseder {
      * Constructeur de la classe Posseder.
      * 
      * @param int $idObjet Identifiant de l'objet.
-     * @param int $idRoom Identifiant de le la room.
+     * @param int $idRoom Identifiant de la room.
      * @param ?string $datePossession Date de possession (peut être nulle).
      */
 
