@@ -32,6 +32,8 @@ class ControllerAchat extends Controller
      * 
      * Cette méthode récupère tous les achats de la base de données en utilisant le DAO `AchatDao`
      * et rend la vue `liste_achats.twig` avec les achats à afficher.
+     * 
+     * @return void
      */
     public function lister(): void
     {
@@ -52,6 +54,7 @@ class ControllerAchat extends Controller
      * et rend la vue `liste_achats.twig` avec les achats à afficher.
      * 
      * @param int $idUtilisateur L'identifiant de l'utilisateur dont on veut lister les achats.
+     * @return void
      * 
      */
     public function listerParUtilisateur(int $idUtilisateur): void
@@ -70,6 +73,8 @@ class ControllerAchat extends Controller
      * 
      * Cette méthode affiche un achat spécifique en récupérant son identifiant (`id`) passé dans l'URL.
      * Si l'achat est trouvé, la vue `achat.twig` est rendue avec les détails de l'achat.
+     * 
+     * @return void
      */
     public function afficher(): void
     {
