@@ -94,9 +94,4 @@ class Message {
     public function getIdUtilisateur() {
         return $this->idUtilisateur;
     }
-
-
-
-
 }
-
