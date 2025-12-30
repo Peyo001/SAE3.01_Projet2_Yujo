@@ -112,16 +112,17 @@ class QuestionDAO extends Dao{
     /**
      * Ajoute une réponse à une question
      * 
-     * Cette méthode permet d'ajouter une réponse à la table REPONSEPOSSIBLE et de l'associer à une question via son identifiant.
+     * Cette méthode permet d'ajouter une réponse à la table REPONSEPOSSIBLE et de l'associer à une question via la table LISTER.
      * 
-     * @param ReponsePossible $reponse la réponse à ajouter à la question.
+     * @param int $idQuestion Identifiant de la question.
+     * @param ReponsePossible $reponse la réponse à ajouter.
      * @return bool Retourne true si l'ajout a réussi, false sinon.
      */
-    public function addReponseToQuestion(ReponsePossible $reponse): bool {
+    public function addReponseToQuestion(int $idQuestion, ReponsePossible $reponse): bool {
         // Insérer la réponse dans la table REPONSEPOSSIBLE
         $stmt = $this->conn->prepare("INSERT INTO REPONSEPOSSIBLE (libelle, estCorrecte) VALUES (:libelle, :estCorrecte)");
         $stmt->bindValue(':libelle', $reponse->getLibelle(), PDO::PARAM_STR);
-        $stmt->bindValue(':estCorrecte', $reponse->isEstCorrecte(), PDO::PARAM_BOOL);
+        $stmt->bindValue(':estCorrecte', $reponse->getEstCorrecte(), PDO::PARAM_BOOL);
 
         if ($stmt->execute()) {
             // Récupérer l'ID de la réponse insérée
@@ -129,12 +130,22 @@ class QuestionDAO extends Dao{
 
             // Associer la réponse à la question dans la table LISTER
             $stmtAssoc = $this->conn->prepare("INSERT INTO LISTER (idQuestion, idReponsePossible) VALUES (:idQuestion, :idReponsePossible)");
-            $stmtAssoc->bindValue(':idQuestion', $reponse->getIdQuestion(), PDO::PARAM_INT);
+            $stmtAssoc->bindValue(':idQuestion', $idQuestion, PDO::PARAM_INT);
             $stmtAssoc->bindValue(':idReponsePossible', $reponseId, PDO::PARAM_INT);
 
             return $stmtAssoc->execute();
         }
         return false;
+    }
+
+    /**
+     * Supprime une réponse possible et ses associations pour une question donnée.
+     * Utilisé lorsque la réponse n'est plus liée à aucune question.
+     */
+    public function supprimerReponsePossible(int $idReponsePossible): bool {
+        $stmt = $this->conn->prepare("DELETE FROM REPONSEPOSSIBLE WHERE idReponsePossible = :id");
+        $stmt->bindValue(':id', $idReponsePossible, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     /**
@@ -149,7 +160,7 @@ class QuestionDAO extends Dao{
         $stmt = $this->conn->prepare("INSERT INTO QUESTION (libelle) VALUES (:libelle)");
         $stmt->bindValue(':libelle', $question->getLibelle(), PDO::PARAM_STR);
 
-        return $stmt->execute();
+        $result = $stmt->execute();
         if ($result) {
             $question->setIdQuestion((int)$this->conn->lastInsertId());
         }
