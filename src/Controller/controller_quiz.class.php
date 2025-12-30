@@ -48,30 +48,43 @@
             $titre = trim($_POST['titre'] ?? '');
             $description = trim($_POST['description'] ?? '');
             $choixMultiples = isset($_POST['choix_multiples']) ? (bool)$_POST['choix_multiples'] : false;
-            $idQuestion = isset($_POST['id_question']) ? (int)$_POST['id_question'] : 1;
             $idPost = isset($_POST['id_post']) ? (int)$_POST['id_post'] : null;
+            $libelleQuestion = trim($_POST['libelle_question'] ?? '');
 
-            if (empty($titre) || $idPost === null) {
-                echo "Le titre et l'ID du post sont requis.";
+            if (empty($titre) || $idPost === null || $libelleQuestion === '') {
+                echo "Le titre, l'ID du post et le libellé de la question sont requis.";
                 return;
             }
 
-            // Création de l'objet Quiz
-            $quiz = new Quiz(null, $titre, $description, $choixMultiples, $idQuestion, $idPost);
+            // Création de l'objet Quiz (la question sera associée après sa création)
+            $quiz = new Quiz(null, $titre, $description, $choixMultiples, 0, $idPost);
 
-            // Insertion dans la base de données
+            // Insertion du quiz
             $managerQuiz = new QuizDao($this->getPdo());
-            $succes = $managerQuiz->insererQuiz($quiz);
-
-            if ($succes) {
-                header('Location: index.php?controleur=quiz&methode=afficher&idQuiz=' . $quiz->getIdQuiz());    // à modifier en fonction de ce qu'on met
-                exit;
-            } else {
+            $succesQuiz = $managerQuiz->insererQuiz($quiz);
+            if (!$succesQuiz) {
                 throw new Exception("Erreur lors de la création du quiz.");
             }
+
+            // Création et association de la question au quiz
+            $questionDao = new QuestionDAO($this->getPdo());
+            $question = new Question(null, $libelleQuestion);
+            $creationQuestion = $questionDao->createQuestion($question);
+            if (!$creationQuestion || $question->getIdQuestion() === null) {
+                throw new Exception("Erreur lors de la création de la question.");
+            }
+
+            // Associer la question au quiz et sauvegarder
+            $quiz->setIdQuestion($question->getIdQuestion());
+            $managerQuiz->mettreAJourQuiz($quiz);
+
+            // Redirection vers l'affichage du quiz
+            header('Location: index.php?controleur=quiz&methode=afficher&idQuiz=' . $quiz->getIdQuiz());
+            exit;
         }
 
-        public function ajouterQuestion() {
+        //Je ne pense pas qu'elle serve à quelque chose puisque que la question est ajouté lors de la création du quiz et ne peut pas être supprimée
+        /*public function ajouterQuestion() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 echo "Méthode non autorisée.";
                 return;
@@ -96,8 +109,8 @@
             $questionDao = new QuestionDAO($this->getPdo());
             $question = new Question(null, $libelleQuestion);
 
-            $created = $questionDao->createQuestion($question);
-            if (!$created || $question->getIdQuestion() === null) {
+            $creationQuestion = $questionDao->createQuestion($question);
+            if (!$creationQuestion || $question->getIdQuestion() === null) {
                 throw new Exception("Erreur lors de la création de la question.");
             }
 
@@ -107,7 +120,7 @@
 
             header('Location: index.php?controleur=quiz&methode=afficher&idQuiz=' . $quiz->getIdQuiz());
             exit;
-        }
+        }*/
 
         public function ajouterReponse() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -142,8 +155,8 @@
 
             $reponse = new ReponsePossible(null, $libelle, $estCorrecte);
 
-            $ok = $questionDao->addReponseToQuestion($idQuestion, $reponse);
-            if (!$ok) {
+            $ajoutReponse = $questionDao->addReponseToQuestion($idQuestion, $reponse);
+            if (!$ajoutReponse) {
                 throw new Exception("Erreur lors de l'ajout de la réponse.");
             }
 
@@ -151,7 +164,8 @@
             exit;
         }
 
-        public function supprimerReponse() {
+        // Je pense que cette fonction n'est pas utile car après l'ajout des réponses et la mise en ligne du quiz, on ne peut plus modifier les réponses, sauf pendant l'ajout des réponses dans le formulaire de créatiuon du quiz
+        /*public function supprimerReponse() {
             $idQuiz = isset($_REQUEST['id_quiz']) ? (int)$_REQUEST['id_quiz'] : 0;
             $idQuestion = isset($_REQUEST['id_question']) ? (int)$_REQUEST['id_question'] : 0;
             $idReponsePossible = isset($_REQUEST['id_reponse_possible']) ? (int)$_REQUEST['id_reponse_possible'] : 0;
@@ -180,14 +194,14 @@
             $listerDao->supprimerLister($idReponsePossible, $idQuestion);
 
             // Si la réponse possible n'est plus associée à aucune question, on la supprime
-            $assocsRemaining = $listerDao->findByReponsePossible($idReponsePossible);
-            if (count($assocsRemaining) === 0) {
+            $listeReponses = $listerDao->findByReponsePossible($idReponsePossible);
+            if (count($listeReponses) === 0) {
                 $questionDao->supprimerReponsePossible($idReponsePossible);
             }
 
             header('Location: index.php?controleur=quiz&methode=afficher&idQuiz=' . $quiz->getIdQuiz());
             exit;
-        }
+        }*/
 
         public function supprimer() {
             $idQuiz = isset($_GET['idQuiz']) ? (int)$_GET['idQuiz'] : 0;
@@ -217,51 +231,10 @@
             exit;
         }
 
-        public function supprimerQuestion() {
-            // Accepte GET ou POST
-            $idQuiz = isset($_REQUEST['id_quiz']) ? (int)$_REQUEST['id_quiz'] : 0;
-            $idQuestion = isset($_REQUEST['id_question']) ? (int)$_REQUEST['id_question'] : 0;
-
-            if ($idQuiz === 0 || $idQuestion === 0) {
-                echo "Les identifiants de quiz et de question sont requis.";
-                return;
-            }
-
-            $quizDao = new QuizDao($this->getPdo());
-            $quiz = $quizDao->find($idQuiz);
-            if (!$quiz) {
-                echo "Quiz introuvable.";
-                return;
-            }
-
-            $questionDao = new QuestionDAO($this->getPdo());
-            $question = $questionDao->findByIdQuestion($idQuestion);
-            if (!$question) {
-                echo "Question introuvable.";
-                return;
-            }
-
-            // Supprimer les associations LISTER pour cette question
-            $listerDao = new ListerDAO($this->getPdo());
-            $assocs = $listerDao->findByQuestion($idQuestion);
-            foreach ($assocs as $assoc) {
-                $listerDao->supprimerLister($assoc->getIdReponsePossible(), $assoc->getIdQuestion());
-            }
-
-            // Si le quiz référence cette question, l'enlever (mettre un fallback à 0)
-            if ($quiz->getIdQuestion() === $idQuestion) {
-                $quiz->setIdQuestion(0);
-                $quizDao->mettreAJourQuiz($quiz);
-            }
-
-            // Supprimer la question
-            $ok = $questionDao->supprimerQuestion($idQuestion);
-            if (!$ok) {
-                throw new Exception("Erreur lors de la suppression de la question.");
-            }
-
-            // Retour à l'affichage du quiz
-            header('Location: index.php?controleur=quiz&methode=afficher&idQuiz=' . $quiz->getIdQuiz());
-            exit;
-        }
+        // Je pense que c'est une méthode qui doit être présente QuestionDao et non dans le controller_quiz
+        /*public function supprimerQuestion() {
+            // Règle métier: une question ne peut pas être supprimée seule.
+            // Inviter à supprimer le quiz pour supprimer la question.
+            echo "Suppression de question interdite. Supprimez le quiz associé.";
+        }*/
     }
