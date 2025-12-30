@@ -81,6 +81,7 @@ class ListerDAO extends Dao {
 
     /**
      * Met à jour une relation question-réponse.
+     * 
      * @return bool Retourne true si la mise à jour a réussi, sinon false.
      */
     public function mettreAJourLister(Lister $lister): bool {
