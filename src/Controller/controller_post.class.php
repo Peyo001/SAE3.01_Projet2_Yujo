@@ -78,6 +78,24 @@ class ControllerPost extends Controller
         $succes = $manager->insererPost($post);
 
         if ($succes) {
+            // Si le type de post est "quiz", créer automatiquement le quiz associé
+            if ($typePost === 'quiz') {
+                $idPost = $post->getIdPost();
+                
+                // Récupérer les données du quiz depuis le formulaire
+                $titreQuiz = trim($_POST['titre_quiz'] ?? 'Quiz sans titre');
+                $descriptionQuiz = trim($_POST['description_quiz'] ?? '');
+                $choixMultiples = isset($_POST['choix_multiples']) ? (bool)$_POST['choix_multiples'] : false;
+                $idQuestion = isset($_POST['id_question']) ? (int)$_POST['id_question'] : 1;
+                
+                // Créer l'objet Quiz
+                $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, $idPost);
+                
+                // Insérer le quiz dans la base de données
+                $managerQuiz = new QuizDao($this->getPdo());
+                $managerQuiz->insererQuiz($quiz);
+            }
+            
             header('Location: index.php?controleur=post&methode=lister');
             exit;
         } else {
