@@ -222,6 +222,12 @@ class UtilisateurDao extends Dao
 
     /**
      * Incrémente le solde de YuPoints d'un utilisateur.
+     * 
+     * Cette méthode permet d'ajouter un certain montant aux YuPoints d'un utilisateur spécifié par son identifiant.
+     * 
+     * @param int $idUtilisateur L'identifiant de l'utilisateur.
+     * @param int $delta Le montant à ajouter aux YuPoints.
+     * @return bool Retourne true si la mise à jour a réussi, false sinon.
      */
     public function incrementerYuPoints(int $idUtilisateur, int $delta): bool
     {
@@ -233,7 +239,13 @@ class UtilisateurDao extends Dao
 
     /**
      * Décrémente le solde de YuPoints si le solde est suffisant.
-     * Retourne true si la mise à jour a eu lieu, false sinon.
+     * 
+     * Cette méthode permet de soustraire un certain montant aux YuPoints d'un utilisateur spécifié par son identifiant,
+     * uniquement si le solde actuel est suffisant pour couvrir la soustraction.
+     * 
+     * @param int $idUtilisateur L'identifiant de l'utilisateur.
+     * @param int $montant Le montant à soustraire des YuPoints.
+     * @return bool Retourne true si la mise à jour a réussi, false sinon.
      */
     public function decrementerYuPoints(int $idUtilisateur, int $montant): bool
     {

@@ -154,8 +154,6 @@ class GroupeDao extends Dao
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
         return $stmt->execute(); 
-    }
-
-    
+    }    
 }
 ?>

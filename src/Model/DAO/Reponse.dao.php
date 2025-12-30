@@ -39,6 +39,14 @@ class ReponseDao extends Dao
         return null;
     }
 
+    /**
+     * Récupère toutes les réponses associées à un post spécifique.
+     * 
+     * Cette méthode permet de récupérer toutes les réponses liées à un post donné en utilisant l'identifiant du post.
+     * 
+     * @param int $idPost Identifiant du post dont on souhaite récupérer les réponses.
+     * @return Reponse[] Tableau d'objets `Reponse` associés au post.
+     */
     public function findResponsesByPost(int $idPost): ?array{
         $sql = "SELECT * FROM REPONSE WHERE idPost = :idPost";
         $stmt = $this->conn->prepare($sql);
@@ -48,6 +56,14 @@ class ReponseDao extends Dao
         return $stmt->fetchAll() ?: [];
     }
 
+    /**
+     * Récupère toutes les réponses d'un auteur spécifique.
+     * 
+     * Cette méthode permet de récupérer toutes les réponses soumises par un auteur donné en utilisant l'identifiant de l'auteur.
+     * 
+     * @param int $idAuteur Identifiant de l'auteur dont on souhaite récupérer les réponses.
+     * @return Reponse[]|null Tableau d'objets `Reponse` soumis par l'auteur, ou null si aucune réponse trouvée.
+     */
     public function findByAuteur(int $idAuteur): ?array {
         $stmt = $this->conn->prepare("SELECT * FROM REPONSE WHERE idAuteur = :idAuteur ORDER BY dateReponse DESC");
         $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
@@ -122,7 +138,4 @@ class ReponseDao extends Dao
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
-
-    
-
 }
