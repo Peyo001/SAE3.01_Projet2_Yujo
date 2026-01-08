@@ -6,11 +6,43 @@
         - la page de personnalisation d'une room car on a besoin de la room pour pouvoir la modifier -->
 
 <?php
+    /**
+     * ControllerRoom, gère les actions liées aux rooms comme
+     * l'affichage, la création, la modification et la suppression d'une room.
+     * 
+     * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+     * Utilise Twig pour le rendu des vues.
+     * Utilise la classe Validator pour la validation des données.
+     * 
+     * Exemples d'utilisation :
+     * $controllerRoom = new ControllerRoom($loader, $twig);
+     * $controllerRoom->afficher(); // affiche une room spécifique
+     * $controllerRoom->lister(); // affiche la liste des rooms
+     * $controllerRoom->creer(); // crée une nouvelle room
+     * $controllerRoom->modifier(); // modifie une room existante
+     * $controllerRoom->supprimer(); // supprime une room
+     */
     class ControllerRoom extends Controller {
+
+        /**
+         * @brief Constructeur de la classe ControllerRoom.
+         * 
+         * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de templates Twig.
+         * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues.
+         */
         public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
             parent::__construct($loader, $twig);
         }
 
+        /**
+         * @brief Affiche une room spécifique.
+         * 
+         * Récupère l'idRoom depuis les paramètres GET.
+         * Utilise RoomDao pour récupérer les informations de la room.
+         * Rend la vue 'room.twig' avec les données de la room.
+         * 
+         * @return void
+         */
         public function afficher() {
             $idRoom = isset($_GET['idRoom']) ? $_GET['idRoom'] : null;
 
@@ -32,6 +64,15 @@
             ]);
         }
 
+        /**
+         * @brief Affiche la liste des rooms.
+         * 
+         * Récupère l'idCreateur depuis les paramètres GET (optionnel).
+         * Utilise RoomDao pour récupérer toutes les rooms ou celles d'un créateur spécifique.
+         * Rend la vue 'rooms_list.twig' avec les données des rooms.
+         * 
+         * @return void
+         */
         public function lister() {
             $idCreateur = isset($_GET['idCreateur']) ? $_GET['idCreateur'] : null;            
             $managerRoom = new RoomDao($this->getPdo());
@@ -50,6 +91,15 @@
             ]);
         }
 
+        /**
+         * @brief Crée une nouvelle room.
+         * 
+         * Affiche le formulaire de création si la requête n'est pas en POST.
+         * Sinon, récupère les données du formulaire, crée une nouvelle room et la sauvegarde.
+         * Redirige vers la liste des rooms après création.
+         * 
+         * @return void
+         */
         public function creer() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 echo $this->getTwig()->render('room_create.twig');
@@ -77,6 +127,16 @@
             exit;
         }
 
+        /**
+         * @brief Modifie une room existante.
+         * 
+         * Récupère l'idRoom depuis les paramètres GET.
+         * Affiche le formulaire de modification si la requête n'est pas en POST.
+         * Sinon, récupère les données du formulaire, met à jour la room et la sauvegarde.
+         * Redirige vers l'affichage de la room après modification.
+         * 
+         * @return void
+         */
         public function modifier() {
             $idRoom = $_GET['idRoom'] ?? null;
 
@@ -107,6 +167,15 @@
             exit;
         }
 
+        /**
+         * @brief Supprime une room existante.
+         * 
+         * Récupère l'idRoom depuis les paramètres GET.
+         * Supprime la room correspondante.
+         * Redirige vers la liste des rooms après suppression.
+         * 
+         * @return void
+         */
         public function supprimer() {
             $idRoom = $_GET['idRoom'] ?? null;
 

@@ -171,7 +171,4 @@ class AvatarDao extends Dao
         $stmt->bindValue(':idAvatar', $avatar->getIdAvatar(), PDO::PARAM_INT);
         return $stmt->execute();
     }
-
-  
-    
 }

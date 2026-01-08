@@ -73,7 +73,8 @@ class ComposerDao extends Dao{
     }
 
 
-    /**     * Supprime un enregistrement de la table COMPOSER en fonction de l'identifiant du groupe et de l'utilisateur.
+    /**     
+     * Supprime un enregistrement de la table COMPOSER en fonction de l'identifiant du groupe et de l'utilisateur.
      * 
      * Cette méthode permet de supprimer une relation entre un groupe et un utilisateur dans la table COMPOSER.
      * 
@@ -89,7 +90,8 @@ class ComposerDao extends Dao{
         return $stmt->execute();
     }
 
-    /**     * Supprime tous les enregistrements de la table COMPOSER pour un groupe donné.
+    /**     
+     * Supprime tous les enregistrements de la table COMPOSER pour un groupe donné.
      * 
      * Cette méthode permet de supprimer toutes les relations entre un groupe et ses utilisateurs dans la table COMPOSER.
      * 
@@ -103,7 +105,8 @@ class ComposerDao extends Dao{
     }
 
 
-    /**     * Met à jour la date d'ajout pour un enregistrement spécifique dans la table COMPOSER.
+    /**     
+     * Met à jour la date d'ajout pour un enregistrement spécifique dans la table COMPOSER.
      * 
      * Cette méthode permet de modifier la date d'ajout d'un utilisateur à un groupe dans la table COMPOSER.
      * 
