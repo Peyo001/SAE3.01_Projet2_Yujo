@@ -42,7 +42,8 @@ class MessageDAO extends Dao{
     }
 
 
-    /** Trouve tous les messages d'un groupe donné.
+    /** 
+     * Trouve tous les messages d'un groupe donné.
      * 
      * @param int $idGroupe Identifiant du groupe.
      * @return array Tableau d'objets Message.
@@ -66,7 +67,8 @@ class MessageDAO extends Dao{
         return $messages;
     }
 
-    /** Trouve tous les messages d'un utilisateur donné.
+    /** 
+     * Trouve tous les messages d'un utilisateur donné.
      * 
      * @param int $idUtilisateur Identifiant de l'utilisateur.
      * @return array Tableau d'objets Message.
@@ -91,7 +93,8 @@ class MessageDAO extends Dao{
     }
 
 
-    /** Trouve tous les messages dans la base de données.
+    /** 
+     * Trouve tous les messages dans la base de données.
      * 
      * @return array Tableau d'objets Message.
      */
@@ -113,9 +116,14 @@ class MessageDAO extends Dao{
     }
 
 
-    /** Sauvegarde un message dans la base de données.
+    /** 
+     * Sauvegarde un message dans la base de données.
+     * 
+     * Si l'objet Message a un idMessage null, il est inséré comme un nouveau message.
+     * Sinon, le message existant est mis à jour.
      * 
      * @param Message $message L'objet Message à sauvegarder.
+     * @return void
      */
     public function insererMessage(Message $message): void {
         if ($message->getIdMessage() === null) {
@@ -139,9 +147,11 @@ class MessageDAO extends Dao{
         }
     }
 
-    /** Supprime un message de la base de données.
+    /** 
+     * Supprime un message de la base de données.
      * 
-     * @param Message $message L'objet Message à supprimer.
+     * @param int $idUtilisateur Identifiant de l'utilisateur dont les messages doivent être supprimés.
+     * @return void
      */
     public function supprimerMessage(int $idUtilisateur): void {
         $stmt = $this->conn->prepare("DELETE FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");

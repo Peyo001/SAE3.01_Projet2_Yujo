@@ -6,6 +6,8 @@
  * Elle permet de créer un objet Utilisateur et de l'utiliser avec les propriétés idUtilisateur, nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints et personnalisation.
  * 
  * Exemple d'utilisation :
+ * $utilisateur = new Utilisateur('Doe', 'John', '1990-01-01', 'Homme', 'johndoe', 'john.doe@example.com', 'password123', 'Standard', false, '2024-01-01', 100);
+ * echo $utilisateur->getFullName(); // Affiche "John Doe"
  *
  */
 class Utilisateur
@@ -25,7 +27,6 @@ class Utilisateur
     private int $yuPoints;// Nombre de YuPoints de l'utilisateur
     private ?string $personnalisation;// Personnalisation de l'utilisateur (JSON ou autre format)
 
-    // CONSTRUCTEUR
     // CONSTRUCTEUR
     /**
      * Constructeur de la classe Utilisateur.
@@ -389,7 +390,7 @@ class Utilisateur
      * 
      * @param ?string $personnalisation La personnalisation du profil de l'utilisateur.
      */
-    public function setPersonnalisation($personnalisation): void
+    public function setPersonnalisation(?string $personnalisation): void
     {
         $this->personnalisation = $personnalisation;
     }

@@ -1,20 +1,40 @@
 <?php
 
 /**
- * Contrôleur Boutique
+ * ContrôleurBoutique gère les actions liées à la boutique en ligne comme
+ * son affichage, l'achat d'objets et l'achat de YuPoints.
  *
- * Liste tous les objets disponibles et permet l'achat
- * en vérifiant le nombre de YuPoints de l'utilisateur.
+ * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+ * Utilise Twig pour le rendu des vues.
+ * Utilise la classe Validator pour la validation des données.
+ * 
+ * Exemples d'utilisation :
+ * $controller = new ControllerBoutique($loader, $twig);
+ * $controller->afficher(); // Affiche la boutique
+ * $controller->acheter(); // Achète un objet
+ * $controller->acheterPoints(); // Achète des YuPoints
  */
 class ControllerBoutique extends Controller
 {
+	/**
+	 * @brief Constructeur de la classe ControllerBoutique.
+	 * 
+	 * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de fichiers Twig.
+	 * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues.
+	 */
 	public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
 	{
 		parent::__construct($loader, $twig);
 	}
 
 	/**
-	 * Affiche la boutique avec tous les objets et le solde utilisateur.
+	 * @brief Affiche la boutique avec tous les objets et le solde utilisateur.
+	 * Récupère les objets via ObjetDao.
+	 * Récupère le solde YuPoints de l'utilisateur connecté via UtilisateurDao.
+	 * Récupère les objets déjà achetés par l'utilisateur via AchatDao.
+	 * Rend la vue 'boutique.twig' avec les données nécessaires.
+	 * 
+	 * @return void
 	 */
 	public function afficher(): void
 	{
@@ -41,8 +61,11 @@ class ControllerBoutique extends Controller
 	}
 
 	/**
-	 * Traite l'achat d'un objet: vérifie YuPoints et enregistre l'achat.
+	 * @brief Traite l'achat d'un objet: vérifie YuPoints et enregistre l'achat.
+	 * Vérifie que l'utilisateur est connecté.
 	 * Attendu: POST avec `idObjet`.
+	 * 
+	 * @return void
 	 */
 	public function acheter(): void
 	{
@@ -141,8 +164,10 @@ class ControllerBoutique extends Controller
 	}
 
 	/**
-	 * Ajoute des YuPoints au solde utilisateur (pack prédéfinis).
+	 * @brief Ajoute des YuPoints au solde utilisateur (pack prédéfinis).
 	 * Attendu: POST pack in [100, 500, 1000].
+	 * 
+	 * @return void
 	 */
 	public function acheterPoints(): void
 	{

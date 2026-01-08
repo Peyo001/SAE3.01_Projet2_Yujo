@@ -1,4 +1,18 @@
 <?php
+    /**
+     * ControlleurAdmin gère les actions réservées aux administrateurs telles que
+     * la gestion des utilisateurs (supprimer les utilisateurs indésirables)
+     * et des objets (ajouter de nouveaux objets).
+     * 
+     * Hérite de la classe Controller pour bénéficier des fonctionnalités de base
+     * Utilise Twig pour le rendu des vues.
+     * Utilise la classe Validator pour la validation des données.
+     * 
+     * Exemples d'utilisation :
+     * Accéder au tableau de bord admin : dashboard()
+     * Ajouter un nouvel objet : ajouterObjet()
+     * Supprimer un utilisateur : supprimerUtilisateur()
+     */
 
     class ControllerAdmin extends Controller {
         
@@ -11,6 +25,13 @@
             }
         }*/
 
+        /**
+         * @brief Affiche le tableau de bord de l'administrateur avec la liste des utilisateurs.
+         * 
+         * Récupère tous les utilisateurs via UtilisateurDAO et les passe à la vue Twig 'admin/dashboard.twig'.
+         * 
+         * @return void
+         */
         public function dashboard(): void {
             //$this->verifierAdmin();
 
@@ -22,6 +43,14 @@
             ]);
         }
 
+        /**
+         * @brief Ajoute un nouvel objet à la base de données.
+         * 
+         * Récupère les données du formulaire POST, crée un objet Objet,
+         * puis utilise ObjetDAO pour l'insérer en base.
+         * 
+         * @return void
+         */
         public function ajouterObjet(): void {
             //$this->verifierAdmin();
 
@@ -43,6 +72,15 @@
             exit;
         }
 
+        /**
+         * @brief Supprime un utilisateur et toutes ses données associées de la base de données.
+         * 
+         * Supprime l'avatar, les amis, les groupes, les messages, les ajouts, les achats,
+         * ainsi que les rooms et les objets associés à l'utilisateur.
+         * Utilise une transaction pour garantir l'intégrité des données.
+         * 
+         * @return void
+         */
         public function supprimerUtilisateur(): void {
             //$this->verifierAdmin();
 

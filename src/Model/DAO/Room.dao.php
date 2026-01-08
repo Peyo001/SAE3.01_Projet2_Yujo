@@ -235,6 +235,7 @@ require_once "Dao.class.php";
          * Cette méthode met à jour le nombre de visites d'une room en l'incrémentant de 1.
          * 
          * @param int $idRoom L'identifiant de la room dont le nombre de visites doit être incrémenté.
+         * @return void
          */
         public function incrementerVisite(int $idRoom): void {
             $stmt = $this->conn->prepare("UPDATE ROOM SET nbVisit = nbVisit + 1 WHERE idRoom = :idRoom");
@@ -249,6 +250,7 @@ require_once "Dao.class.php";
         * Cette méthode permet d'ajouter un objet à la table `OBJET` et de l'associer à une room via son identifiant.
         * 
         * @param Objet $objet L'objet à ajouter à la room.
+        * @param int $idRoom L'identifiant de la room à laquelle ajouter l'objet.
         * @return bool Retourne true si l'ajout a réussi, sinon false.
         */
         public function addObjetToRoom(Objet $objet, int $idRoom): bool {

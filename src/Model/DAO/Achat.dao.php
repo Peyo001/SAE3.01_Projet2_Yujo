@@ -53,7 +53,13 @@ class AchatDao extends Dao
     }
 
     /**
-     * Retourne l'achat si l'utilisateur a déjà acheté cet objet.
+     * Vérifie si un utilisateur a déjà acheté un objet spécifique.
+     * 
+     * Cette méthode recherche un achat en fonction de l'identifiant de l'objet et de l'identifiant de l'utilisateur.
+     * 
+     * @param int $idObjet Identifiant de l'objet à vérifier.
+     * @param int $idUtilisateur Identifiant de l'utilisateur à vérifier.
+     * @return Achat|null Retourne un objet Achat si l'achat existe, sinon null. 
      */
     public function findByObjetUtilisateur(int $idObjet, int $idUtilisateur): ?Achat
     {
@@ -97,9 +103,6 @@ class AchatDao extends Dao
      * @param Achat $achat L'objet Achat à insérer dans la base de données.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
-    /**
-     * Insère un nouvel achat.
-     */
     public function insererAchat(Achat $achat): bool
     {
         $stmt = $this->conn->prepare("INSERT INTO ACHETER (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
@@ -118,9 +121,6 @@ class AchatDao extends Dao
      * @param int $idObjet Identifiant de l'objet dont l'achat doit être supprimé.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    /**
-     * Supprime un achat.
-     */
     public function supprimerAchat(int $idObjet, ?int $idUtilisateur = null): bool
     {
         $sql = "DELETE FROM ACHETER WHERE idObjet = :idObjet" . ($idUtilisateur !== null ? " AND idUtilisateur = :idUtilisateur" : "");
@@ -134,7 +134,11 @@ class AchatDao extends Dao
 
     /**
      * Liste des idObjet déjà achetés par un utilisateur.
-     * @return int[]
+     * 
+     * Cette méthode récupère les identifiants des objets achetés par un utilisateur spécifique.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @return int[] Tableau des identifiants des objets achetés par l'utilisateur.
      */
     public function listObjetsAchetesByUtilisateur(int $idUtilisateur): array
     {
