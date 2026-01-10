@@ -1,0 +1,23 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Objet{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <h1 class="h3 mb-4">Détails de l'objet</h1>
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ objet.description }}</h5>
+                <p class="mb-2"><strong>Prix:</strong> {{ objet.prix }} crédits</p>
+                <p class="mb-2"><strong>Modèle 3D:</strong> {{ objet.modele3dPath }}</p>
+                <div class="d-flex gap-2 mt-3">
+                    <a class="btn btn-outline-secondary" href="index.php?controleur=objet&methode=modifier&idObjet={{ objet.idObjet }}">Modifier</a>
+                    <a class="btn btn-outline-danger" href="index.php?controleur=objet&methode=supprimer&idObjet={{ objet.idObjet }}" onclick="return confirm('Supprimer cet objet ?');">Supprimer</a>
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-secondary" href="index.php?controleur=objet&methode=lister">Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}

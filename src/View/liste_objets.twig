@@ -1,0 +1,37 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Liste des objets{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3">Objets</h1>
+        {% if idRoom %}
+            <a class="btn btn-success" href="index.php?controleur=objet&methode=creer&idRoom={{ idRoom }}">+ Nouvel objet</a>
+        {% endif %}
+    </div>
+
+    {% if objets is empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Aucun objet pour le moment.</div>
+        </div>
+    {% else %}
+        {% for objet in objets %}
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ objet.description }}</h5>
+                        <p class="text-muted mb-2">Prix : {{ objet.prix }} crédits</p>
+                        <p class="text-muted small mb-3">Modèle 3D : {{ objet.modele3dPath }}</p>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-primary btn-sm" href="index.php?controleur=objet&methode=afficher&idObjet={{ objet.idObjet }}">Voir</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="index.php?controleur=objet&methode=modifier&idObjet={{ objet.idObjet }}">Modifier</a>
+                            <a class="btn btn-outline-danger btn-sm" href="index.php?controleur=objet&methode=supprimer&idObjet={{ objet.idObjet }}" onclick="return confirm('Supprimer cet objet ?');">Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
