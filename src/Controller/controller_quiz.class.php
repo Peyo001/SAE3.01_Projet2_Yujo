@@ -1,11 +1,41 @@
-<!-- Controller pour la classe Quiz -->
-
 <?php
+    /**
+     * Classe ControllerQuiz
+     * 
+     * Cette classe gère les actions liées aux quiz dans l'application. Elle utilise les classes métiers et DAO appropriées
+     * pour interagir avec la base de données et afficher les vues correspondantes.
+     * 
+     * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+     * Utilise Twig pour le rendu des vues.
+     * Utilise la classe Validator pour la validation des données.
+     * 
+     * Exemples d'utilisation :
+     * $controllerQuiz = new ControllerQuiz($loader, $twig);
+     * $controllerQuiz->lister(); // Affiche la liste des quiz
+     * $controllerQuiz->afficher(); // Affiche un quiz spécifique
+     * $controllerQuiz->creer(); // Crée un nouveau quiz
+     * $controllerQuiz->ajouterReponse(); // Ajoute une réponse à une question
+     */
     class ControllerQuiz extends Controller {
+        /**
+         * Constructeur de la classe ControllerQuiz
+         * 
+         * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de templates Twig
+         * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues
+         */
         public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
             parent::__construct($loader, $twig);
         }
 
+        /**
+         * @brief Affiche un quiz spécifique.
+         * 
+         * Récupère l'ID du quiz depuis les paramètres GET, vérifie son existence,
+         * puis utilise la méthode find() de la classe QuizDao pour récupérer le quiz.
+         * Ensuite, elle rend la vue `quiz.twig` avec les données du quiz.
+         * 
+         * @return void
+         */
         public function afficher() {
             $idQuiz = isset($_GET['idQuiz']) ? $_GET['idQuiz'] : null;
 
@@ -27,6 +57,14 @@
             ]);
         }
 
+        /**
+         * @brief Liste tous les quiz disponibles.
+         * 
+         * Utilise la méthode findAll() de la classe QuizDao pour récupérer tous les quiz
+         * et rend la vue 'liste_quizs.twig' avec les données des quiz.
+         * 
+         * @return void
+         */
         public function lister() {
             $managerQuiz = new QuizDao($this->getPdo());
             $quizs = $managerQuiz->findAll();
@@ -38,6 +76,15 @@
             ]);
         }
 
+        /**
+         * @brief Crée un nouveau quiz avec une question associée.
+         * 
+         * Récupère les données du formulaire via POST, crée un nouvel objet Quiz
+         * et une Question associée, puis les insère dans la base de données.
+         * Après la création, redirige vers l'affichage du quiz créé.
+         * 
+         * @return void
+         */
         public function creer() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 echo "Méthode non autorisée.";
@@ -122,6 +169,15 @@
             exit;
         }*/
 
+        /**
+         * @brief Ajoute une réponse possible à une question d'un quiz.
+         * 
+         * Récupère les données du formulaire via POST, crée un objet ReponsePossible,
+         * et l'associe à la question spécifiée. Après l'ajout, redirige vers l'affichage du quiz.
+         * 
+         * @return void
+         * @throws Exception Si une erreur survient lors de l'ajout de la réponse
+         */
         public function ajouterReponse() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 echo "Méthode non autorisée.";
@@ -203,6 +259,13 @@
             exit;
         }*/
 
+        /**
+         * @brief Supprime un quiz spécifique et son post associé.
+         * 
+         * Récupère l'ID du quiz depuis les paramètres GET, supprime le quiz
+         * ainsi que le post associé, puis redirige vers la liste des posts.
+         * @return void
+         */
         public function supprimer() {
             $idQuiz = isset($_GET['idQuiz']) ? (int)$_GET['idQuiz'] : 0;
 
