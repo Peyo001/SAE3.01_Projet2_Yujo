@@ -16,22 +16,33 @@
             <form action="index.php?controleur=utilisateur&methode=modifierProfil" method="POST">
                 <div class="mb-3">
                     <label for="nom" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="nom" name="nom" value="{{ utilisateur.nom }}">
+                    <input type="text" class="form-control" id="nom" name="nom" value="{{ utilisateur.nom }}" minlength="2" maxlength="150" pattern="^[a-zA-ZÀ-ÿ\'-]+$">
                 </div>
                 <div class="mb-3">
                     <label for="prenom" class="form-label">Prénom</label>
-                    <input type="text" class="form-control" id="prenom" name="prenom" value="{{ utilisateur.prenom }}">
+                    <input type="text" class="form-control" id="prenom" name="prenom" value="{{ utilisateur.prenom }}" minlength="2" maxlength="150" pattern="^[a-zA-ZÀ-ÿ\'-]+$" required>
                 </div>
                 <div class="mb-3">
                     <label for="pseudo" class="form-label">Pseudo</label>
-                    <input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ utilisateur.pseudo }}">
+                    <input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ utilisateur.pseudo }}" minlength="3" maxlength="150" pattern="^[a-zA-Z0-9_]+$">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ utilisateur.email }}">
+                    <input type="email" class="form-control" id="email" name="email" value="{{ utilisateur.email }}" maxlength="255">
                 </div>
                 <button type="submit" class="btn btn-primary" style="background-color: #e9407A;">Enregistrer les modifications</button>
             </form>
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
