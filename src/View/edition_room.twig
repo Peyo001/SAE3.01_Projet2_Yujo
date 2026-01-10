@@ -1,0 +1,26 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Modifier la room{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="h3 mb-4">Modifier la room</h1>
+        <form method="post" action="index.php?controleur=room&methode=modifier&idRoom={{ room.idRoom }}">
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom de la room</label>
+                <input type="text" class="form-control" id="nom" name="nom" required minlength="2" maxlength="150" value="{{ room.nom }}">
+            </div>
+            <div class="mb-3">
+                <label for="visibilite" class="form-label">Visibilité</label>
+                <select class="form-select" id="visibilite" name="visibilite" required>
+                    <option value="public" {% if room.visibilite == 'public' %}selected{% endif %}>Publique</option>
+                    <option value="prive" {% if room.visibilite == 'prive' %}selected{% endif %}>Privée</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a class="btn btn-outline-secondary" href="index.php?controleur=room&methode=afficher&idRoom={{ room.idRoom }}">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

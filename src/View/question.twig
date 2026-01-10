@@ -1,0 +1,20 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Question{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h1 class="h4 mb-2">{{ question.libelle }}</h1>
+                <p class="text-muted small mb-0">ID : {{ question.idQuestion }}</p>
+            </div>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+            <a class="btn btn-outline-secondary" href="index.php?controleur=question&methode=lister">Retour à la liste</a>
+            <a class="btn btn-success" href="index.php?controleur=question&methode=afficherFormulaireInsertion">+ Nouvelle question</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
