@@ -15,15 +15,15 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label for="contenu">Votre message :</label><br>
-                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" required></textarea>
+                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" minlength="1" maxlength="5000" required>{{ donnees.contenu|default('') }}</textarea>
                 </div>
 
                 <div style="margin-bottom: 15px;">
                     <label for="type_post">Type de post :</label><br>
                     <select name="type_post" id="type_post">
-                        <option value="texte">Texte</option>
-                        <option value="image">Image</option>
-                        <option value="lien">Lien</option>
+                        <option value="texte" {% if donnees.type_post|default('texte') == 'texte' %}selected{% endif %}>Texte</option>
+                        <option value="image" {% if donnees.type_post|default('texte') == 'image' %}selected{% endif %}>Image</option>
+                        <option value="lien" {% if donnees.type_post|default('texte') == 'lien' %}selected{% endif %}>Lien</option>
                     </select>
                 </div>
 
@@ -31,6 +31,28 @@
 
                 <button type="submit">Publier</button>
             </form>
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

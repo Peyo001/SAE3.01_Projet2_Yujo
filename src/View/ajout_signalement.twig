@@ -16,14 +16,36 @@
             <form action="index.php?controleur=signalement&methode=traiterFormulaireInsertion" method="post">
                 
                 <div style="margin-bottom: 15px;">
-                    <label for="contenu">Votre raison :</label><br>
-                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" required></textarea>
+                    <label for="raison">Votre raison :</label><br>
+                    <textarea name="raison" id="raison" rows="5" style="width: 100%;" minlength="10" maxlength="2000" required>{{ donnees.raison|default('') }}</textarea>
                 </div>
 
                 <input type="hidden" name="id_post" value="1">
 
                 <button type="submit">Soumettre</button>
             </form>
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

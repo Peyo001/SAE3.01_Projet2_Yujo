@@ -69,25 +69,111 @@ class ControllerParametre extends Controller
         // Initialisation du DAO Utilisateur
         $userManager = new UtilisateurDao($this->getPdo());
 
-        // Récupération des données du formulaire
-        $nouveauNom = $_POST['nom'] ?? null;
-        $nouveauEmail = $_POST['email'] ?? null;
-
-        // Validation et mise à jour
-        if ($nouveauNom && $nouveauEmail) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            // Afficher le formulaire
             $utilisateur = $userManager->find($idUtilisateur);
-            if ($utilisateur) {
-                $utilisateur->setNom($nouveauNom);
-                $utilisateur->setEmail($nouveauEmail);
-                $userManager->modifierUtilisateur($utilisateur);
+            echo $this->getTwig()->render('page_modification_profil.twig', [
+                'utilisateur' => $utilisateur,
+                'page_title' => 'Modification du profil'
+            ]);
+            return;
+        }
+
+        // Traitement du formulaire POST
+        // Définition des règles de validation
+        $reglesValidation = [
+            'nom' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_min' => 2,
+                'longueur_max' => 150,
+                'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/'
+            ],
+            'prenom' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_min' => 2,
+                'longueur_max' => 150,
+                'format' => '/^[a-zA-ZÀ-ÿ\'-]+$/'
+            ],
+            'pseudo' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_min' => 3,
+                'longueur_max' => 150,
+                'format' => '/^[a-zA-Z0-9_]+$/'
+            ],
+            'email' => [
+                'obligatoire' => false,
+                'type' => 'email',
+                'longueur_max' => 255,
+                'format' => FILTER_VALIDATE_EMAIL
+            ]
+        ];
+
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        $utilisateur = $userManager->find($idUtilisateur);
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('page_modification_profil.twig', [
+                'utilisateur' => $utilisateur,
+                'page_title' => 'Modification du profil',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+
+        // Récupération des données validées
+        $nouveauNom = trim($_POST['nom'] ?? '');
+        $nouveauPrenom = trim($_POST['prenom'] ?? '');
+        $nouveauPseudo = trim($_POST['pseudo'] ?? '');
+        $nouvelEmail = trim($_POST['email'] ?? '');
+
+        // Validation supplémentaire: vérifier l'unicité de l'email et du pseudo
+        $erreurUnicite = [];
+        if (!empty($nouvelEmail) && $nouvelEmail !== $utilisateur->getEmail()) {
+            if ($userManager->findByEmail($nouvelEmail) !== null) {
+                $erreurUnicite[] = "Cet email est déjà utilisé.";
             }
         }
-        $utilisateur = $userManager->find($idUtilisateur);
-        // Envoi à la vue
-        echo $this->getTwig()->render('page_modification_profil.twig', [
-            'utilisateur' => $utilisateur,
-            'page_title' => 'Paramètres'
-        ]);
+        if (!empty($nouveauPseudo) && $nouveauPseudo !== $utilisateur->getPseudo()) {
+            if ($userManager->findByPseudo($nouveauPseudo) !== null) {
+                $erreurUnicite[] = "Ce pseudo est déjà utilisé.";
+            }
+        }
+
+        if (!empty($erreurUnicite)) {
+            echo $this->getTwig()->render('page_modification_profil.twig', [
+                'utilisateur' => $utilisateur,
+                'page_title' => 'Modification du profil',
+                'erreurs' => $erreurUnicite,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+
+        // Mise à jour des données
+        if (!empty($nouveauNom)) {
+            $utilisateur->setNom($nouveauNom);
+        }
+        if (!empty($nouveauPrenom)) {
+            $utilisateur->setPrenom($nouveauPrenom);
+        }
+        if (!empty($nouveauPseudo)) {
+            $utilisateur->setPseudo($nouveauPseudo);
+        }
+        if (!empty($nouvelEmail)) {
+            $utilisateur->setEmail($nouvelEmail);
+        }
+
+        $userManager->modifierUtilisateur($utilisateur);
+
+        // Redirection avec succès
+        header('Location: index.php?controleur=parametre&methode=afficherParametre');
+        exit;
     }
 }
-?>

@@ -104,21 +104,42 @@ class ControllerReponse extends Controller
             exit;
         }
 
-        $dateReponse = $_POST['dateReponse'] ?? null;
-        $contenu = $_POST['contenu'] ?? null;
-        $idAuteur = $_POST['idAuteur'] ?? null;
-        $idPost = $_POST['idPost'] ?? null;
+        // Définition des règles de validation
+        $reglesValidation = [
+            'contenu' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 1,
+                'longueur_max' => 5000
+            ],
+            'id_post' => [
+                'obligatoire' => false,
+                'type' => 'integer'
+            ]
+        ];
 
-        if (!$dateReponse || !$contenu || !$idAuteur || !$idPost) {
-            echo "Tous les champs sont requis.";
-            return;
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('ajout_reponse.twig', [
+                'title' => 'Nouvelle réponse',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
         }
 
-        $reponse = new Reponse(null, $dateReponse, $contenu, $idAuteur, $idPost);
-        $manager = new ReponseDao($this->getPdo());
-        $success = $manager->insererReponse($reponse);
+        $contenu = trim($_POST['contenu']);
+        $idPost = $_POST['id_post'] ?? null;
 
-        if ($success) {
+        $reponse = new Reponse(null, $contenu, null, $idPost);
+
+        $manager = new ReponseDao($this->getPdo());
+        $succes = $manager->insererReponse($reponse);
+
+        if ($succes) {
             header('Location: index.php?controleur=reponse&methode=lister');
             exit;
         } else {
