@@ -69,7 +69,7 @@
          * 
          * Récupère l'idCreateur depuis les paramètres GET (optionnel).
          * Utilise RoomDao pour récupérer toutes les rooms ou celles d'un créateur spécifique.
-         * Rend la vue 'rooms_list.twig' avec les données des rooms.
+         * Rend la vue 'liste_rooms.twig' avec les données des rooms.
          * 
          * @return void
          */
@@ -85,7 +85,7 @@
             }
 
             // Généralisation de la vue
-            echo $this->getTwig()->render('rooms_list.twig', [
+            echo $this->getTwig()->render('liste_rooms.twig', [
                 'rooms' => $rooms,
                 'idCreateur' => $idCreateur
             ]);
@@ -102,7 +102,7 @@
          */
         public function creer() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('room_create.twig');
+                echo $this->getTwig()->render('creation_room.twig');
                 return;
             }
 
@@ -152,7 +152,7 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('room_edit.twig', [
+                echo $this->getTwig()->render('edition_room.twig', [
                     'room' => $room
                 ]);
                 return;
