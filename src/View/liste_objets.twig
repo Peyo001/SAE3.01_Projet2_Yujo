@@ -26,7 +26,7 @@
                         <div class="d-flex gap-2">
                             <a class="btn btn-primary btn-sm" href="index.php?controleur=objet&methode=afficher&idObjet={{ objet.idObjet }}">Voir</a>
                             <a class="btn btn-outline-secondary btn-sm" href="index.php?controleur=objet&methode=modifier&idObjet={{ objet.idObjet }}">Modifier</a>
-                            <a class="btn btn-outline-danger btn-sm" href="index.php?controleur=objet&methode=supprimer&idObjet={{ objet.idObjet }}" onclick="return confirm('Supprimer cet objet ?');">Supprimer</a>
+                            <a class="btn btn-outline-danger btn-sm" href="index.php?controleur=objet&methode=supprimer&idObjet={{ objet.idObjet }}{% if idRoom %}&idRoom={{ idRoom }}{% endif %}" onclick="return confirm('Supprimer cet objet ?');">Supprimer</a>
                         </div>
                     </div>
                 </div>

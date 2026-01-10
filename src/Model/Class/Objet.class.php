@@ -19,8 +19,6 @@
         private ?string $modele3dPath;
         // Prix de l'objet
         private ?int $prix;
-        // Identifiant de la room associée (optionnel)
-        private ?int $idRoom;
     
         /**
          * Constructeur de la classe Objet.
@@ -38,7 +36,6 @@
             $this->setDescription($description);
             $this->setModele3dPath($modele3dPath);
             $this->setPrix($prix);
-            $this->setIdRoom($idRoom);
         }
 
 
@@ -79,14 +76,6 @@
         public function getPrix(): ?int {
             return $this->prix;
         }
-        /**
-         * Récupère l'identifiant de la room associée.
-         * 
-         * @return ?int L'identifiant de la room, ou null si non défini.
-         */
-        public function getIdRoom(): ?int {
-            return $this->idRoom;
-        }
         // Setters
 
         /**
@@ -124,14 +113,5 @@
         public function setPrix(?int $prix): void {
             $this->prix = $prix;
         }   
-
-        /**
-         * Définit l'identifiant de la room associée.
-         * 
-         * @param ?int $idRoom L'identifiant de la room à définir.
-         */
-        public function setIdRoom(?int $idRoom): void {
-            $this->idRoom = $idRoom;
-        }
 
     }

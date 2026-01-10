@@ -236,6 +236,7 @@
          */
         public function supprimer() {
             $idObjet = $_GET['idObjet'] ?? null;
+            $idRoom = $_GET['idRoom'] ?? null;
             if (!$idObjet) {
                 die("Erreur : aucun objet spécifié.");
             }
@@ -246,12 +247,14 @@
                 die("Objet introuvable.");
             }
 
-            $idRoom = $objet->getIdRoom();
-
             $managerObjet->supprimerObjet($idObjet);
 
-            // Retour à la room
-            header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
+            // Retour à la room si fournie, sinon liste générale
+            if ($idRoom) {
+                header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
+            } else {
+                header("Location: index.php?controleur=objet&methode=lister");
+            }
             exit;
         }
     }
