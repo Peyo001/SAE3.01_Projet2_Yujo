@@ -1,0 +1,19 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Nouvelle question{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="h3 mb-4">Ajouter une question</h1>
+        <form action="index.php?controleur=question&methode=traiterFormulaireInsertion" method="post">
+            <div class="mb-3">
+                <label for="libelle" class="form-label">Libellé</label>
+                <input type="text" class="form-control" id="libelle" name="libelle" required minlength="3" maxlength="255" placeholder="Saisissez votre question">
+            </div>
+            <button type="submit" class="btn btn-primary">Créer</button>
+            <a class="btn btn-outline-secondary" href="index.php?controleur=question&methode=lister">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
