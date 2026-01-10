@@ -123,15 +123,38 @@ class ControllerGroupe extends Controller
             exit;
         }
 
-        $nom = trim($_POST['nom_groupe'] ?? '');
+        // Définition des règles de validation
+        $reglesValidation = [
+            'nom_groupe' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 2,
+                'longueur_max' => 150
+            ],
+            'description' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_max' => 1000
+            ]
+        ];
+
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('ajout_groupe.twig', [
+                'menu' => 'nouveau_groupe',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+
+        $nom = trim($_POST['nom_groupe']);
         $description = trim($_POST['description'] ?? '');
         $dateCreation = date('Y-m-d H:i:s');
         $idCreateur = $_SESSION['idUtilisateur'];
-
-        if (empty($nom)) {
-            echo "Le nom du groupe ne peut pas être vide.";
-            return;
-        }
 
         $groupe = new Groupe($nom, $description, $dateCreation, [], null);
 

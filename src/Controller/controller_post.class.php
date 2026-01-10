@@ -113,7 +113,39 @@ class ControllerPost extends Controller
             exit;
         }
 
-        $contenu = trim($_POST['contenu'] ?? '');
+        // Définition des règles de validation
+        $reglesValidation = [
+            'contenu' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 1,
+                'longueur_max' => 5000
+            ],
+            'type_post' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'valeurs_acceptables' => ['texte', 'image', 'lien']
+            ],
+            'id_room' => [
+                'obligatoire' => false,
+                'type' => 'integer'
+            ]
+        ];
+
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('ajout_post.twig', [
+                'menu' => 'nouveau_post',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+
+        $contenu = trim($_POST['contenu']);
         $typePost = $_POST['type_post'] ?? 'texte'; 
         $idRoom = (int)($_POST['id_room'] ?? 1); 
         
@@ -121,10 +153,6 @@ class ControllerPost extends Controller
             $idAuteur = (int) $_SESSION['idUtilisateur'];
         } else {
             $idAuteur = 1; 
-        }       
-        if (empty($contenu)) {
-            echo "Le contenu ne peut pas être vide."; 
-            return;
         }
 
         $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
