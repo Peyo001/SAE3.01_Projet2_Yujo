@@ -26,12 +26,49 @@
             //$this->verifierAdmin();
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Définition des règles de validation
+                $reglesValidation = [
+                    'description' => [
+                        'obligatoire' => true,
+                        'type' => 'string',
+                        'longueur_min' => 5,
+                        'longueur_max' => 500
+                    ],
+                    'modele3dPath' => [
+                        'obligatoire' => true,
+                        'type' => 'string',
+                        'longueur_min' => 3,
+                        'longueur_max' => 500
+                    ],
+                    'prix' => [
+                        'obligatoire' => true,
+                        'type' => 'integer',
+                        'plage_min' => 0,
+                        'plage_max' => 999999
+                    ]
+                ];
+
+                $validator = new Validator($reglesValidation);
+                $donneesValides = $validator->valider($_POST);
+                $erreurs = $validator->getMessagesErreurs();
+
+                if (!$donneesValides) {
+                    $userDAO = new UtilisateurDAO($this->getPdo());
+                    $users = $userDAO->findAll();
+                    echo $this->getTwig()->render('admin/dashboard.twig', [
+                        'users' => $users,
+                        'erreurs' => $erreurs,
+                        'donnees' => $_POST
+                    ]);
+                    exit;
+                }
+
                 $objetDAO = new ObjetDAO($this->getPdo());
 
                 $objet = new Objet(
                     null,
-                    $_POST['description'],
-                    $_POST['modele3dPath'],
+                    trim($_POST['description']),
+                    trim($_POST['modele3dPath']),
                     (int) $_POST['prix'],
                     null
                 );
