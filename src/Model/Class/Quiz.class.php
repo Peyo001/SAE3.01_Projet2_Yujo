@@ -119,6 +119,15 @@ class Quiz
         return $this->idQuestion;
     }
 
+    /**
+     * Récupère l'identifiant du post associé au quiz.
+     * 
+     * @return int Identifiant du post.
+     */
+    public function getIdPost(): int {
+        return $this->idPost;
+    }
+
     //SETTERS
 
     /**
