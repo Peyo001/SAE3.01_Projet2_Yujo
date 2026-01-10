@@ -17,6 +17,8 @@ class SignalerDao extends Dao {
     /**
      * Récupère tous les signalements.
      * 
+     * Cette méthode permet de récupérer tous les signalements présents dans la table `SIGNALER`.
+     * 
      * @return Signaler[] Tableau des objets Signaler.
      */
     public function findAll(): array {
@@ -27,6 +29,8 @@ class SignalerDao extends Dao {
 
     /**
      * Récupère les signalements d'un utilisateur spécifique.
+     * 
+     * Cette méthode permet de récupérer tous les signalements effectués par un utilisateur donné en utilisant son identifiant.
      * 
      * @param int $idUtilisateur Identifiant de l'utilisateur.
      * @return Signaler[] Tableau des objets Signaler.
@@ -42,6 +46,8 @@ class SignalerDao extends Dao {
     /**
      * Récupère les signalements pour un post spécifique.
      * 
+     * Cette méthode permet de récupérer tous les signalements associés à un post donné en utilisant son identifiant.
+     * 
      * @param int $idPost Identifiant du post.
      * @return Signaler[] Tableau des objets Signaler.
      */
@@ -55,6 +61,8 @@ class SignalerDao extends Dao {
 
     /**
      * Insère un nouveau signalement.
+     * 
+     * Cette méthode permet d'insérer un nouveau signalement dans la table `SIGNALER`.
      * 
      * @param Signaler $signaler Objet Signaler à insérer.
      * @return bool Retourne true si l'insertion a réussi, sinon false.
@@ -71,6 +79,8 @@ class SignalerDao extends Dao {
 
     /**
      * Supprime un signalement.
+     * 
+     * Cette méthode permet de supprimer un signalement spécifique de la table `SIGNALER` en fonction de l'identifiant de l'utilisateur, de l'identifiant du signalement et de l'identifiant du post.
      * 
      * @param int $idUtilisateur Identifiant de l'utilisateur.
      * @param int $idSignalement Identifiant du signalement.

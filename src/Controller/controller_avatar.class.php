@@ -1,15 +1,41 @@
 <?php
-
+/**
+ * ControllerAvatar gère les actions liées aux avatars des utilisateurs comme
+ * la personnalisation, l'affichage et la suppression.
+ * 
+ * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+ * Utilise Twig pour le rendu des vues.
+ * Utilise la classe Validator pour la validation des données.
+ * 
+ * Exemples d'utilisation :
+ * $controllerAvatar = new ControllerAvatar($loader, $twig);
+ * $controllerAvatar->showCustomizer(); // Affiche l'interface de personnalisation
+ * $controllerAvatar->saveAvatar(); // Sauvegarde l'avatar
+ * $controllerAvatar->afficherAvatar(); // Affiche l'avatar
+ * $controllerAvatar->supprimerAvatar(); // Supprime l'avatar
+ */
 class ControllerAvatar extends Controller {
     private AvatarDao $avatarDao;
 
+    /**
+     * @brief Constructeur de ControllerAvatar
+     * 
+     * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de templates Twig
+     * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig) {
         parent::__construct($loader, $twig);
         $this->avatarDao = new AvatarDao($this->getPdo());
     }
 
     /**
-     * Affiche l'interface de personnalisation de l'avatar
+     * @brief Affiche l'interface de personnalisation de l'avatar
+     * 
+     * Redirige vers la page de connexion si l'utilisateur n'est pas connecté.
+     * Récupère l'avatar existant de l'utilisateur s'il y en a un.
+     * Passe les données nécessaires à la vue Twig pour le rendu.
+     * 
+     * @return void
      */
     public function showCustomizer(): void {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -39,7 +65,14 @@ class ControllerAvatar extends Controller {
     }
 
     /**
-     * Sauvegarde l'avatar
+     * @brief Sauvegarde l'avatar
+     * 
+     * Vérifie que l'utilisateur est connecté.
+     * Valide et nettoie les données reçues.
+     * Met à jour ou crée un nouvel avatar selon le cas.
+     * Redirige vers l'interface de personnalisation avec un message de succès ou d'erreur.
+     * 
+     * @return void
      */
     public function saveAvatar(): void {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -119,7 +152,14 @@ class ControllerAvatar extends Controller {
     }
 
     /**
-     * Affiche l'avatar d'un utilisateur
+     * @brief Affiche l'avatar d'un utilisateur
+     * 
+     * Vérifie que l'utilisateur est connecté.
+     * Récupère l'avatar de l'utilisateur.
+     * Redirige vers la personnalisation si aucun avatar n'existe.
+     * Passe les données nécessaires à la vue Twig pour le rendu.
+     * 
+     * @return void
      */
     public function afficherAvatar(): void {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -142,7 +182,14 @@ class ControllerAvatar extends Controller {
     }
 
     /**
-     * Supprime l'avatar
+     * @brief Supprime l'avatar
+     * 
+     * Vérifie que l'utilisateur est connecté.
+     * Récupère l'avatar de l'utilisateur.
+     * Supprime l'avatar s'il existe.
+     * Redirige vers l'interface de personnalisation avec un message de succès.
+     * 
+     * @return void
      */
     public function supprimerAvatar(): void {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -163,7 +210,12 @@ class ControllerAvatar extends Controller {
     }
 
     /**
-     * Nettoie une entrée utilisateur
+     * @brief Nettoie une entrée utilisateur
+     * 
+     * Utilise htmlspecialchars pour éviter les injections XSS.
+     * 
+     * @param string $input L'entrée utilisateur à nettoyer
+     * @return string L'entrée nettoyée
      */
     private function sanitize(string $input): string {
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');

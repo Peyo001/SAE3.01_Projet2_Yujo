@@ -53,7 +53,6 @@ class PostDao extends Dao
      * @param int $idPost L'identifiant du post à supprimer.
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
-    // Supprimer un post
     public function supprimerPost(int $idPost): bool
     {
         $stmt = $this->conn->prepare("DELETE FROM POST WHERE idPost = :idPost");
@@ -70,7 +69,6 @@ class PostDao extends Dao
      * @param int $id Identifiant du post à récupérer.
      * @return Post|null Retourne un objet `Post` si trouvé, sinon null.
      */
-    // Récupérer un post par ID de post
     public function find(int $id): ?Post
     {
         $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
@@ -173,10 +171,10 @@ class PostDao extends Dao
         return $posts;
     }
 
-    /**
+/**
  * Récupère tous les posts publiés par un ensemble d'auteurs.
  *
- * @param int[] $ids Tableau des idUtilisateur des auteurs
+ * @param int[] $ids Tableau des identifiants des auteurs.
  * @return Post[] Tableau des objets Post
  */
 public function findByAuteurs(array $ids): array

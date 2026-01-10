@@ -34,6 +34,8 @@
          * Cette méthode récupère les objets associés à une room spécifique, ou tous les objets de la base de données
          * si aucun identifiant de room n'est passé en paramètre. Ensuite, elle rend la vue `objets_list.twig` avec
          * les objets à afficher.
+         * 
+         * @return void
          */
         public function lister() {
             $idRoom = $_GET['idRoom'] ?? null;
@@ -59,6 +61,8 @@
         * Cette méthode affiche un objet spécifique en récupérant son identifiant (`idObjet`) passé dans l'URL.
         * Si l'objet est trouvé, la vue `objet.twig` est rendue avec les détails de l'objet.
         * Sinon, un message d'erreur est affiché.
+        *
+        * @return void
         */
         public function afficher() {
             $idObjet = $_GET['idObjet'] ?? null;
@@ -83,6 +87,8 @@
          * Cette méthode gère la création d'un nouvel objet. Si le formulaire est soumis en méthode `POST`,
          * elle récupère les données, crée un objet `Objet` et l'insère dans la base de données via le DAO.
          * Ensuite, l'utilisateur est redirigé vers la page de la room.
+         * 
+         * @return void
          */
         public function creer() {
             $idRoom = $_GET['idRoom'] ?? null;
@@ -116,6 +122,8 @@
          * Cette méthode permet de modifier un objet existant. Si l'ID de l'objet est passé dans l'URL,
          * le formulaire de modification est affiché. Si le formulaire est soumis en `POST`, les données sont
          * récupérées, l'objet est mis à jour dans la base de données et l'utilisateur est redirigé vers la page de l'objet.
+         * 
+         * @return void
          */
         public function modifier() {
             $idObjet = $_GET['idObjet'] ?? null;
@@ -151,6 +159,8 @@
          * Cette méthode permet de modifier un objet existant. Si l'ID de l'objet est passé dans l'URL,
          * le formulaire de modification est affiché. Si le formulaire est soumis en `POST`, les données sont
          * récupérées, l'objet est mis à jour dans la base de données et l'utilisateur est redirigé vers la page de l'objet.
+         * 
+         * @return void
          */
         public function supprimer() {
             $idObjet = $_GET['idObjet'] ?? null;

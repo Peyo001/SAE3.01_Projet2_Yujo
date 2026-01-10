@@ -1,14 +1,39 @@
 <?php
 
+/**
+ * ControllerReponse gère les actions liées aux réponses comme
+ * lister, afficher, ajouter une réponse.
+ * 
+ * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+ * Utilise Twig pour le rendu des vues.
+ * Utilise la classe Validator pour la validation des données.
+ * 
+ * Exemples d'utilisation :
+ * $controller = new ControllerReponse($loader, $twig);
+ * $controller->lister(); // Affiche la liste des réponses
+ * $controller->afficher(); // Affiche une réponse spécifique
+ * $controller->afficherFormulaireInsertion(); // Affiche le formulaire d'ajout de réponse
+ * $controller->traiterFormulaireInsertion(); // Traite l'ajout d'une réponse
+ */
 class ControllerReponse extends Controller
 {
+    /**
+     * Constructeur de ControllerReponse
+     * 
+     * @param \Twig\Loader\FilesystemLoader $loader Chargeur de templates Twig
+     * @param \Twig\Environment $twig Environnement Twig pour le rendu des vues
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
     {
         parent::__construct($loader, $twig);
     }
 
     /**
-     * LISTE DES RÉPONSES
+     * @brief Affiche la liste des réponses
+     * 
+     * Récupère toutes les réponses via le DAO et les passe au template Twig pour affichage.
+     * 
+     * @return void
      */
     public function lister(): void
     {
@@ -22,7 +47,12 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * AFFICHER UNE RÉPONSE
+     * @brief Affiche une réponse spécifique
+     * 
+     * Vérifie la présence de l'ID de la réponse dans les paramètres GET,
+     * récupère la réponse via le DAO et la passe au template Twig pour affichage.
+     * 
+     * @return void
      */
     public function afficher(): void
     {
@@ -45,7 +75,11 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * FORMULAIRE AJOUT RÉPONSE
+     * @brief Affiche le formulaire d'ajout d'une réponse
+     * 
+     * Rend le template Twig contenant le formulaire d'insertion.
+     * 
+     * @return void
      */
 
     public function afficherFormulaireInsertion(): void
@@ -56,7 +90,12 @@ class ControllerReponse extends Controller
     }
 
     /**
-     * TRAITEMENT DU FORMULAIRE
+     * @brief Traite le formulaire d'ajout d'une réponse
+     * 
+     * Valide les données reçues via POST, crée une nouvelle réponse,
+     * l'insère via le DAO et redirige ou affiche un message d'erreur.
+     * 
+     * @return void
      */
     public function traiterFormulaireInsertion(): void
     {
