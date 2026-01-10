@@ -49,7 +49,7 @@
                 $objets = $managerObjet->findAll();
             }
 
-            echo $this->getTwig()->render('objets_list.twig', [
+            echo $this->getTwig()->render('liste_objets.twig', [
                 'objets' => $objets,
                 'idRoom' => $idRoom
             ]);
@@ -97,15 +97,51 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('objet_create.twig', [
+                echo $this->getTwig()->render('creation_objet.twig', [
                     'idRoom' => $idRoom
                 ]);
                 return;
             }
 
-            // Récupérer données du formulaire
-            $description = $_POST['description'];
-            $modele3dPath = $_POST['modele3dPath'];
+            // Validation serveur des données
+            $regles = [
+                'description' => [
+                    'obligatoire' => true,
+                    'type' => 'string',
+                    'longueur_min' => 2,
+                    'longueur_max' => 200
+                ],
+                'modele3dPath' => [
+                    'obligatoire' => true,
+                    'type' => 'string',
+                    'longueur_max' => 300,
+                    // chemin simple autorisant lettres/chiffres/_-/./
+                    'format' => '/^[A-Za-z0-9_\-\.\/]+$/'
+                ],
+                'prix' => [
+                    'obligatoire' => true,
+                    'type' => 'integer',
+                    'plage_min' => 0
+                ]
+            ];
+
+            $validator = new Validator($regles);
+            $donneesValides = $validator->valider($_POST);
+            if (!$donneesValides) {
+                echo $this->getTwig()->render('creation_objet.twig', [
+                    'idRoom' => $idRoom,
+                    'erreurs' => $validator->getMessagesErreurs(),
+                    'donnees' => [
+                        'description' => $_POST['description'] ?? '',
+                        'modele3dPath' => $_POST['modele3dPath'] ?? '',
+                        'prix' => $_POST['prix'] ?? ''
+                    ]
+                ]);
+                return;
+            }
+
+            $description = trim($_POST['description']);
+            $modele3dPath = trim($_POST['modele3dPath']);
             $prix = (int)$_POST['prix'];
 
             $objet = new Objet(null, $description, $modele3dPath, $prix, $idRoom);
@@ -138,14 +174,50 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('objet_edit.twig', [
+                echo $this->getTwig()->render('edition_objet.twig', [
                     'objet' => $objet
                 ]);
                 return;
             }
 
-            $objet->setDescription($_POST['description']);
-            $objet->setModele3dPath($_POST['modele3dPath']);
+            // Validation serveur des données de modification
+            $regles = [
+                'description' => [
+                    'obligatoire' => true,
+                    'type' => 'string',
+                    'longueur_min' => 2,
+                    'longueur_max' => 200
+                ],
+                'modele3dPath' => [
+                    'obligatoire' => true,
+                    'type' => 'string',
+                    'longueur_max' => 300,
+                    'format' => '/^[A-Za-z0-9_\-\.\/]+$/'
+                ],
+                'prix' => [
+                    'obligatoire' => true,
+                    'type' => 'integer',
+                    'plage_min' => 0
+                ]
+            ];
+
+            $validator = new Validator($regles);
+            $donneesValides = $validator->valider($_POST);
+            if (!$donneesValides) {
+                echo $this->getTwig()->render('edition_objet.twig', [
+                    'objet' => $objet,
+                    'erreurs' => $validator->getMessagesErreurs(),
+                    'donnees' => [
+                        'description' => $_POST['description'] ?? '',
+                        'modele3dPath' => $_POST['modele3dPath'] ?? '',
+                        'prix' => $_POST['prix'] ?? ''
+                    ]
+                ]);
+                return;
+            }
+
+            $objet->setDescription(trim($_POST['description']));
+            $objet->setModele3dPath(trim($_POST['modele3dPath']));
             $objet->setPrix((int)$_POST['prix']);
 
             $managerObjet->mettreAJourObjet($objet);
