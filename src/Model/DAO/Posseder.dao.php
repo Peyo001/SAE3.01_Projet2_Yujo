@@ -73,6 +73,7 @@ class PossederDAO extends Dao {
      * 
      * @param int $idRoom Identifiant de la room.
      * @param int $idObjet Identifiant de l'objet.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerPosseder(int $idRoom, int $idObjet): bool {
         $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idRoom = :idRoom AND idObjet = :idObjet");

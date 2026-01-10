@@ -1,13 +1,43 @@
 <?php
-
+/**
+ * ControllerGroupe gère les actions liées aux groupes comme
+ * la liste des groupes, l'affichage d'un groupe, la création d'un groupe
+ * et la possibilité de rejoindre un groupe.
+ * 
+ * Hérite de la classe Controller pour bénéficier des fonctionnalités de base.
+ * Utilise Twig pour le rendu des vues.
+ * Utilise la classe Validator pour la validation des données.
+ * 
+ * Exemples d'utilisation :
+ * $controller = new ControllerGroupe($loader, $twig);
+ * $controller->lister(); // Affiche la liste des groupes
+ * $controller->afficher(); // Affiche un groupe spécifique
+ * $controller->afficherFormulaireCreation(); // Affiche le formulaire de création de groupe
+ * $controller->traiterFormulaireCreation(); // Traite la création d'un groupe
+ * $controller->rejoindre(); // Permet de rejoindre un groupe
+ */
 class ControllerGroupe extends Controller
 {
+    /**
+     * Constructeur de la classe ControllerGroupe
+     * 
+     * @param \Twig\Loader\FilesystemLoader $loader Le chargeur de templates Twig
+     * @param \Twig\Environment $twig L'environnement Twig pour le rendu des vues
+     */
     public function __construct(\Twig\Loader\FilesystemLoader $loader, \Twig\Environment $twig)
     {
         parent::__construct($loader, $twig);
     }
 
 
+    /**
+     * @brief Affiche la liste de tous les groupes
+     * 
+     * Utilise la méthode findAll() de la classe GroupeDao pour récupérer tous les groupes
+     * et rend la vue 'liste_groupes.twig' avec les données des groupes.
+     * 
+     * @return void
+     */
     public function lister(): void
     {   
         $manager = new GroupeDao($this->getPdo());
@@ -19,6 +49,15 @@ class ControllerGroupe extends Controller
         ]);
     }
 
+    /**
+     * @brief Affiche un groupe spécifique
+     * 
+     * Récupère l'ID du groupe depuis les paramètres GET, vérifie son existence,
+     * puis utilise la méthode find() de la classe GroupeDao pour récupérer le groupe.
+     * Rend la vue 'groupe.twig' avec les données du groupe.
+     * 
+     * @return void
+     */
     public function afficher(): void
     {
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -43,6 +82,14 @@ class ControllerGroupe extends Controller
     }
 
 
+    /**
+     * @brief Affiche le formulaire de création d'un nouveau groupe
+     * 
+     * Vérifie si l'utilisateur est connecté avant d'afficher le formulaire.
+     * Sinon, redirige vers la page de connexion.
+     * 
+     * @return void
+     */
     public function afficherFormulaireCreation(): void
     {
         if (!isset($_SESSION['idUtilisateur'])) {
@@ -56,6 +103,14 @@ class ControllerGroupe extends Controller
     }
 
   
+    /**
+     * @brief Traite les données du formulaire de création d'un nouveau groupe
+     * 
+     * Vérifie la méthode de requête, l'authentification de l'utilisateur,
+     * puis insère le nouveau groupe dans la base de données.
+     * 
+     * @return void
+     */
     public function traiterFormulaireCreation(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -120,7 +175,13 @@ class ControllerGroupe extends Controller
     }
 
     /**
-     * Permet de rejoindre un groupe existant
+     * @brief Permet de rejoindre un groupe existant
+     * 
+     * Vérifie si l'utilisateur est connecté, récupère l'ID du groupe depuis les paramètres GET,
+     * puis utilise la méthode ajouterMembre() de la classe GroupeDao pour ajouter l'utilisateur au groupe.
+     * Redirige ensuite vers la page d'affichage du groupe.
+     * 
+     * @return void
      */
     public function rejoindre(): void
     {
