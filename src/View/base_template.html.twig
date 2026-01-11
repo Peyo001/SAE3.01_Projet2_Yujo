@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% if googleAnalyticsId is defined and googleAnalyticsId %}
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);} 
+            gtag('js', new Date());
+            gtag('config', '{{ googleAnalyticsId }}');
+        </script>
+    {% endif %}
 </head>
 <body>
 
