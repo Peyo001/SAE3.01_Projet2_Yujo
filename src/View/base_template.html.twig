@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="../public/assets/css/theme.css" rel="stylesheet">
     {% if googleAnalyticsId is defined and googleAnalyticsId %}
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script>
@@ -36,6 +37,9 @@
     </nav>
 </footer>
 
+<script src="../../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="../../node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+{% block scripts %}{% endblock %}
 
 </body>
 </html>
