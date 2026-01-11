@@ -122,7 +122,7 @@ class Quiz
     /**
      * Récupère l'identifiant du post associé au quiz.
      *
-     * @return int Identifiant du post.
+     * @return i nt Identifiant du post.
      */
     public function getIdPost(): int {
         return $this->idPost;
