@@ -208,16 +208,4 @@ class ControllerAvatar extends Controller {
         header('Location: index.php?controleur=avatar&methode=showCustomizer');
         exit();
     }
-
-    /**
-     * @brief Nettoie une entrée utilisateur
-     * 
-     * Utilise htmlspecialchars pour éviter les injections XSS.
-     * 
-     * @param string $input L'entrée utilisateur à nettoyer
-     * @return string L'entrée nettoyée
-     */
-    private function sanitize(string $input): string {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
-    }
 }
