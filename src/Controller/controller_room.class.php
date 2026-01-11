@@ -65,6 +65,30 @@
         }
 
         /**
+         * @brief Affiche une room en 3D (Three.js) pour prévisualisation.
+         */
+        public function afficherThreejs() {
+            $idRoom = isset($_GET['idRoom']) ? $_GET['idRoom'] : null;
+
+            if ($idRoom === null) {
+                header('Location: index.php?controleur=room&methode=lister');
+                exit;
+            }
+
+            $managerRoom = new RoomDao($this->getPdo());
+            $room = $managerRoom->find((int)$idRoom);
+
+            if (!$room) {
+                header('Location: index.php?controleur=room&methode=lister');
+                exit;
+            }
+
+            echo $this->getTwig()->render('room_threejs.twig', [
+                'room' => $room
+            ]);
+        }
+
+        /**
          * @brief Affiche la liste des rooms.
          * 
          * Récupère l'idCreateur depuis les paramètres GET (optionnel).

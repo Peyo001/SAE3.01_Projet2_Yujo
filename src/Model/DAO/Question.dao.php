@@ -99,11 +99,10 @@ class QuestionDAO extends Dao{
         $reponses = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $reponses[] = new Reponse(
+            $reponses[] = new ReponsePossible(
                 (int) $row['idReponsePossible'],
                 $row['libelle'],
-                (bool) $row['estCorrecte'],
-                (int) $row['idQuestion']
+                (bool) $row['estCorrecte']
             );
         }
         return $reponses;

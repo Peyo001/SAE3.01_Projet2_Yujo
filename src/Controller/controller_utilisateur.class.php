@@ -293,13 +293,98 @@ class ControllerUtilisateur extends Controller
         }
         
         $manager = new UtilisateurDao($this->getPdo());
-        $manager2 = new PostDao($this->getPdo());
-        $manager3 = new AmiDao($this->getPdo());
-        $amis = $manager3->findAmis($_SESSION['idUtilisateur']);
+        $postDao = new PostDao($this->getPdo());
+        $amiDao = new AmiDao($this->getPdo());
+        $roomDao = new RoomDao($this->getPdo());
+
+        $amis = $amiDao->findAmis($_SESSION['idUtilisateur']);
         $user = $manager->find($_SESSION['idUtilisateur']);
-        $posts = $manager2->findPostsByAuteur($user->getIdUtilisateur() );
+        $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
+        $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
+
+        // Préparer un mapping des amis -> Utilisateur pour afficher les noms
+        $utilisateursAmis = [];
+        foreach ($amis as $ami) {
+            $idAmi = $ami->getIdUtilisateur2();
+            if (!isset($utilisateursAmis[$idAmi])) {
+                $u = $manager->find($idAmi);
+                if ($u) { $utilisateursAmis[$idAmi] = $u; }
+            }
+        }
+
+        // Récupérer et consommer les messages flash
+        $flashSuccess = $_SESSION['flash_success'] ?? null;
+        $flashError = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         
-        echo $this->getTwig()->render('profil.twig', ['utilisateur' => $user, 'posts' => $posts, 'amis' => $amis]);
+        echo $this->getTwig()->render('profil.twig', [
+            'utilisateur' => $user,
+            'posts' => $posts,
+            'amis' => $amis,
+            'rooms' => $rooms,
+            'utilisateursAmis' => $utilisateursAmis,
+            'flash_success' => $flashSuccess,
+            'flash_error' => $flashError
+        ]);
+    }
+
+    /**
+     * @brief Ajoute un ami par pseudo depuis le profil
+     */
+    public function ajouterAmi(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            exit;
+        }
+
+        $pseudoAmi = trim($_POST['pseudo_ami'] ?? '');
+        if ($pseudoAmi === '') {
+            $_SESSION['flash_error'] = "Veuillez entrer le pseudo de l'ami à ajouter.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            exit;
+        }
+
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+        $amiDao = new AmiDao($this->getPdo());
+
+        $cible = $utilisateurDao->findByPseudo($pseudoAmi);
+        if (!$cible) {
+            $_SESSION['flash_error'] = "Aucun utilisateur trouvé avec ce pseudo.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            exit;
+        }
+
+        $idMoi = (int)$_SESSION['idUtilisateur'];
+        $idCible = (int)$cible->getIdUtilisateur();
+        if ($idMoi === $idCible) {
+            $_SESSION['flash_error'] = "Vous ne pouvez pas vous ajouter vous-même.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            exit;
+        }
+
+        // Vérifier si la relation existe déjà (dans un sens ou l'autre)
+        $existe1 = $amiDao->find($idMoi, $idCible);
+        $existe2 = $amiDao->find($idCible, $idMoi);
+        if ($existe1 || $existe2) {
+            $_SESSION['flash_error'] = "Cet utilisateur est déjà dans vos amis.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            exit;
+        }
+
+        $ami = new Ami($idMoi, $idCible, date('Y-m-d H:i:s'));
+        if ($amiDao->insererAmi($ami)) {
+            $_SESSION['flash_success'] = "Ami ajouté avec succès.";
+        } else {
+            $_SESSION['flash_error'] = "Erreur lors de l'ajout de l'ami.";
+        }
+
+        header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+        exit;
     }
     
     public function afficherCompte(): void
