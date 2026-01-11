@@ -3,34 +3,50 @@
 {% block title %}Fil d'actualité{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-12">
-            <h1>Fil d'actualité</h1>
-            
-            <p>
-                <a href="index.php?controleur=post&methode=afficherFormulaireInsertion">
-                    [+] Publier quelque chose
-                </a>
-            </p>
-            <hr>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="mb-1">Fil d'actualité</h1>
+                <p class="text-muted mb-0">Les derniers posts de la communauté.</p>
+            </div>
+            <a class="btn btn-cta" href="index.php?controleur=post&methode=afficherFormulaireInsertion">Publier</a>
         </div>
 
-        <div class="col-12">
+        <div class="row g-3">
             {% for post in posts %}
-                <div class="post-item" style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
-                    <h3>
-                        <a href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">
-                            {{ post.idPost }}
-                        </a> 
-                        <small>({{ post.typePost }})</small>
-                    </h3>
-                    
-                    <p>{{ post.contenu }}</p>
-                    
-                    <small>Publié le {{ post.datePublication }}</small>
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 h-100 hover-effect">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-secondary" style="width:36px;height:36px;"></div>
+                                    <div>
+                                        <strong>Auteur #{{ post.idAuteur }}</strong>
+                                        <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }}</div>
+                                    </div>
+                                </div>
+                                <span class="badge bg-primary">{{ post.typePost|capitalize }}</span>
+                            </div>
+                            {% if post.typePost == 'quiz' %}
+                                <div class="p-3 border rounded-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="fw-bold">Quiz</div>
+                                        <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Jouer</a>
+                                    </div>
+                                    <p class="mb-0 text-muted">{{ post.contenu }}</p>
+                                </div>
+                            {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
+                                <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 380px; object-fit: cover;">
+                            {% else %}
+                                <p class="mb-0 text-muted">{{ post.contenu }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             {% else %}
-                <p>Aucun post à afficher pour le moment.</p>
+                <div class="col-12">
+                    <div class="alert alert-info">Aucun post à afficher pour le moment.</div>
+                </div>
             {% endfor %}
         </div>
     </div>

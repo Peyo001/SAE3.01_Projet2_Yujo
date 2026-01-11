@@ -4,40 +4,237 @@
 
 
 {% block content %}
-    <div class="container mt-4">
-    <div class="card">
-        <div class="card-body">
-            <h3 class="mb-1">{{ utilisateur.pseudo }}</h3>
-            <hr>
-            <p class="mb-1"><strong>Nom :</strong> {{ utilisateur.prenom }} {{ utilisateur.nom }}</p>
-            <p class="mb-1"><strong>Genre :</strong> {{ utilisateur.genre }}</p>
-            <p class="mb-1"><strong>Inscription :</strong> {{ utilisateur.dateInscription|date('d/m/Y') }}</p>
-            <p class="mb-1"><strong>Amis :</strong> {{ amis | length }}</p>
-            <p class="mb-1"><strong>Posts :</strong> {{ posts | length }}</p>
-            <a href="index.php?controleur=room&methode=afficher" class="btn btn-primary mt-3" style="background-color: #e9407A;">Rejoindre la Room</a> {# A implémenté #}
-        </div>
-    </div>
-</div>
-
-<div class="container mt-4">
-    <h4>Posts</h4>
-
-    {% if posts is not empty %}
-        {% for post in posts %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <strong>{{ utilisateur.pseudo }}</strong>
-                    <small class="text-muted">
-                        · {{ post.dateCreation|date('d/m/Y') }}
-                    </small>
-
-                    <p class="mt-2 mb-0">{{ post.contenu }}</p>
+    <div class="container py-4">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h3 class="mb-1">{{ utilisateur.pseudo }}</h3>
+                        <p class="text-muted mb-2">{{ utilisateur.prenom }} {{ utilisateur.nom }} · {{ utilisateur.genre }}</p>
+                        <small class="text-muted">Inscrit le {{ utilisateur.dateInscription|date('d/m/Y') }}</small>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="text-center">
+                            <div class="fw-bold h5 mb-0">{{ amis|length }}</div>
+                            <small class="text-muted">Amis</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold h5 mb-0">{{ posts|length }}</div>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold h5 mb-0">{{ rooms|length }}</div>
+                            <small class="text-muted">Rooms</small>
+                        </div>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <p class="text-muted">Aucun post.</p>
-    {% endif %}
-</div>
+        </div>
 
+        <div class="row g-4">
+            <div class="col-lg-7">
+                {% if flash_success %}
+                    <div class="alert alert-success">{{ flash_success }}</div>
+                {% endif %}
+                {% if flash_error %}
+                    <div class="alert alert-danger">{{ flash_error }}</div>
+                {% endif %}
+
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Créer un post</h5>
+                        <form method="post" action="index.php?controleur=post&methode=traiterFormulaireInsertion" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="type_post" class="form-label">Type de post</label>
+                                <select id="type_post" name="type_post" class="form-select" onchange="togglePostFields()">
+                                    <option value="post">Post</option>
+                                    <option value="quiz">Quiz</option>
+                                </select>
+                                <button type="button" id="btnAddImageProfile" class="btn btn-outline-secondary btn-sm ms-2" onclick="quickAddImage()">Ajouter une image</button>
+                            </div>
+                            <div class="mb-3" id="contenuText">
+                                <label for="contenu" class="form-label">Contenu</label>
+                                <textarea id="contenu" name="contenu" class="form-control" rows="3" placeholder="Exprime-toi..."></textarea>
+                            </div>
+                            <div class="mb-3" id="contenuImage" style="display:none;">
+                                <label for="image" class="form-label">Image</label>
+                                <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                                <small class="text-muted">Formats: jpg, png, gif, webp · max 5MB</small>
+                            </div>
+                            <div class="mb-3" id="contenuLien" style="display:none;">
+                                <label for="lien" class="form-label">Lien URL</label>
+                                <input type="url" id="lien" name="contenu" class="form-control" placeholder="https://exemple.com">
+                            </div>
+                            <div class="mb-3" id="quizFields" style="display:none;">
+                                <label for="titre_quiz" class="form-label">Titre du quiz</label>
+                                <input type="text" id="titre_quiz" name="titre_quiz" class="form-control" placeholder="Mon super quiz">
+                                <label for="description_quiz" class="form-label mt-2">Description</label>
+                                <textarea id="description_quiz" name="description_quiz" class="form-control" rows="3" placeholder="Décris ton quiz"></textarea>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="choix_multiples" name="choix_multiples" value="1">
+                                    <label class="form-check-label" for="choix_multiples">Autoriser les choix multiples</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-cta">Publier</button>
+                        </form>
+                        <script>
+                        function togglePostFields(){
+                            const type = document.getElementById('type_post').value;
+                            document.getElementById('contenuText').style.display = (type === 'post') ? 'block' : 'none';
+                            document.getElementById('contenuImage').style.display = (type === 'post') ? 'block' : 'none';
+                            document.getElementById('quizFields').style.display = (type === 'quiz') ? 'block' : 'none';
+                        }
+                        document.addEventListener('DOMContentLoaded', togglePostFields);
+                        function quickAddImage(){
+                            const typeSel = document.getElementById('type_post');
+                            typeSel.value = 'post';
+                            togglePostFields();
+                            const fileInput = document.getElementById('image');
+                            if (fileInput) fileInput.click();
+                        }
+                        </script>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="mb-3">Vos posts</h5>
+                        {% if posts is not empty %}
+                            {% for post in posts %}
+                                <div class="mb-3 pb-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>{{ utilisateur.pseudo }}</strong>
+                                            <small class="text-muted"> · {{ post.datePublication|date('d/m/Y H:i') }}</small>
+                                        </div>
+                                        <span class="badge bg-primary">{{ post.typePost|capitalize }}</span>
+                                    </div>
+                                    {% if post.typePost == 'quiz' %}
+                                        <div class="p-3 border rounded-3 mt-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="fw-bold">Quiz</div>
+                                                <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Jouer</a>
+                                            </div>
+                                            <p class="mb-0 text-muted">{{ post.contenu }}</p>
+                                        </div>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Voir</a>
+                                            <span class="text-muted">·</span>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                        </div>
+                                    {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
+                                        <div class="mt-2">
+                                            <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 320px; object-fit: cover;">
+                                        </div>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Voir</a>
+                                            <span class="text-muted">·</span>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                        </div>
+                                    {% else %}
+                                        <p class="mb-1 text-muted">{{ post.contenu }}</p>
+                                        <div class="d-flex gap-2">
+                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Voir</a>
+                                            <span class="text-muted">·</span>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">Aucun post pour l'instant.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Ajouter un ami</h5>
+                        <form method="post" action="index.php?controleur=utilisateur&methode=ajouterAmi">
+                            <div class="mb-3">
+                                <label for="pseudo_ami" class="form-label">Pseudo de l'ami</label>
+                                <input type="text" id="pseudo_ami" name="pseudo_ami" class="form-control" required minlength="3" maxlength="150" placeholder="Ex: SuperJean">
+                            </div>
+                            <button type="submit" class="btn btn-cta">Ajouter</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Créer une room</h5>
+                        <form method="post" action="index.php?controleur=room&methode=creer">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom de la room</label>
+                                <input type="text" id="nom" name="nom" class="form-control" required minlength="2" maxlength="150" placeholder="Ex: Salon principal">
+                            </div>
+                            <div class="mb-3">
+                                <label for="visibilite" class="form-label">Visibilité</label>
+                                <select id="visibilite" name="visibilite" class="form-select" required>
+                                    <option value="public">Publique</option>
+                                    <option value="prive">Privée</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-cta">Créer la room</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="mb-3">Vos rooms</h5>
+                        {% if rooms is not empty %}
+                            <div class="d-flex flex-column gap-3">
+                                {% for room in rooms %}
+                                    <div class="p-3 border rounded-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong>{{ room.nom }}</strong>
+                                                <div class="text-muted small">Créée le {{ room.dateCreation|date('d/m/Y') }} · {{ room.visibilite }}</div>
+                                            </div>
+                                            <span class="badge bg-secondary">{{ room.nbVisit }} visites</span>
+                                        </div>
+                                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                                            <a class="btn btn-sm btn-outline-primary" href="index.php?controleur=room&methode=afficher&idRoom={{ room.idRoom }}">Ouvrir</a>
+                                            <a class="btn btn-sm btn-cta" href="index.php?controleur=room&methode=afficherThreejs&idRoom={{ room.idRoom }}">Vue 3D (Three.js)</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-2">Aucune room pour l'instant.</p>
+                            <p class="small text-muted">Crée une room et ouvre la vue 3D (Three.js) pour tester l'exemple interactif.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0 mt-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Vos amis</h5>
+                        {% if amis is not empty %}
+                            <ul class="list-group list-group-flush">
+                                {% for a in amis %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-secondary" style="width:28px;height:28px;"></div>
+                                            <span>
+                                                {% if utilisateursAmis[a.idUtilisateur2] is defined %}
+                                                    {{ utilisateursAmis[a.idUtilisateur2].pseudo }}
+                                                {% else %}
+                                                    Utilisateur #{{ a.idUtilisateur2 }}
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mb-0">Aucun ami pour l'instant.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
