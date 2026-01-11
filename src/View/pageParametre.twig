@@ -101,6 +101,85 @@
         </div>
     </div>
 
+    <div class="row g-4 mb-4" id="newsletter">
+        <div class="col-12">
+            <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-envelope me-2"></i>Newsletter</h5>
+        </div>
+        <div class="col-12">
+            {% if estInscritNewsletter %}
+                <div class="card shadow-sm border-success">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                            <div>
+                                <h6 class="card-title text-success mb-1">
+                                    Vous êtes bien inscrit à la newsletter !
+                                </h6>
+                                <p class="text-muted small mb-0">Vous recevez nos actualités à l'adresse : <strong>{{ user.email }}</strong></p>
+                            </div>
+                        </div>
+                        {% if app.session.get('newsletter_message') %}
+                            <div class="alert alert-{{ app.session.get('newsletter_type') }} alert-dismissible fade show mb-3" role="alert">
+                                {{ app.session.get('newsletter_message') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% do app.session.remove('newsletter_message') %}
+                            {% do app.session.remove('newsletter_type') %}
+                        {% endif %}
+                        <form method="post" action="index.php?controleur=newsletter&methode=desinscrire" onsubmit="return confirm('Voulez-vous vraiment vous désinscrire de la newsletter ?');">
+                            <input type="hidden" name="email" value="{{ user.email }}">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-times me-2"></i>Se désinscrire
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-2 text-primary">Restez connecté(e) !</h3>
+                        <p class="text-muted mb-4">Recevez nos actualités et contenus exclusifs. Simple et convivial.</p>
+                        
+                        {% if app.session.get('newsletter_message') %}
+                            <div class="alert alert-{{ app.session.get('newsletter_type') }} alert-dismissible fade show mb-3" role="alert">
+                                {{ app.session.get('newsletter_message') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% do app.session.remove('newsletter_message') %}
+                            {% do app.session.remove('newsletter_type') %}
+                        {% endif %}
+                        
+                        <form method="post" action="index.php?controleur=newsletter&methode=inscrire">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small">Votre adresse email *</label>
+                                <input type="email" name="email" class="form-control form-control-lg" placeholder="exemple@email.com" value="{{ user.email }}" required>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="acceptNewsletter" required>
+                                <label class="form-check-label small" for="acceptNewsletter">
+                                    J'accepte explicitement de recevoir la newsletter.
+                                </label>
+                            </div>
+                            
+                            <p class="small text-muted mb-4">
+                                <a href="#" class="text-decoration-none">Consulter notre politique de confidentialité</a>
+                            </p>
+                            
+                            <button type="submit" class="btn btn-lg w-100 text-white fw-bold" style="background-color: #e91e63; border: none; border-radius: 25px;">
+                                M'INSCRIRE
+                            </button>
+                            
+                            <p class="small text-muted mt-3 mb-0">
+                                * Nous utilisons votre adresse email uniquement pour cette newsletter. Lien de désinscription inclus.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-12">
             <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-cogs me-2"></i>Préférences</h5>
