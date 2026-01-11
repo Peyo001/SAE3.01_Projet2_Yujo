@@ -21,4 +21,14 @@ $twig->getExtension(\Twig\Extension\CoreExtension::class)->setTimezone('Europe/P
 $twig->addExtension(new \Twig\Extension\DebugExtension());
 //Ajout de l'extension d'internationalisation qui permet d'utiliser les filtres de date dans twig
 //$twig->addExtension(new IntlExtension());
+
+// Expose Google Analytics ID (si défini dans la config) comme variable globale Twig
+try {
+	$gaId = Config::getParametre('googleAnalyticsId');
+	if (is_string($gaId) && $gaId !== '') {
+		$twig->addGlobal('googleAnalyticsId', $gaId);
+	}
+} catch (Exception $e) {
+	// Clé non définie, on ignore silencieusement
+}
 ?>

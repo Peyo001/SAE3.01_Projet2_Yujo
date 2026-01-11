@@ -1,8 +1,9 @@
 {
-    "database" : {
-        "host" : "",
-        "name" : "",
-        "user" : "",
-        "password" : ""
-    }
+    "database": {
+        "host": "",
+        "name": "",
+        "user": "",
+        "password": ""
+    },
+    "googleAnalyticsId": "G-XXXXXXXXXX"
 }
