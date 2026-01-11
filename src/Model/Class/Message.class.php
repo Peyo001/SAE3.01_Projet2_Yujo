@@ -60,6 +60,15 @@ class Message {
     }
 
     /**
+     * Définit l'identifiant du message (après insertion).
+     * @param int $idMessage
+     * @return void
+     */
+    public function setIdMessage($idMessage): void {
+        $this->idMessage = $idMessage;
+    }
+
+    /**
      * Obtient le contenu du message.
      * 
      * @return string Contenu du message.
