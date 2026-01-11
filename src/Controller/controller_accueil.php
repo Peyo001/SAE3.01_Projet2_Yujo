@@ -37,26 +37,43 @@ class ControllerAccueil extends Controller
         $userManager = new UtilisateurDao($this->getPdo());
         $amiManager  = new AmiDao($this->getPdo());
         $postManager = new PostDao($this->getPdo());
+        $newsletterManager = new NewsletterDAO($this->getPdo());
 
         // --- Récupérer les amis ---
         $amis = $amiManager->findAmis($idUtilisateur); // tableau d'objets Ami
 
-        // --- Construire tableau d'IDs pour récupérer uniquement les posts des amis ---
+        // --- Construire tableau d'IDs pour récupérer les posts des amis + les vôtres ---
         $idsAmis = [];
         foreach ($amis as $ami) {
             $idsAmis[] = $ami->getIdUtilisateur2(); // ou la propriété correspondant à l'id de l'ami
+        }
+        if ($idUtilisateur) {
+            $idsAmis[] = (int)$idUtilisateur; // inclure les posts de l'utilisateur connecté
         }
 
         // --- Récupérer uniquement les posts des amis ---
         $posts = $postManager->findByAuteurs($idsAmis);
 
-        // --- Tableau id => pseudo pour Twig ---
-        $utilisateurs = $userManager->findAll(); 
+        // --- Tableau id => Utilisateur pour Twig (clé = idUtilisateur) ---
+        $utilisateursList = $userManager->findAll();
+        $utilisateurs = [];
+        foreach ($utilisateursList as $u) {
+            // suppose getIdUtilisateur() existe dans le modèle Utilisateur
+            $utilisateurs[$u->getIdUtilisateur()] = $u;
+        }
+        
+        // Vérifier si l'utilisateur est inscrit à la newsletter
+        $utilisateurConnecte = $userManager->find($idUtilisateur);
+        $estInscritNewsletter = false;
+        if ($utilisateurConnecte) {
+            $estInscritNewsletter = $newsletterManager->emailExiste($utilisateurConnecte->getEmail());
+        }
 
         echo $this->getTwig()->render('pageAccueil.html.twig', [
             'amis' => $amis,
             'posts' => $posts,
-            'utilisateurs' => $utilisateurs
+            'utilisateurs' => $utilisateurs,
+            'estInscritNewsletter' => $estInscritNewsletter
         ]);
     }
 }

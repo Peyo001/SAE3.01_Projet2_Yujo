@@ -107,13 +107,35 @@ class ControllerSignalement extends Controller
             exit;
         }
 
-        $raison = trim($_POST['raison'] ?? '');
-        $idPost = $_POST['id_post'] ?? null;
+        // Définition des règles de validation
+        $reglesValidation = [
+            'raison' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'longueur_min' => 10,
+                'longueur_max' => 2000
+            ],
+            'id_post' => [
+                'obligatoire' => false,
+                'type' => 'integer'
+            ]
+        ];
 
-        if (empty($raison)) {
-            echo "La raison ne peut pas être vide.";
-            return;
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('ajout_signalement.twig', [
+                'menu' => 'signalement',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
         }
+
+        $raison = $this->sanitize($_POST['raison']);
+        $idPost = $_POST['id_post'] ?? null;
 
         $signalement = new Signalement(null, $raison);
 

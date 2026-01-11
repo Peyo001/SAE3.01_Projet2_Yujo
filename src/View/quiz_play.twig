@@ -1,0 +1,73 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4" style="border-radius:16px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div class="badge bg-primary mb-2">Quiz</div>
+                            <h3 class="mb-1">{{ quiz.titre }}</h3>
+                            {% if quiz.description %}
+                                <p class="text-muted mb-0">{{ quiz.description }}</p>
+                            {% endif %}
+                        </div>
+                        <span class="badge bg-light text-primary border" style="font-weight:600;">{{ quiz.choixMultiples ? 'Choix multiples' : '1 seule réponse' }}</span>
+                    </div>
+
+                    {% if question %}
+                        <h5 class="mb-3">{{ question.libelle }}</h5>
+                        <form id="quiz-form" class="d-flex flex-column gap-2">
+                            {% set multiple = quiz.choixMultiples %}
+                            {% for rep in reponses %}
+                                <label class="d-flex align-items-center gap-2 p-3 border rounded-3 hover-effect" style="cursor:pointer;">
+                                    <input type="{{ multiple ? 'checkbox' : 'radio' }}" name="answer" value="{{ rep.idReponsePossible }}" data-correct="{{ rep.estCorrecte ? 1 : 0 }}" style="transform:scale(1.1);">
+                                    <span class="flex-grow-1">{{ rep.libelle }}</span>
+                                </label>
+                            {% else %}
+                                <p class="text-muted">Aucune réponse disponible.</p>
+                            {% endfor %}
+
+                            <button type="submit" class="btn btn-cta mt-2">Valider</button>
+                            <div id="quiz-result" class="mt-2 fw-semibold"></div>
+                        </form>
+                    {% else %}
+                        <p class="text-muted">Aucune question trouvée pour ce quiz.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    const form = document.getElementById('quiz-form');
+    if (!form) return;
+    const resultEl = document.getElementById('quiz-result');
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const inputs = Array.from(form.querySelectorAll('input[name="answer"]'));
+        const selected = inputs.filter(i => i.checked);
+        if (selected.length === 0) {
+            resultEl.textContent = "Choisis au moins une réponse.";
+            resultEl.className = 'mt-2 fw-semibold text-warning';
+            return;
+        }
+        const allCorrect = selected.every(i => i.dataset.correct === '1');
+        const noMissed = inputs.every(i => i.dataset.correct !== '1' || i.checked);
+        if (allCorrect && noMissed) {
+            resultEl.textContent = "Bravo, bonne réponse !";
+            resultEl.className = 'mt-2 fw-semibold text-success';
+        } else {
+            resultEl.textContent = "Ce n'est pas tout à fait ça. Essaie encore.";
+            resultEl.className = 'mt-2 fw-semibold text-danger';
+        }
+    });
+})();
+</script>
+{% endblock %}

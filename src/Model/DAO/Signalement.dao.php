@@ -24,7 +24,8 @@ class SignalementDao extends Dao
     public function findAll(): array
     {
         $signalements = [];
-        $stmt = $this->conn->query("SELECT idSignalement, raison FROM SIGNALEMENT");
+        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT");
+        $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $signalement = new Signalement($row['idSignalement'], $row['raison']);
             $signalements[] = $signalement;

@@ -92,6 +92,33 @@ class GroupeDao extends Dao
     }
 
     /**
+     * Recherche des groupes par nom ou description.
+     * @param string $term Terme de recherche.
+     * @return Groupe[]
+     */
+    public function search(string $term): array
+    {
+        $like = '%' . $term . '%';
+        $stmt = $this->conn->prepare("SELECT * FROM GROUPE WHERE nomGroupe LIKE :like OR description LIKE :like");
+        $stmt->bindValue(':like', $like, PDO::PARAM_STR);
+        $stmt->execute();
+        $groupes = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $membres = $this->getMembres($row['idGroupe']);
+            $groupes[] = new Groupe(
+                $row['nomGroupe'],
+                $row['description'],
+                $row['dateCreationGroupe'],
+                $membres,
+                (int)$row['idGroupe']
+            );
+        }
+
+        return $groupes;
+    }
+
+    /**
      * Insère un nouveau groupe dans la base de données.
      * 
      * Cette méthode ajoute un nouveau groupe dans la base de données avec les données de l'objet Groupe passé en paramètre.

@@ -4,6 +4,29 @@
 
 {% block content %}
 <div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h4 class="mb-3">Connaissances</h4>
+        </div>
+        <div class="col-lg-4">
+            <a href="index.php?controleur=parametre&methode=afficherParametre#newsletter" class="text-decoration-none">
+                <div class="card shadow-sm {% if estInscritNewsletter %}border-success{% else %}border-primary{% endif %} hover-effect">
+                    <div class="card-body p-3 text-center">
+                        <i class="bi bi-envelope-fill {% if estInscritNewsletter %}text-success{% else %}text-primary{% endif %}" style="font-size: 2rem;"></i>
+                        <h6 class="card-title {% if estInscritNewsletter %}text-success{% else %}text-primary{% endif %} mt-2 mb-2">Newsletter</h6>
+                        {% if estInscritNewsletter %}
+                            <span class="badge bg-success mb-2">✓ Inscrit</span>
+                            <p class="text-muted small mb-2">Gérer votre inscription</p>
+                            <span class="btn btn-outline-success btn-sm">Paramètres →</span>
+                        {% else %}
+                            <p class="text-muted small mb-2">Restez informé de nos nouveautés</p>
+                            <span class="btn btn-outline-primary btn-sm">S'inscrire →</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 
     <h4 class="mb-3">Connaissances</h4>
 
@@ -24,46 +47,42 @@
         <p class="text-muted mb-5">Aucun ami pour le moment.</p>
     {% endif %}
 
-    <h4 class="mb-3 text-center">À découvrir</h4>
+    <h4 class="mb-3 text-center">Fil d'actualité</h4>
 
     {% if posts is defined and posts|length > 0 %}
         <div class="row justify-content-center">
             <div class="col-md-8">
 
                 {% for post in posts %}
-                    <div class="card mb-4">
-
-
-                        <div class="card-body d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
-                                 style="width:40px;height:40px;">
-                                
+                    <div class="card shadow-sm border-0 mb-4 hover-effect">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-secondary" style="width:36px;height:36px;"></div>
+                                    <div>
+                                        <strong>
+                                            {{ utilisateurs[post.idAuteur].pseudo|default('Auteur inconnu') }}
+                                        </strong>
+                                        <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }}</div>
+                                    </div>
+                                </div>
+                                <span class="badge bg-primary">{{ post.typePost|capitalize }}</span>
                             </div>
-                            <strong>
-                                {{ utilisateurs[post.idAuteur].pseudo|default('Auteur inconnu') }}
-                            </strong>
-                        </div>
-
-                        <div class="card-body pt-0">
 
                             {% if post.typePost == 'quiz' %}
-                                <button class="btn btn-primary w-100">
-                                    {{ post.contenu }}
-                                </button>
-
-                            {% elseif post.typePost == 'room' %}
-                                <img src="/assets/room.png" class="img-fluid rounded mb-2">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-primary btn-sm">Visiter</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Nom room</button>
+                                <div class="p-3 border rounded-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="fw-bold">Quiz</div>
+                                        <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Jouer</a>
+                                    </div>
+                                    <p class="mb-0 text-muted">{{ post.contenu }}</p>
                                 </div>
-
+                            {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
+                                <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 380px; object-fit: cover;">
                             {% else %}
-                                <p class="mb-0">{{ post.contenu }}</p>
+                                <p class="mb-0 text-muted">{{ post.contenu }}</p>
                             {% endif %}
-
                         </div>
-
                     </div>
                 {% endfor %}
 

@@ -1,0 +1,26 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Créer une room{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="h3 mb-4">Nouvelle room</h1>
+        <form method="post" action="index.php?controleur=room&methode=creer">
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom de la room</label>
+                <input type="text" class="form-control" id="nom" name="nom" required minlength="2" maxlength="150" placeholder="Ex: Salon principal">
+            </div>
+            <div class="mb-3">
+                <label for="visibilite" class="form-label">Visibilité</label>
+                <select class="form-select" id="visibilite" name="visibilite" required>
+                    <option value="public">Publique</option>
+                    <option value="prive">Privée</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Créer</button>
+            <a class="btn btn-outline-secondary" href="index.php?controleur=room&methode=lister">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

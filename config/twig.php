@@ -11,7 +11,8 @@ $twig = new \Twig\Environment($loader, [
 templates {{dump
  (variable)}} pour afficher le contenu d'une variable. Nécessite l'utilisation de
 l'extension debug*/
- 'debug' => true,
+ 'debug' => false, // SÉCURITÉ: Désactivé en production pour éviter l'exposition de données
+ 'autoescape' => 'html', // SÉCURITÉ: Active l'échappement HTML automatique de toutes les variables Twig
  // Il est possible de définir d'autre variable d'environnement
  //...
 ]);
@@ -21,4 +22,14 @@ $twig->getExtension(\Twig\Extension\CoreExtension::class)->setTimezone('Europe/P
 $twig->addExtension(new \Twig\Extension\DebugExtension());
 //Ajout de l'extension d'internationalisation qui permet d'utiliser les filtres de date dans twig
 //$twig->addExtension(new IntlExtension());
+
+// Expose Google Analytics ID (si défini dans la config) comme variable globale Twig
+try {
+	$gaId = Config::getParametre('googleAnalyticsId');
+	if (is_string($gaId) && $gaId !== '') {
+		$twig->addGlobal('googleAnalyticsId', $gaId);
+	}
+} catch (Exception $e) {
+	// Clé non définie, on ignore silencieusement
+}
 ?>

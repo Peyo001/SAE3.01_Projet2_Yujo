@@ -113,49 +113,212 @@ class ControllerPost extends Controller
             exit;
         }
 
+        // Définition des règles de validation
+        $reglesValidation = [
+            'contenu' => [
+                'obligatoire' => false,
+                'type' => 'string',
+                'longueur_min' => 0,
+                'longueur_max' => 5000
+            ],
+            'type_post' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'valeurs_acceptables' => ['post', 'quiz']
+            ],
+            'id_room' => [
+                'obligatoire' => false,
+                'type' => 'integer'
+            ]
+        ];
+
+        $validator = new Validator($reglesValidation);
+        $donneesValides = $validator->valider($_POST);
+        $erreurs = $validator->getMessagesErreurs();
+
+        if (!$donneesValides) {
+            echo $this->getTwig()->render('ajout_post.twig', [
+                'menu' => 'nouveau_post',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
+        }
+
+        $typePost = $this->sanitize($_POST['type_post'] ?? 'post'); 
         $contenu = trim($_POST['contenu'] ?? '');
-        $typePost = $_POST['type_post'] ?? 'texte'; 
+        // Sanitize le contenu seulement s'il n'est pas une image
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            $contenu = $this->sanitize($contenu);
+        }
         $idRoom = (int)($_POST['id_room'] ?? 1); 
         
         if (isset($_SESSION['idUtilisateur'])) {
             $idAuteur = (int) $_SESSION['idUtilisateur'];
         } else {
             $idAuteur = 1; 
-        }       
-        if (empty($contenu)) {
-            echo "Le contenu ne peut pas être vide."; 
-            return;
         }
 
+        // Gestion spécifique selon type
+        if ($typePost === 'post') {
+            // Facultatif: texte OU image, au moins l'un des deux
+            if ((isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK)) {
+                $tmp = $_FILES['image']['tmp_name'];
+                $name = $_FILES['image']['name'];
+                $size = (int)$_FILES['image']['size'];
+                $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                $allowed = ['jpg','jpeg','png','gif','webp'];
+                if (!in_array($ext, $allowed)) {
+                    $erreurs[] = "Format d'image non supporté (jpg, png, gif, webp).";
+                } elseif ($size > 5 * 1024 * 1024) {
+                    $erreurs[] = "Image trop lourde (max 5MB).";
+                } else {
+                    $targetDir = __DIR__ . '/../../public/uploads/posts';
+                    $unique = uniqid('post_', true) . '.' . $ext;
+                    $targetPath = $targetDir . '/' . $unique;
+                    if (!is_dir($targetDir)) {
+                        @mkdir($targetDir, 0775, true);
+                    }
+                    if (move_uploaded_file($tmp, $targetPath)) {
+                        // chemin web relatif
+                        $contenu = 'uploads/posts/' . $unique;
+                    } else {
+                        $erreurs[] = "Échec de l'envoi de l'image.";
+                    }
+                }
+            }
+            if ($contenu === '' && !(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK)) {
+                $erreurs[] = "Veuillez écrire un contenu ou ajouter une image.";
+            }
+        }
+
+        // Créer le post (contenu est soit texte/lien, soit chemin d'image)
         $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
 
         $manager = new PostDao($this->getPdo());
         $succes = $manager->insererPost($post);
 
         if ($succes) {
-            // Si le type de post est "quiz", créer automatiquement le quiz associé
+            // Si le type de post est "quiz", créer la question et ses réponses puis le quiz associé
             if ($typePost === 'quiz') {
                 $idPost = $post->getIdPost();
-                
-                // Récupérer les données du quiz depuis le formulaire
+                $managerQuiz = new QuizDao($this->getPdo());
+
+                // Éviter la création en double : un seul quiz par post
+                $existingQuiz = $managerQuiz->findByPost($idPost);
+                if ($existingQuiz) {
+                    header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+                    exit;
+                }
+
                 $titreQuiz = trim($_POST['titre_quiz'] ?? 'Quiz sans titre');
                 $descriptionQuiz = trim($_POST['description_quiz'] ?? '');
                 $choixMultiples = isset($_POST['choix_multiples']) ? (bool)$_POST['choix_multiples'] : false;
-                $idQuestion = isset($_POST['id_question']) ? (int)$_POST['id_question'] : 1;
-                
-                // Créer l'objet Quiz
+
+                $idQuestion = 0;
+                $questionLibelle = trim($_POST['question_libelle'] ?? '');
+                $reponses = isset($_POST['reponses']) && is_array($_POST['reponses']) ? $_POST['reponses'] : [];
+
+                // Validation minimale côté serveur pour le quiz
+                $validAnswers = [];
+                $correctCount = 0;
+                foreach ($reponses as $r) {
+                    $lib = isset($r['libelle']) ? trim($r['libelle']) : '';
+                    if ($lib !== '') {
+                        $isCorrect = !empty($r['correct']);
+                        $validAnswers[] = [ 'libelle' => $lib, 'correct' => $isCorrect ];
+                        if ($isCorrect) { $correctCount++; }
+                    }
+                }
+                if ($questionLibelle === '') {
+                    $erreurs[] = "La question du quiz est obligatoire.";
+                }
+                if (count($validAnswers) < 2) {
+                    $erreurs[] = "Indique au moins 2 réponses pour le quiz.";
+                }
+                if (!$choixMultiples && $correctCount !== 1) {
+                    $erreurs[] = "Sélectionne exactement une bonne réponse (désactive choix multiples).";
+                }
+
+                if (!empty($erreurs)) {
+                    echo $this->getTwig()->render('ajout_post.twig', [
+                        'menu' => 'nouveau_post',
+                        'erreurs' => $erreurs,
+                        'donnees' => $_POST
+                    ]);
+                    exit;
+                }
+
+                // Créer la question
+                $managerQuestion = new QuestionDAO($this->getPdo());
+                $question = new Question(null, $questionLibelle);
+                if ($managerQuestion->createQuestion($question)) {
+                    $idQuestion = (int)$question->getIdQuestion();
+                }
+
+                if ($idQuestion === 0) {
+                    $erreurs[] = "Impossible de créer la question du quiz.";
+                    echo $this->getTwig()->render('ajout_post.twig', [
+                        'menu' => 'nouveau_post',
+                        'erreurs' => $erreurs,
+                        'donnees' => $_POST
+                    ]);
+                    exit;
+                }
+
+                // Ajouter les réponses possibles
+                if ($idQuestion > 0) {
+                    foreach ($validAnswers as $ans) {
+                        $rp = new ReponsePossible(null, $ans['libelle'], (bool)$ans['correct']);
+                        $managerQuestion->addReponseToQuestion($idQuestion, $rp);
+                    }
+                }
+
+                // Créer le quiz lié au post et à la question
                 $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, $idPost);
-                
-                // Insérer le quiz dans la base de données
-                $managerQuiz = new QuizDao($this->getPdo());
                 $managerQuiz->insererQuiz($quiz);
             }
             
-            header('Location: index.php?controleur=post&methode=lister');
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
             exit;
         } else {
             throw new Exception("Erreur lors de la création du post.");
         }
+    }
+
+    /**
+     * Affiche le quiz associé à un post (jouer au quiz).
+     */
+    public function afficherQuiz(): void
+    {
+        $idPost = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($idPost === 0) {
+            header('Location: index.php?controleur=accueil&methode=afficher');
+            exit;
+        }
+
+        $quizDao = new QuizDao($this->getPdo());
+        $quiz = $quizDao->findByPost($idPost);
+        if (!$quiz) {
+            header('Location: index.php?controleur=post&methode=afficher&id=' . $idPost);
+            exit;
+        }
+
+        $question = null;
+        $reponses = [];
+        if ($quiz->getIdQuestion()) {
+            $questionDao = new QuestionDAO($this->getPdo());
+            $question = $questionDao->findByIdQuestion($quiz->getIdQuestion());
+            if ($question) {
+                $reponses = $question->getReponses();
+            }
+        }
+
+        echo $this->getTwig()->render('quiz_play.twig', [
+            'quiz' => $quiz,
+            'question' => $question,
+            'reponses' => $reponses
+        ]);
     }
 
     /**

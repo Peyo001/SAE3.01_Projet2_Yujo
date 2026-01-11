@@ -49,7 +49,8 @@ class ListerDAO extends Dao {
      * @return Lister[] Tableau des objets Lister.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT idReponsePossible, idQuestion FROM LISTER");
+        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM LISTER");
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return array_map(fn($row) => new Lister($row['idReponsePossible'], $row['idQuestion']), $rows);
     }

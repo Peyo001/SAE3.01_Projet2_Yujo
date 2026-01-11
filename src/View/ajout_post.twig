@@ -5,32 +5,126 @@
 {% block content %}
     <div class="row">
         <div class="col-12">
-            <h1>Créer un nouveau post</h1>
-            <a href="index.php?controleur=post&methode=lister"><- Retour</a>
+            <h1 style="margin-bottom:12px;">Créer un nouveau post</h1>
+            <a href="index.php?controleur=post&methode=lister" style="color:#7a3cff;text-decoration:none;">← Retour</a>
             <hr>
         </div>
 
-        <div class="col-9">
-            <form action="index.php?controleur=post&methode=traiterFormulaireInsertion" method="post" enctype="multipart/form-data">
-                
-                <div style="margin-bottom: 15px;">
-                    <label for="contenu">Votre message :</label><br>
-                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%;" required></textarea>
+        <div class="col-12 col-md-10 col-lg-9">
+            <form action="index.php?controleur=post&methode=traiterFormulaireInsertion" method="post" enctype="multipart/form-data" style="background:#f9f6ff;border:1px solid #ebddff;padding:18px 18px 22px 18px;border-radius:16px;box-shadow:0 8px 24px rgba(122,60,255,0.08);">
+                <div style="margin-bottom: 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <div style="flex:1 1 240px;">
+                        <label for="type_post" style="font-weight:600;">Type de post</label><br>
+                        <select name="type_post" id="type_post" onchange="toggleFields()" style="width:100%; padding:10px; border-radius:10px; border:1px solid #d6c4ff; background:#fff;">
+                            <option value="post" {% if donnees.type_post|default('post') == 'post' %}selected{% endif %}>Post</option>
+                            <option value="quiz" {% if donnees.type_post|default('post') == 'quiz' %}selected{% endif %}>Quiz</option>
+                        </select>
+                    </div>
+                    <button type="button" id="btnAddImage" style="height:44px;padding:0 14px;border-radius:10px;border:1px solid #d6c4ff;background:#fff;font-weight:600;color:#7a3cff;cursor:pointer;">Ajouter une image</button>
                 </div>
 
-                <div style="margin-bottom: 15px;">
-                    <label for="type_post">Type de post :</label><br>
-                    <select name="type_post" id="type_post">
-                        <option value="texte">Texte</option>
-                        <option value="image">Image</option>
-                        <option value="lien">Lien</option>
-                    </select>
+                <div id="postFields" style="margin-bottom: 15px;">
+                    <label for="contenu" style="font-weight:600;">Votre message</label><br>
+                    <textarea name="contenu" id="contenu" rows="5" style="width: 100%; padding:12px; border-radius:12px; border:1px solid #d6c4ff;" minlength="1" maxlength="5000">{{ donnees.contenu|default('') }}</textarea>
+                </div>
+
+                <div id="imageFields" style="margin-bottom: 15px; display: none;">
+                    <label for="image" style="font-weight:600;">Choisir une image</label><br>
+                    <input type="file" name="image" id="image" accept="image/*" style="margin-top:6px;">
+                    <small class="text-muted">Formats: jpg, png, gif, webp · max 5MB</small>
+                </div>
+
+                <div id="quizFields" style="margin-bottom: 15px; display: none; padding:14px; border:1px solid #d6c4ff; border-radius:12px; background:#fff;">
+                    <label for="titre_quiz" style="font-weight:600;">Titre du quiz</label><br>
+                    <input type="text" name="titre_quiz" id="titre_quiz" style="width: 100%; padding:10px; border-radius:10px; border:1px solid #d6c4ff;" placeholder="Mon super quiz">
+                    <br><br>
+                    <label for="description_quiz" style="font-weight:600;">Description</label><br>
+                    <textarea name="description_quiz" id="description_quiz" rows="3" style="width: 100%; padding:10px; border-radius:10px; border:1px solid #d6c4ff;" placeholder="Décris ton quiz"></textarea>
+                    <br><br>
+                    <label style="font-weight:600; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" name="choix_multiples" value="1"> Autoriser les choix multiples
+                    </label>
+                    <br>
+                    <div style="margin-top:6px;">
+                        <label for="question_libelle" style="font-weight:600;">Question</label><br>
+                        <input type="text" name="question_libelle" id="question_libelle" style="width: 100%; padding:10px; border-radius:10px; border:1px solid #d6c4ff;" placeholder="Saisis la question du quiz">
+                    </div>
+                    <div style="margin-top:12px;">
+                        <strong>Réponses possibles</strong>
+                        <small class="text-muted" style="display:block; margin-bottom:6px;">Au moins 2 réponses, coche les bonnes.</small>
+                        <div class="quiz-answer" style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                            <input type="text" name="reponses[0][libelle]" placeholder="Réponse 1" style="flex:1; padding:9px; border-radius:10px; border:1px solid #d6c4ff;">
+                            <label style="display:flex; align-items:center; gap:6px; white-space:nowrap;"><input type="checkbox" name="reponses[0][correct]" value="1"> Correcte</label>
+                        </div>
+                        <div class="quiz-answer" style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                            <input type="text" name="reponses[1][libelle]" placeholder="Réponse 2" style="flex:1; padding:9px; border-radius:10px; border:1px solid #d6c4ff;">
+                            <label style="display:flex; align-items:center; gap:6px; white-space:nowrap;"><input type="checkbox" name="reponses[1][correct]" value="1"> Correcte</label>
+                        </div>
+                        <div class="quiz-answer" style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                            <input type="text" name="reponses[2][libelle]" placeholder="Réponse 3 (optionnel)" style="flex:1; padding:9px; border-radius:10px; border:1px solid #d6c4ff;">
+                            <label style="display:flex; align-items:center; gap:6px; white-space:nowrap;"><input type="checkbox" name="reponses[2][correct]" value="1"> Correcte</label>
+                        </div>
+                        <div class="quiz-answer" style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                            <input type="text" name="reponses[3][libelle]" placeholder="Réponse 4 (optionnel)" style="flex:1; padding:9px; border-radius:10px; border:1px solid #d6c4ff;">
+                            <label style="display:flex; align-items:center; gap:6px; white-space:nowrap;"><input type="checkbox" name="reponses[3][correct]" value="1"> Correcte</label>
+                        </div>
+                    </div>
                 </div>
 
                 <input type="hidden" name="id_room" value="1">
 
-                <button type="submit">Publier</button>
+                <button type="submit" style="margin-top:4px; background:#7a3cff; color:#fff; border:none; padding:12px 18px; border-radius:12px; font-weight:700; cursor:pointer;">Publier</button>
             </form>
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if erreurs is defined and erreurs is not empty %}
+            <div class="alert alert-danger mt-3" role="alert">
+                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+                <ul class="mb-0">
+                    {% for msg in erreurs %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
     </div>
+    <script>
+    function toggleFields() {
+        const type = document.getElementById('type_post').value;
+        const imageFields = document.getElementById('imageFields');
+        const quizFields = document.getElementById('quizFields');
+        const postFields = document.getElementById('postFields');
+
+        imageFields.style.display = type === 'post' ? 'block' : 'none';
+        quizFields.style.display = type === 'quiz' ? 'block' : 'none';
+        if (postFields) {
+            postFields.style.display = (type === 'post') ? 'block' : 'none';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', toggleFields);
+    // Bouton pour basculer rapidement en mode image et ouvrir le sélecteur
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('btnAddImage');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const typeSel = document.getElementById('type_post');
+                typeSel.value = 'post';
+                toggleFields();
+                const fileInput = document.getElementById('image');
+                if (fileInput) fileInput.click();
+            });
+        }
+    });
+    </script>
 {% endblock %}

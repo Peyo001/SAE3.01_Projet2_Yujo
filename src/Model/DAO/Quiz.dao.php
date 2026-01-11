@@ -41,6 +41,27 @@ require_once "Dao.class.php";
         }
 
         /**
+         * Trouve un quiz par idPost (un seul quiz par post).
+         */
+        public function findByPost(int $idPost): ?Quiz {
+            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM QUIZ WHERE idPost = :idPost LIMIT 1");
+            $stmt->bindParam(':idPost', $idPost, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                return new Quiz(
+                    (int)$row['idQuiz'],
+                    $row['titre'],
+                    $row['description'],
+                    (bool)$row['choixMultiples'],
+                    (int)$row['idQuestion'],
+                    (int)$row['idPost']
+                );
+            }
+            return null;
+        }
+
+        /**
          * Récupère tous les quiz de la base de données.
          * 
          * Cette méthode récupère tous les quiz et retourne un tableau d'objets `Quiz`.

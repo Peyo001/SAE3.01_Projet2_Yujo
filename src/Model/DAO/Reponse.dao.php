@@ -90,7 +90,8 @@ class ReponseDao extends Dao
      * @return Reponse[] Tableau contenant toutes les réponses sous forme d'objets `Reponse`.
      */
     public function findAll(): array{
-        $stmt = $this->conn->query("SELECT * FROM REPONSE");
+        $stmt = $this->conn->prepare("SELECT * FROM REPONSE");
+        $stmt->execute();
         $reponses = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
