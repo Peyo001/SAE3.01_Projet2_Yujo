@@ -41,11 +41,17 @@ class ControllerGroupe extends Controller
     public function lister(): void
     {   
         $manager = new GroupeDao($this->getPdo());
-        $groupes = $manager->findAll();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        if ($search !== '') {
+            $groupes = $manager->search($search);
+        } else {
+            $groupes = $manager->findAll();
+        }
 
         echo $this->getTwig()->render('liste_groupes.twig', [
             'groupes' => $groupes,
-            'title' => 'Les Groupes'
+            'title' => 'Les Groupes',
+            'search' => $search
         ]);
     }
 
@@ -68,6 +74,7 @@ class ControllerGroupe extends Controller
         }
 
         $manager = new GroupeDao($this->getPdo());
+        $messageDao = new MessageDAO($this->getPdo());
         $groupe = $manager->find($id);
 
         if (!$groupe) {
@@ -75,9 +82,36 @@ class ControllerGroupe extends Controller
             return;
         }
 
+        $messages = $messageDao->findByIdGroupe($id);
+
+        // Préparer une liste des utilisateurs (auteurs des messages) pour l'affichage des noms
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+        $utilisateurs = [];
+        // Auteurs des messages
+        foreach ($messages as $m) {
+            $uid = $m->getIdUtilisateur();
+            if ($uid && !isset($utilisateurs[$uid])) {
+                $u = $utilisateurDao->find($uid);
+                if ($u) {
+                    $utilisateurs[$uid] = $u;
+                }
+            }
+        }
+        // Membres du groupe
+        foreach ($groupe->getMembres() as $idMembre) {
+            if ($idMembre && !isset($utilisateurs[$idMembre])) {
+                $u = $utilisateurDao->find($idMembre);
+                if ($u) {
+                    $utilisateurs[$idMembre] = $u;
+                }
+            }
+        }
+
         echo $this->getTwig()->render('groupe.twig', [
             'groupe' => $groupe,
-            'user_connected' => $_SESSION['idUtilisateur'] ?? null
+            'user_connected' => $_SESSION['idUtilisateur'] ?? null,
+            'messages' => $messages,
+            'utilisateurs' => $utilisateurs
         ]);
     }
 
@@ -205,6 +239,55 @@ class ControllerGroupe extends Controller
         if ($groupe) {
             $manager->ajouterMembre($groupe, $idUtilisateur, $dateAjout);
         }
+
+        header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+        exit;
+    }
+
+    /**
+     * @brief Poster un message dans un groupe
+     *
+     * Vérifie que l'utilisateur est membre du groupe, puis insère le message.
+     */
+    public function posterMessage(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+        $idGroupe = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $contenu = isset($_POST['message']) ? trim($_POST['message']) : '';
+
+        if (!$idUtilisateur || $idGroupe === 0 || $contenu === '') {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        $groupeDao = new GroupeDao($this->getPdo());
+        $groupe = $groupeDao->find($idGroupe);
+        if (!$groupe) {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        // Vérifier que l'utilisateur est membre du groupe
+        if (!in_array($idUtilisateur, $groupe->getMembres())) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Insérer le message
+        $messageDao = new MessageDAO($this->getPdo());
+        $message = new Message(
+            null,
+            $contenu,
+            date('Y-m-d H:i:s'),
+            $idGroupe,
+            $idUtilisateur
+        );
+        $messageDao->insererMessage($message);
 
         header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
         exit;
