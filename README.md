@@ -32,11 +32,16 @@ Rejoignez Yujo et redécouvrez ce que signifie être vraiment connecté.
     Si ce n'est pas déjà fait: 
    - PHP >= 8.0
    - Composer
+   - Node.js et npm
    - Base de données MySQL/MariaDB
 
     Executez ensuite: 
    ```bash
+   # Installation des dépendances PHP (Twig, Symfony, etc.)
    composer install
+   
+   # Installation des dépendances JavaScript (Bootstrap, DataTables, Three.js)
+   npm install
    ```
 
 3. **Configurer la base de données :**
