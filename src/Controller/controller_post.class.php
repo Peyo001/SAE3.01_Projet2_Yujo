@@ -145,8 +145,12 @@ class ControllerPost extends Controller
             exit;
         }
 
-        $typePost = $_POST['type_post'] ?? 'post'; 
+        $typePost = $this->sanitize($_POST['type_post'] ?? 'post'); 
         $contenu = trim($_POST['contenu'] ?? '');
+        // Sanitize le contenu seulement s'il n'est pas une image
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            $contenu = $this->sanitize($contenu);
+        }
         $idRoom = (int)($_POST['id_room'] ?? 1); 
         
         if (isset($_SESSION['idUtilisateur'])) {

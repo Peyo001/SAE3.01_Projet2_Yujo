@@ -175,4 +175,23 @@ class Controller
     {
         $this->post = $post;
     }
+
+    /**
+     * @brief Nettoie une entrée utilisateur pour prévenir les attaques XSS.
+     * 
+     * Utilise htmlspecialchars() pour échapper les caractères spéciaux HTML
+     * et convertir les entités HTML. Cette fonction est utilisée pour
+     * sécuriser les données d'entrée utilisateur avant stockage ou affichage.
+     * 
+     * Paramètres:
+     * - ENT_QUOTES: Échappe les guillemets simples ET doubles
+     * - UTF-8: Spécifie l'encodage de caractères
+     * 
+     * @param string $input L'entrée utilisateur à nettoyer
+     * @return string L'entrée nettoyée et échappée pour HTML
+     */
+    protected function sanitize(string $input): string
+    {
+        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    }
 }

@@ -130,8 +130,8 @@
                 return;
             }
 
-            $nom = $_POST['nom'];
-            $visibilite = $_POST['visibilite'];
+            $nom = $this->sanitize($_POST['nom']);
+            $visibilite = $this->sanitize($_POST['visibilite']);
             $idCreateur = $_SESSION['idUtilisateur'];   // a modifier, en liant la classe UTILISATEUR
 
             $room = new Room(
@@ -182,8 +182,8 @@
                 return;
             }
 
-            $room->setNom($_POST['nom']);
-            $room->setVisibilite($_POST['visibilite']);
+            $room->setNom($this->sanitize($_POST['nom']));
+            $room->setVisibilite($this->sanitize($_POST['visibilite']));
 
             $managerRoom->update($room);
 

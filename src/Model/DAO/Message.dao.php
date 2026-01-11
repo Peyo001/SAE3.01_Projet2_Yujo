@@ -99,7 +99,8 @@ class MessageDAO extends Dao{
      * @return array Tableau d'objets Message.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT * FROM MESSAGE");
+        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE");
+        $stmt->execute();
         $messages = [];
 
         while ($row = $stmt->fetch()) {

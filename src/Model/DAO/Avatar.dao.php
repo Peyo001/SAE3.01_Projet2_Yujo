@@ -23,7 +23,8 @@ class AvatarDao extends Dao
      */
     public function findAll(): array {
         $avatars = [];
-        $stmt = $this->conn->query("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR");
+        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR");
+        $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $avatar = new Avatar(
                 $row['nom'],

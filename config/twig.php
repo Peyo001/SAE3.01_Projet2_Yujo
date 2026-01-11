@@ -11,7 +11,8 @@ $twig = new \Twig\Environment($loader, [
 templates {{dump
  (variable)}} pour afficher le contenu d'une variable. Nécessite l'utilisation de
 l'extension debug*/
- 'debug' => true,
+ 'debug' => false, // SÉCURITÉ: Désactivé en production pour éviter l'exposition de données
+ 'autoescape' => 'html', // SÉCURITÉ: Active l'échappement HTML automatique de toutes les variables Twig
  // Il est possible de définir d'autre variable d'environnement
  //...
 ]);

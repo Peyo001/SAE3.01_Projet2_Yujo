@@ -22,7 +22,8 @@ class SignalerDao extends Dao {
      * @return Signaler[] Tableau des objets Signaler.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER");
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return array_map(fn($row) => new Signaler($row['idUtilisateur'], $row['idSignalement'], $row['idPost'], $row['dateSignalement'], $row['statut']), $rows);
     }

@@ -140,8 +140,8 @@
                 return;
             }
 
-            $description = trim($_POST['description']);
-            $modele3dPath = trim($_POST['modele3dPath']);
+            $description = $this->sanitize($_POST['description']);
+            $modele3dPath = $this->sanitize($_POST['modele3dPath']);
             $prix = (int)$_POST['prix'];
 
             $objet = new Objet(null, $description, $modele3dPath, $prix, $idRoom);
@@ -216,8 +216,8 @@
                 return;
             }
 
-            $objet->setDescription(trim($_POST['description']));
-            $objet->setModele3dPath(trim($_POST['modele3dPath']));
+            $objet->setDescription($this->sanitize($_POST['description']));
+            $objet->setModele3dPath($this->sanitize($_POST['modele3dPath']));
             $objet->setPrix((int)$_POST['prix']);
 
             $managerObjet->mettreAJourObjet($objet);
