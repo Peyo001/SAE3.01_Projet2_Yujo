@@ -38,14 +38,17 @@ class ControllerParametre extends Controller
 
         // Initialisation du DAO Utilisateur
         $userManager = new UtilisateurDao($this->getPdo());
+        $newsletterManager = new NewsletterDAO($this->getPdo());
 
         // Récupération des données
-        $utilisateur = $userManager->find($idUtilisateur); 
+        $utilisateur = $userManager->find($idUtilisateur);
+        $estInscritNewsletter = $newsletterManager->emailExiste($utilisateur->getEmail());
 
         // Envoi à la vue
         echo $this->getTwig()->render('pageParametre.twig', [
             'user' => $utilisateur,
-            'page_title' => 'Paramètres'
+            'page_title' => 'Paramètres',
+            'estInscritNewsletter' => $estInscritNewsletter
         ]);
     }
 

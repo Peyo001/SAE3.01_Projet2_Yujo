@@ -37,6 +37,7 @@ class ControllerAccueil extends Controller
         $userManager = new UtilisateurDao($this->getPdo());
         $amiManager  = new AmiDao($this->getPdo());
         $postManager = new PostDao($this->getPdo());
+        $newsletterManager = new NewsletterDAO($this->getPdo());
 
         // --- Récupérer les amis ---
         $amis = $amiManager->findAmis($idUtilisateur); // tableau d'objets Ami
@@ -51,12 +52,20 @@ class ControllerAccueil extends Controller
         $posts = $postManager->findByAuteurs($idsAmis);
 
         // --- Tableau id => pseudo pour Twig ---
-        $utilisateurs = $userManager->findAll(); 
+        $utilisateurs = $userManager->findAll();
+        
+        // Vérifier si l'utilisateur est inscrit à la newsletter
+        $utilisateurConnecte = $userManager->find($idUtilisateur);
+        $estInscritNewsletter = false;
+        if ($utilisateurConnecte) {
+            $estInscritNewsletter = $newsletterManager->emailExiste($utilisateurConnecte->getEmail());
+        }
 
         echo $this->getTwig()->render('pageAccueil.html.twig', [
             'amis' => $amis,
             'posts' => $posts,
-            'utilisateurs' => $utilisateurs
+            'utilisateurs' => $utilisateurs,
+            'estInscritNewsletter' => $estInscritNewsletter
         ]);
     }
 }
