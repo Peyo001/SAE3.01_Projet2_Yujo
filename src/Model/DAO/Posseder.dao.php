@@ -49,7 +49,8 @@ class PossederDAO extends Dao {
      * @return Posseder[] Tableau des objets Posseder.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT idObjet, idRoom, dateAjout FROM POSSEDER");
+        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM POSSEDER");
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return array_map(fn($row) => new Posseder($row['idObjet'], $row['idRoom'], $row['dateAjout']), $rows);
     }

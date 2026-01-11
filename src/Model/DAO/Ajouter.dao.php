@@ -51,7 +51,8 @@ class AjouterDao extends Dao {
      * @return Ajouter[] Tableau des objets Ajouter.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER");
+        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER");
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return array_map(fn($row) => new Ajouter($row['idObjet'], $row['idUtilisateur'], $row['dateAjout']), $rows);
     }

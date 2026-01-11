@@ -87,8 +87,8 @@ class NewsletterDAO extends Dao
      */
     public function compterInscritsActifs(): int
     {
-        $query = "SELECT COUNT(*) FROM NEWSLETTER WHERE estActif = TRUE";
-        $stmt = $this->conn->query($query);
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM NEWSLETTER WHERE estActif = TRUE");
+        $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
 }

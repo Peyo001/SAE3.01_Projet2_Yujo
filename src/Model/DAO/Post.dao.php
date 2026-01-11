@@ -127,7 +127,8 @@ class PostDao extends Dao
      */
     public function findAll(): array
     {
-        $stmt = $this->conn->query("SELECT * FROM POST");
+        $stmt = $this->conn->prepare("SELECT * FROM POST");
+        $stmt->execute();
         $posts = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $posts[] = new Post(

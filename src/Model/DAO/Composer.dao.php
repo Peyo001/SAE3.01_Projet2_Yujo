@@ -59,7 +59,8 @@ class ComposerDao extends Dao{
      * @return Composer[] Tableau d'objets Composer représentant tous les enregistrements de la table COMPOSER.
      */
     public function findAll(): array {
-        $stmt = $this->conn->query("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER");
+        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER");
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return array_map(fn($row) => new Composer($row['idGroupe'], $row['idUtilisateur'], $row['dateAjout']), $rows);
     }
