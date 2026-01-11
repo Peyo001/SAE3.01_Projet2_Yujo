@@ -50,7 +50,7 @@
          * @param ?int $nbVisit Nombre de visites de la room (peut être nul si non défini).
          * @param ?int $idCreateur Identifiant du créateur de la room (peut être nul si non défini).
          */
-        public function __construct(?int $idRoom, ?string $nom, ?string $visibilite, ?string $personnalisation = null, ?string $dateCreation, ?int $nbVisit, ?int $idCreateur) {
+        public function __construct( ?int $idCreateur,?int $idRoom, ?string $nom, ?string $visibilite, ?string $personnalisation = null, ?string $dateCreation, ?int $nbVisit) {
             $this->setIdRoom($idRoom);
             $this->setNom($nom);
             $this->setVisibilite($visibilite);
