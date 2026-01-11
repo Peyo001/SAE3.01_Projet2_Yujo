@@ -64,7 +64,7 @@ class ControllerQuestion extends Controller
 			exit;
 		}
 
-		$libelle = trim($_POST['libelle'] ?? '');
+		$libelle = $this->sanitize($_POST['libelle'] ?? '');
 
 		if ($libelle === '') {
 			echo "Le libellé est requis.";
@@ -94,7 +94,7 @@ class ControllerQuestion extends Controller
 		}
 
 		$id = isset($_POST['idQuestion']) ? (int) $_POST['idQuestion'] : 0;
-		$libelle = trim($_POST['libelle'] ?? '');
+		$libelle = $this->sanitize($_POST['libelle'] ?? '');
 
 		if ($id <= 0 || $libelle === '') {
 			echo "Identifiant et libellé requis.";
@@ -134,7 +134,7 @@ class ControllerQuestion extends Controller
 		}
 
 		$idQuestion = isset($_POST['idQuestion']) ? (int) $_POST['idQuestion'] : 0;
-		$libelle = trim($_POST['libelle'] ?? '');
+		$libelle = $this->sanitize($_POST['libelle'] ?? '');
 		$estCorrecte = isset($_POST['estCorrecte']) ? (bool) $_POST['estCorrecte'] : false;
 
 		if ($idQuestion <= 0 || $libelle === '') {

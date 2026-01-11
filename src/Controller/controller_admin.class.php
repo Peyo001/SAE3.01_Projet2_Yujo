@@ -96,8 +96,8 @@
 
                 $objet = new Objet(
                     null,
-                    trim($_POST['description']),
-                    trim($_POST['modele3dPath']),
+                    $this->sanitize($_POST['description']),
+                    $this->sanitize($_POST['modele3dPath']),
                     (int) $_POST['prix'],
                     null
                 );

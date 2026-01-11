@@ -131,9 +131,9 @@ class ControllerParametre extends Controller
         }
 
         // Récupération des données validées
-        $nouveauNom = trim($_POST['nom'] ?? '');
-        $nouveauPrenom = trim($_POST['prenom'] ?? '');
-        $nouveauPseudo = trim($_POST['pseudo'] ?? '');
+        $nouveauNom = $this->sanitize($_POST['nom'] ?? '');
+        $nouveauPrenom = $this->sanitize($_POST['prenom'] ?? '');
+        $nouveauPseudo = $this->sanitize($_POST['pseudo'] ?? '');
         $nouvelEmail = trim($_POST['email'] ?? '');
 
         // Validation supplémentaire: vérifier l'unicité de l'email et du pseudo

@@ -41,7 +41,7 @@ class ControllerGroupe extends Controller
     public function lister(): void
     {   
         $manager = new GroupeDao($this->getPdo());
-        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $search = isset($_GET['search']) ? $this->sanitize($_GET['search']) : '';
         if ($search !== '') {
             $groupes = $manager->search($search);
         } else {
@@ -185,8 +185,8 @@ class ControllerGroupe extends Controller
             exit;
         }
 
-        $nom = trim($_POST['nom_groupe']);
-        $description = trim($_POST['description'] ?? '');
+        $nom = $this->sanitize($_POST['nom_groupe']);
+        $description = $this->sanitize($_POST['description'] ?? '');
         $dateCreation = date('Y-m-d H:i:s');
         $idCreateur = $_SESSION['idUtilisateur'];
 
@@ -258,7 +258,7 @@ class ControllerGroupe extends Controller
 
         $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
         $idGroupe = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        $contenu = isset($_POST['message']) ? trim($_POST['message']) : '';
+        $contenu = isset($_POST['message']) ? $this->sanitize($_POST['message']) : '';
 
         if (!$idUtilisateur || $idGroupe === 0 || $contenu === '') {
             header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);

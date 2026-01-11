@@ -134,7 +134,7 @@ class ControllerSignalement extends Controller
             exit;
         }
 
-        $raison = trim($_POST['raison']);
+        $raison = $this->sanitize($_POST['raison']);
         $idPost = $_POST['id_post'] ?? null;
 
         $signalement = new Signalement(null, $raison);
