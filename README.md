@@ -109,7 +109,10 @@ class exempleDocumentation {
         return true;
     }
 }
+
 ```
+Voici l'url pour accéder à la documentation générée avec Doxygen : 
+https://peyo001.github.io/SAE3.01_Projet2_Yujo/
 
 De manière générale tout le code doit être en français.
 
