@@ -3,74 +3,74 @@
 {% block title %}Administration{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
+    <h1>Panel Administrateur</h1>
 
-<h1>Panel Administrateur</h1>
+    <h2>Ajouter un objet</h2>
+    <form method="post" action="index.php?controleur=Admin&methode=ajouterObjet">
+        <div class="mb-3">
+            <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="description" name="description" minlength="5" maxlength="500" required>
+        </div>
+        <div class="mb-3">
+            <label for="modele3dPath" class="form-label">Chemin du modèle 3D <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="modele3dPath" name="modele3dPath" minlength="3" maxlength="500" required>
+        </div>
+        <div class="mb-3">
+            <label for="prix" class="form-label">Prix <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="prix" name="prix" min="0" max="999999" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
 
-<h2>Ajouter un objet</h2>
-<form method="post" action="index.php?controller=Admin&methode=ajouterObjet">
-    <div class="mb-3">
-        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="description" name="description" minlength="5" maxlength="500" required>
+    {% if erreurs is defined and erreurs is not empty %}
+    <div class="alert alert-danger mt-3" role="alert">
+        <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
+        <ul class="mb-0">
+            {% for msg in erreurs %}
+                <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
     </div>
-    <div class="mb-3">
-        <label for="modele3dPath" class="form-label">Chemin du modèle 3D <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="modele3dPath" name="modele3dPath" minlength="3" maxlength="500" required>
-    </div>
-    <div class="mb-3">
-        <label for="prix" class="form-label">Prix <span class="text-danger">*</span></label>
-        <input type="number" class="form-control" id="prix" name="prix" min="0" max="999999" step="0.01" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Ajouter</button>
-</form>
+    {% endif %}
 
-{% if erreurs is defined and erreurs is not empty %}
-<div class="alert alert-danger mt-3" role="alert">
-    <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
-    <ul class="mb-0">
-        {% for msg in erreurs %}
-            <li>{{ msg }}</li>
-        {% endfor %}
-    </ul>
+    <h2>Utilisateurs</h2>
+    <table id="usersTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.idUtilisateur }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <a href="index.php?controleur=Admin&methode=supprimerUtilisateur&id={{ user.idUtilisateur }}"
+                    onclick="return confirm('Supprimer ?')" class="btn btn-sm btn-danger">
+                        Supprimer
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-{% endif %}
-
-<h2>Utilisateurs</h2>
-<table id="usersTable" class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.idUtilisateur }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <a href="index.php?controller=Admin&methode=supprimerUtilisateur&id={{ user.idUtilisateur }}"
-                   onclick="return confirm('Supprimer ?')" class="btn btn-sm btn-danger">
-                    Supprimer
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
 {% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        new DataTable('#usersTable', {
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/fr-FR.json'
-            },
-            pageLength: 10,
-            responsive: true
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new DataTable('#usersTable', {
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/fr-FR.json'
+                },
+                pageLength: 10,
+                responsive: true
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}
 
 {% endblock %}
