@@ -13,7 +13,7 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form action="index.php?controleur=utilisateur&methode=modifierProfil" method="POST">
+            <form action="index.php?controleur=utilisateur&methode=modifierProfil" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="nom" class="form-label">Nom</label>
                     <input type="text" class="form-control" id="nom" name="nom" value="{{ utilisateur.nom }}" minlength="2" maxlength="150" pattern="^[a-zA-ZÀ-ÿ\'-]+$">
@@ -29,6 +29,17 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" value="{{ utilisateur.email }}" maxlength="255">
+                </div>
+                <div class="mb-3">
+                    <label for="photo_profil" class="form-label">Photo de profil</label>
+                    <input type="file" class="form-control" id="photo_profil" name="photo_profil" accept="image/png, image/jpeg, image/webp">
+                    {% if utilisateur.personnalisation %}
+                        <div class="mt-2">
+                            <small class="text-muted">Photo actuelle :</small><br>
+                            <img src="../public/{{ utilisateur.personnalisation }}" alt="Photo de profil" class="img-thumbnail" style="max-width: 140px;">
+                        </div>
+                    {% endif %}
+                    <small class="text-muted">Formats acceptés : JPG, PNG, WEBP. Taille max 2 Mo.</small>
                 </div>
                 <button type="submit" class="btn btn-primary" style="background-color: #e9407A;">Enregistrer les modifications</button>
             </form>

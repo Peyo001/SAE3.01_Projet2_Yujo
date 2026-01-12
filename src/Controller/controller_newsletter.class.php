@@ -44,6 +44,16 @@ class ControllerNewsletter extends Controller
                     if ($this->newsletterDAO->inscrire($email)) {
                         $message = 'Merci ! Vous êtes maintenant inscrit à la newsletter.';
                         $type = 'success';
+
+                        // Envoi d'un email de bienvenue
+                        $sujet = 'Bienvenue sur la newsletter Yujo';
+                        $corps = "Bonjour,\n\nMerci pour votre inscription a la newsletter Yujo. Nous vous tiendrons informes des nouveautes et mises a jour.\n\nA tres vite sur Yujo !\nL'equipe Yujo";
+                        $headers = "From: Yujo <newsletter@yujo.fr>\r\n" .
+                                   "Reply-To: contact@yujo.fr\r\n" .
+                                   "MIME-Version: 1.0\r\n" .
+                                   "Content-Type: text/plain; charset=UTF-8\r\n" .
+                                   "X-Mailer: PHP/" . phpversion();
+                        @mail($email, $sujet, $corps, $headers);
                     } else {
                         $message = 'Une erreur est survenue. Veuillez réessayer.';
                     }

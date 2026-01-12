@@ -1,0 +1,222 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Mentions Légales - Yujo{% endblock %}
+
+{% block content %}
+<style>
+    .mentions-hero {
+        background: linear-gradient(135deg, #eb3f73 0%, #c12458 45%, #2c3696 100%);
+        color: #fff;    
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    }
+    .mentions-hero h1 {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .section-title {
+        color: #2c3696;
+        font-weight: 700;
+        border-left: 4px solid #eb3f73;
+        padding-left: 15px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+    .content-section {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .highlight {
+        background-color: #ffeef5;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        color: #c12458;
+    }
+    ul, ol {
+        margin-left: 20px;
+        line-height: 1.8;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    .info-box {
+        background-color: #fff5f7;
+        border-left: 4px solid #eb3f73;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+    .footer-link {
+        color: #2c3696;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .footer-link:hover {
+        color: #eb3f73;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="p-5 mentions-hero text-center">
+                <h1 class="display-5 mb-2">Mentions Légales</h1>
+                <p class="lead mb-0">Informations obligatoires et responsabilités</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- 1. Éditeur du site -->
+            <h3 class="section-title">1. Éditeur du site</h3>
+            <div class="content-section">
+                <p>
+                    Le site <span class="highlight">Yujo</span> est édité par :
+                </p>
+                <div class="info-box">
+                    <p class="mb-2"><strong>Yujo SAS</strong></p>
+                    <p class="mb-2">Adresse : France</p>
+                    <p class="mb-2">Forme juridique : Société par Actions Simplifiée (SAS)</p>
+                    <p class="mb-0">Directeur de publication : Équipe Yujo</p>
+                </div>
+            </div>
+
+            <!-- 2. Hébergement -->
+            <h3 class="section-title">2. Hébergement</h3>
+            <div class="content-section">
+                <p>
+                    Le site est hébergé chez :
+                </p>
+                <div class="info-box">
+                    <p class="mb-2"><strong>WAMP (Windows Apache MySQL PHP)</strong></p>
+                    <p class="mb-0">Serveur local de développement</p>
+                </div>
+            </div>
+
+            <!-- 3. Accès au service -->
+            <h3 class="section-title">3. Accès au service</h3>
+            <div class="content-section">
+                <p>
+                    L'utilisateur reconnaît avoir pris connaissance des présentes conditions d'utilisation et s'engage à les respecter. L'accès au site Yujo est gratuit pour tous les utilisateurs. Cependant, certaines fonctionnalités avancées peuvent être réservées aux utilisateurs Premium.
+                </p>
+            </div>
+
+            <!-- 4. Droits de propriété intellectuelle -->
+            <h3 class="section-title">4. Droits de propriété intellectuelle</h3>
+            <div class="content-section">
+                <p>
+                    Tous les éléments du site Yujo (textes, images, logos, vidéos, code source) sont protégés par les droits d'auteur et les droits de propriété intellectuelle. L'utilisateur ne peut pas reproduire, modifier ou distribuer ces contenus sans autorisation explicite.
+                </p>
+                <p>
+                    <strong>Exceptions :</strong> L'utilisateur peut télécharger ou imprimer une copie pour un usage personnel et non commercial.
+                </p>
+            </div>
+
+            <!-- 5. Responsabilité -->
+            <h3 class="section-title">5. Limitation de responsabilité</h3>
+            <div class="content-section">
+                <p>
+                    Yujo ne peut pas être tenue responsable pour :
+                </p>
+                <ul>
+                    <li>Les interruptions de service ou les bugs logiciels.</li>
+                    <li>La perte de données ou les dommages causés par une utilisation inappropriée.</li>
+                    <li>Les contenus créés par les utilisateurs (posts, rooms, messages).</li>
+                    <li>Les dommages indirects ou consécutifs liés à l'utilisation du service.</li>
+                </ul>
+                <p class="mt-3">
+                    Yujo s'engage à maintenir le service au mieux de ses efforts mais ne garantit pas une disponibilité 100% ou l'absence de dysfonctionnements.
+                </p>
+            </div>
+
+            <!-- 6. Conditions d'utilisation -->
+            <h3 class="section-title">6. Conditions d'utilisation</h3>
+            <div class="content-section">
+                <p>
+                    En utilisant Yujo, vous acceptez de :
+                </p>
+                <ul>
+                    <li>Ne pas créer de contenu offensant, haineux, violent ou illégal.</li>
+                    <li>Ne pas harceler, intimider ou menacer d'autres utilisateurs.</li>
+                    <li>Ne pas usurper l'identité d'une autre personne.</li>
+                    <li>Ne pas partager d'informations personnelles d'autres sans consentement.</li>
+                    <li>Ne pas tenter de pirater ou d'accéder à des zones sécurisées du service.</li>
+                    <li>Respecter la propriété intellectuelle d'autrui.</li>
+                </ul>
+            </div>
+
+            <!-- 7. Modération et sanctions -->
+            <h3 class="section-title">7. Modération et sanctions</h3>
+            <div class="content-section">
+                <p>
+                    Yujo se réserve le droit de :
+                </p>
+                <ul>
+                    <li>Modérer, supprimer ou masquer tout contenu violant ces conditions.</li>
+                    <li>Avertir, suspendre ou bannir les utilisateurs en infraction.</li>
+                    <li>Réclamer des dommages-intérêts en cas de dommages causés.</li>
+                </ul>
+                <p class="mt-3">
+                    La modération peut se faire automatiquement ou par intervention manuelle de notre équipe.
+                </p>
+            </div>
+
+            <!-- 8. Données et cookies -->
+            <h3 class="section-title">8. Données personnelles et cookies</h3>
+            <div class="content-section">
+                <p>
+                    Pour plus d'informations sur la collecte et l'utilisation de vos données personnelles, consultez notre 
+                    <a href="index.php?controleur=parametre&methode=afficherPolitiqueConfidentialite" class="footer-link">Politique de Confidentialité</a>.
+                </p>
+            </div>
+
+            <!-- 9. Modifications des conditions -->
+            <h3 class="section-title">9. Modifications des conditions</h3>
+            <div class="content-section">
+                <p>
+                    Yujo se réserve le droit de modifier ces mentions légales à tout moment. Les modifications importantes seront notifiées aux utilisateurs via une notification ou un email.
+                </p>
+                <p class="text-muted small">
+                    <strong>Dernière mise à jour :</strong> Janvier 2026
+                </p>
+            </div>
+
+            <!-- 10. Droit applicable et juridiction -->
+            <h3 class="section-title">10. Droit applicable et juridiction</h3>
+            <div class="content-section">
+                <p>
+                    Ces mentions légales sont régies par la loi française. En cas de litige, les tribunaux français sont compétents.
+                </p>
+            </div>
+
+            <!-- 11. Contact -->
+            <h3 class="section-title">11. Nous contacter</h3>
+            <div class="content-section">
+                <p>
+                    Pour toute question concernant ces mentions légales :
+                </p>
+                <ul>
+                    <li><strong>Email :</strong> <a href="mailto:legal@yujo.fr" class="footer-link">legal@yujo.fr</a></li>
+                    <li><strong>Support :</strong> <a href="mailto:support@yujo.fr" class="footer-link">support@yujo.fr</a></li>
+                    <li><strong>Adresse :</strong> Yujo, France</li>
+                </ul>
+            </div>
+
+            <!-- Retour -->
+            <div class="text-center mt-5">
+                <a href="index.php?controleur=parametre&methode=afficherParametre" class="btn btn-lg text-white fw-bold" style="background: linear-gradient(135deg, #eb3f73 0%, #2c3696 100%); border: none; border-radius: 25px;">
+                    ← Retour aux paramètres
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

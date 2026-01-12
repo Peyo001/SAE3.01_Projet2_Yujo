@@ -422,20 +422,41 @@ class ControllerUtilisateur extends Controller
         
         $manager = new UtilisateurDao($this->getPdo());
         $utilisateur = $manager->find($_SESSION['idUtilisateur']);
-        
+
         // Récupérer les nouvelles données du formulaire
         $nouveauNom = $_POST['nom'] ?? $utilisateur->getNom();
         $nouveauPrenom = $_POST['prenom'] ?? $utilisateur->getPrenom();
         $nouveauPseudo = $_POST['pseudo'] ?? $utilisateur->getPseudo();
-        
+
         // Mettre à jour l'objet utilisateur
         $utilisateur->setNom($nouveauNom);
         $utilisateur->setPrenom($nouveauPrenom);
         $utilisateur->setPseudo($nouveauPseudo);
-        
+
+        // Gestion de l'upload de photo de profil (fichier image < 2 Mo)
+        if (isset($_FILES['photo_profil']) && $_FILES['photo_profil']['error'] === UPLOAD_ERR_OK) {
+            $cheminTemporaire = $_FILES['photo_profil']['tmp_name'];
+            $typeMime = mime_content_type($cheminTemporaire);
+            $typesAutorises = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
+            if (isset($typesAutorises[$typeMime]) && $_FILES['photo_profil']['size'] <= 2 * 1024 * 1024) {
+                $extension = $typesAutorises[$typeMime];
+                $dossierUpload = __DIR__ . '/../../public/uploads/avatars/';
+                if (!is_dir($dossierUpload)) {
+                    @mkdir($dossierUpload, 0775, true);
+                }
+                $nomFichier = 'avatar_' . $_SESSION['idUtilisateur'] . '_' . uniqid() . '.' . $extension;
+                $cheminDestination = $dossierUpload . $nomFichier;
+                if (move_uploaded_file($cheminTemporaire, $cheminDestination)) {
+                    // Stocker le chemin relatif pour l'affichage
+                    $utilisateur->setPersonnalisation('uploads/avatars/' . $nomFichier);
+                }
+            }
+        }
+
         // Enregistrer les modifications
         $manager->modifierUtilisateur($utilisateur);
-        
+
         // Rediriger vers le profil après modification
         echo $this->getTwig()->render('compte.twig', ['utilisateur' => $utilisateur]);
         exit;

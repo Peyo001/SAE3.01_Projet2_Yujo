@@ -1,0 +1,305 @@
+{% extends 'base_template.html.twig' %}
+
+{% block title %}Abonnement - Yujo{% endblock %}
+
+{% block content %}
+<style>
+    .abonnement-hero {
+        background: linear-gradient(135deg, #eb3f73 0%, #c12458 45%, #2c3696 100%);
+        color: #fff;    
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    }
+    .abonnement-hero h1 {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .plan-card {
+        border: 2px solid #eee;
+        border-radius: 15px;
+        padding: 30px;
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .plan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        border-color: #eb3f73;
+    }
+    .plan-card.premium {
+        border: 3px solid #eb3f73;
+        background: linear-gradient(135deg, rgba(235, 63, 115, 0.05) 0%, rgba(44, 54, 150, 0.05) 100%);
+    }
+    .plan-card.premium::before {
+        content: "POPULAIRE";
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #eb3f73 0%, #c12458 100%);
+        color: white;
+        padding: 5px 20px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    .plan-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3696;
+        margin-bottom: 10px;
+    }
+    .plan-card.premium .plan-title {
+        color: #eb3f73;
+    }
+    .plan-price {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #eb3f73;
+        margin: 20px 0;
+    }
+    .plan-price .currency {
+        font-size: 1.5rem;
+        vertical-align: super;
+    }
+    .plan-price .period {
+        font-size: 1rem;
+        color: #666;
+        font-weight: 400;
+    }
+    .plan-description {
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 30px;
+    }
+    .features-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        display: flex;
+        align-items: center;
+    }
+    .features-list li:last-child {
+        border-bottom: none;
+    }
+    .features-list li::before {
+        content: "✓";
+        color: #2c3696;
+        font-weight: 700;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+    .features-list li.unavailable::before {
+        content: "✕";
+        color: #ccc;
+    }
+    .features-list li.unavailable {
+        color: #ccc;
+    }
+    .plan-button {
+        width: 100%;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+    .plan-button.basic {
+        background-color: #f0f0f0;
+        color: #2c3696;
+        border: 2px solid #2c3696;
+    }
+    .plan-button.basic:hover {
+        background-color: #2c3696;
+        color: white;
+    }
+    .plan-button.premium {
+        background: linear-gradient(135deg, #eb3f73 0%, #2c3696 100%);
+        color: white;
+    }
+    .plan-button.premium:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 30px rgba(235, 63, 115, 0.3);
+    }
+    .plan-button.current {
+        background-color: #28a745;
+        color: white;
+        cursor: default;
+    }
+    .plan-button.current:hover {
+        background-color: #28a745;
+        transform: none;
+    }
+    .comparison-table {
+        margin-top: 50px;
+    }
+    .comparison-table h3 {
+        color: #2c3696;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .comparison-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 20px;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+    }
+    .comparison-row.header {
+        background: linear-gradient(135deg, #eb3f73 0%, #2c3696 100%);
+        color: white;
+        font-weight: 700;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    .comparison-row.header:hover {
+        background: linear-gradient(135deg, #eb3f73 0%, #2c3696 100%);
+    }
+    .feature-name {
+        font-weight: 600;
+        color: #333;
+    }
+    .feature-value {
+        text-align: center;
+        color: #666;
+    }
+    .feature-value.yes {
+        color: #28a745;
+        font-weight: 700;
+    }
+    .feature-value.no {
+        color: #ccc;
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="p-5 abonnement-hero text-center">
+                <h1 class="display-5 mb-2">Choisissez votre abonnement</h1>
+                <p class="lead mb-0">Déverrouillez tous les potentiels de Yujo</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plans de prix -->
+    <div class="row g-4 mb-5">
+        <!-- Plan Basique -->
+        <div class="col-lg-6">
+            <div class="plan-card">
+                <h2 class="plan-title">Basique</h2>
+                <div class="plan-price">
+                    <span class="currency">€</span>0<span class="period">/mois</span>
+                </div>
+                <p class="plan-description">
+                    Parfait pour débuter votre aventure sur Yujo. Accédez aux fonctionnalités essentielles et connectez-vous avec la communauté.
+                </p>
+                
+                <ul class="features-list">
+                    <li>Création de 1 room</li>
+                    <li>Accès au fil d'actualité</li>
+                    <li>Participation aux quiz</li>
+                    <li>Gestion d'amis</li>
+                    <li>Avatar personnalisé</li>
+                    <li class="unavailable">Support prioritaire</li>
+                    <li class="unavailable">Themes exclusifs</li>
+                    <li class="unavailable">Badges de créateur</li>
+                </ul>
+
+                {% if user.getEstPremium() == false %}
+                    <button class="plan-button basic" disabled style="cursor: default; opacity: 0.7;">
+                        Votre abonnement actuel
+                    </button>
+                {% else %}
+                    <button class="plan-button basic" onclick="downgradeAbonnement()">
+                        Rétrograder vers Basique
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Plan Premium -->
+        <div class="col-lg-6">
+            <div class="plan-card premium">
+                <h2 class="plan-title">Premium</h2>
+                <div class="plan-price">
+                    <span class="currency">€</span>4,99<span class="period">/mois</span>
+                </div>
+                <p class="plan-description">
+                    Débloquez toutes les fonctionnalités avancées et rejoignez l'élite des créateurs Yujo.
+                </p>
+                
+                <ul class="features-list">
+                    <li><strong>Création de 1 room supplémentaire</strong></li>
+                    <li>Accès au fil d'actualité</li>
+                    <li>Création et partage de quiz</li>
+                    <li>Gestion d'amis illimitée</li>
+                    <li>Avatars multiples personnalisés</li>
+                    <li><strong>Support prioritaire 24/7</strong></li>
+                    <li><strong>Thèmes exclusifs</strong></li>
+                    <li><strong>Badge créateur Yujo</strong></li>
+                </ul>
+
+                {% if user.getEstPremium() == true %}
+                    <button class="plan-button current" disabled style="cursor: default;">
+                        ✓ Votre abonnement actuel
+                    </button>
+                {% else %}
+                    <a href="index.php?controleur=parametre&methode=upgraderPremium" class="plan-button premium" style="text-decoration: none; display: inline-block;">
+                        Passer à Premium
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!-- Information supplémentaire -->
+    <div class="row mt-5">
+        <div class="col-lg-8 mx-auto">
+            <div style="background-color: #f9f9f9; padding: 30px; border-radius: 10px; border-left: 4px solid #eb3f73;">
+                <h4 style="color: #2c3696; margin-bottom: 15px;">
+                    <i class="fas fa-info-circle me-2"></i>Informations importantes
+                </h4>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Tous les abonnements incluent un accès complet à la communauté Yujo.</li>
+                    <li>Vous pouvez annuler votre abonnement Premium à tout moment depuis vos paramètres.</li>
+                    <li>Les paiements sont traités de manière sécurisée et ne sont prélevés qu'une fois par mois.</li>
+                    <li>Vous bénéficiez d'une période d'essai gratuite de 7 jours pour Premium (à venir).</li>
+                    <li>Pas de frais cachés, pas d'engagement à long terme.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Retour -->
+    <div class="text-center mt-5">
+        <a href="index.php?controleur=parametre&methode=afficherParametre" class="btn btn-lg text-white fw-bold" style="background: linear-gradient(135deg, #eb3f73 0%, #2c3696 100%); border: none; border-radius: 25px;">
+            ← Retour aux paramètres
+        </a>
+    </div>
+</div>
+
+<script>
+    function downgradeAbonnement() {
+        if (confirm('Êtes-vous sûr de vouloir rétrograder vers l\'abonnement Basique ?')) {
+            window.location.href = 'index.php?controleur=parametre&methode=downgraderPremium';
+        }
+    }
+</script>
+{% endblock %}
