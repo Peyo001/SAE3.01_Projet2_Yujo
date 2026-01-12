@@ -31,6 +31,7 @@ $autoloadDirs = [
 	__DIR__ . '/src/Model/Class',
 	__DIR__ . '/src/Model/DAO',
 	__DIR__ . '/src/Controller',
+	__DIR__ . '/src/Service',
 ];
 
 

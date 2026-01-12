@@ -292,17 +292,8 @@ class ControllerUtilisateur extends Controller
                 // Envoi d'un mail de sécurité (une seule fois) si l'utilisateur existe
                 if ($user && empty($etatTentative['notif_envoyee'])) {
                     $ip = $_SERVER['REMOTE_ADDR'] ?? 'IP inconnue';
-                    $sujet = 'Alerte sécurité : tentatives de connexion échouées';
-                    $message = "Bonjour " . $user->getPseudo() . ",\n\n"
-                        . "Nous avons détecté plusieurs tentatives de connexion échouées sur votre compte Yujo.\n"
-                        . "Adresse email : " . $email . "\n"
-                        . "Adresse IP : " . $ip . "\n"
-                        . "Date : " . date('d/m/Y H:i') . "\n\n"
-                        . "Par sécurité, les nouvelles connexions sont temporairement bloquées pendant 2 minutes.\n"
-                        . "Si ce n'était pas vous, nous vous recommandons de changer votre mot de passe.\n\n"
-                        . "— Équipe Yujo";
-                    $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
-                    @mail($user->getEmail(), $sujet, $message, $headers);
+                    $mailService = new MailService();
+                    $mailService->envoyerEmailAlerteSecurite($user, $ip);
                     $etatTentative['notif_envoyee'] = true;
                 }
             }
@@ -616,17 +607,10 @@ class ControllerUtilisateur extends Controller
         ];
 
         // Envoyer un mail de confirmation
-        $sujet = 'Confirmation du changement de mot de passe - Yujo';
         $lienConfirmation = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . '/index.php?controleur=utilisateur&methode=confirmerChangementMotDePasse&token=' . $tokenConfirmation;
-        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
-            . "Vous avez demandé à changer votre mot de passe Yujo.\n\n"
-            . "Cliquez sur le lien ci-dessous pour confirmer ce changement :\n"
-            . $lienConfirmation . "\n\n"
-            . "Ce lien est valide pendant 1 heure.\n\n"
-            . "Si vous n'avez pas demandé ce changement, ignorez cet email.\n\n"
-            . "— Équipe Yujo";
-        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
-        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+        
+        $mailService = new MailService();
+        $mailService->envoyerEmailChangementMotDePasse($utilisateur, $lienConfirmation);
 
         // Rediriger avec message
         $_SESSION['flash_success'] = "Un lien de confirmation a été envoyé à votre adresse email. Veuillez confirmer dans l'heure.";
@@ -671,14 +655,8 @@ class ControllerUtilisateur extends Controller
         unset($_SESSION['changement_mdp_attente']);
 
         // Email de notification
-        $sujet = 'Confirmation : Votre mot de passe a été changé - Yujo';
-        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
-            . "Votre mot de passe Yujo a été changé avec succès.\n"
-            . "Date : " . date('d/m/Y H:i') . "\n\n"
-            . "Si vous ne reconnaissez pas cette action, veuillez contacter notre équipe de sécurité immédiatement.\n\n"
-            . "— Équipe Yujo";
-        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
-        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+        $mailService = new MailService();
+        $mailService->envoyerEmailConfirmationChangementMotDePasse($utilisateur);
 
         $_SESSION['flash_success'] = "Votre mot de passe a été changé avec succès. Un email de confirmation a été envoyé.";
         header('Location: index.php?controleur=parametre&methode=afficherParametre');
@@ -731,17 +709,10 @@ class ControllerUtilisateur extends Controller
         ];
 
         // Envoyer le mail
-        $sujet = 'Réinitialisation de votre mot de passe - Yujo';
         $lienReinit = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . '/index.php?controleur=utilisateur&methode=afficherReinitialisationMotDePasse&token=' . $tokenReinit . '&id=' . $utilisateur->getIdUtilisateur();
-        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
-            . "Vous avez demandé à réinitialiser votre mot de passe Yujo.\n\n"
-            . "Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :\n"
-            . $lienReinit . "\n\n"
-            . "Ce lien est valide pendant 30 minutes.\n\n"
-            . "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre compte reste sécurisé.\n\n"
-            . "— Équipe Yujo";
-        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
-        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+        
+        $mailService = new MailService();
+        $mailService->envoyerEmailMotDePasseOublie($utilisateur, $lienReinit);
 
         $_SESSION['flash_info'] = "Si cet email existe, vous recevrez un lien de réinitialisation.";
         header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
@@ -853,14 +824,8 @@ class ControllerUtilisateur extends Controller
         unset($_SESSION[$cleSession]);
 
         // Email de notification
-        $sujet = 'Notification : Votre mot de passe a été réinitialisé - Yujo';
-        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
-            . "Votre mot de passe Yujo a été réinitialisé avec succès.\n"
-            . "Date : " . date('d/m/Y H:i') . "\n\n"
-            . "Si vous ne reconnaissez pas cette action, veuillez contacter notre équipe de sécurité immédiatement : security@yujo.fr\n\n"
-            . "— Équipe Yujo";
-        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
-        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+        $mailService = new MailService();
+        $mailService->envoyerEmailNotificationReinitialisation($utilisateur);
 
         $_SESSION['flash_success'] = "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.";
         header('Location: index.php?controleur=utilisateur&methode=connexion');
