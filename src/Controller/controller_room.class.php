@@ -135,13 +135,13 @@
             $idCreateur = $_SESSION['idUtilisateur'];   // a modifier, en liant la classe UTILISATEUR
 
             $room = new Room(
-                null,            // idRoom
-                $nom,            // nom
-                $visibilite,     // visibilite
-                null,            // personnalisation
-                date('Y-m-d'),   // dateCreation
-                0,               // nbVisit
-                (int)$idCreateur // idCreateur
+                null,              // idRoom
+                $nom,              // nom
+                $visibilite,       // visibilite
+                date('Y-m-d'),     // dateCreation
+                0,                 // nbVisit
+                (int)$idCreateur,  // idCreateur
+                null               // personnalisation
             );
 
             $managerRoom = new RoomDao($this->getPdo());

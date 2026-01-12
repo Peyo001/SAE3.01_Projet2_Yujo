@@ -34,10 +34,10 @@ require_once "Dao.class.php";
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -63,10 +63,10 @@ require_once "Dao.class.php";
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
                     (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
                 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -96,10 +96,10 @@ require_once "Dao.class.php";
                     (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
                     (int)$row['nbVisit'],
-                    (int)$row['idCreateur']
+                    (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -126,13 +126,13 @@ require_once "Dao.class.php";
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $room = new Room(
-                    $row['idRoom'],
+                    (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
-                    $row['nbVisit'],
-                    $row['idCreateur']
+                    (int)$row['nbVisit'],
+                    (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
@@ -158,13 +158,13 @@ require_once "Dao.class.php";
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $room = new Room(
-                    $row['idRoom'],
+                    (int)$row['idRoom'],
                     $row['nom'],
                     $row['visibilite'],
-                    $row['personnalisation'] ?? null,
                     $row['dateCreation'],
-                    $row['nbVisit'],
-                    $row['idCreateur']
+                    (int)$row['nbVisit'],
+                    (int)$row['idCreateur'],
+                    $row['personnalisation'] ?? null
                 );
 
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));

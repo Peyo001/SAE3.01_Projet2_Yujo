@@ -22,7 +22,7 @@
                         <p class="text-muted mb-2">Visibilité : {{ room.visibilite }}</p>
                         <p class="text-muted small mb-3">Créée le {{ room.dateCreation }}</p>
                         <div class="d-flex gap-2">
-                            <a class="btn btn-primary btn-sm" href="index.php?controleur=room&methode=afficher&idRoom={{ room.idRoom }}">Ouvrir</a>
+                            <a class="btn btn-primary btn-sm" href="index.php?controleur=room&methode=afficherThreejs&idRoom={{ room.idRoom }}">Jouer en 3D</a>
                             <a class="btn btn-outline-secondary btn-sm" href="index.php?controleur=room&methode=modifier&idRoom={{ room.idRoom }}">Modifier</a>
                             <a class="btn btn-outline-danger btn-sm" href="index.php?controleur=room&methode=supprimer&idRoom={{ room.idRoom }}" onclick="return confirm('Supprimer cette room ?');">Supprimer</a>
                         </div>
