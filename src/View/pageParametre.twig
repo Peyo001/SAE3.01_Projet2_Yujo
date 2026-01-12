@@ -45,13 +45,13 @@
         </div>
 
         <div class="col-md-4">
-            <a href="index.php?controleur=parametre&methode=abonnement" class="text-decoration-none">
-                <div class="card h-100 shadow-sm hover-effect {{ user.is_premium ? 'border-warning' : '' }}">
+            <a href="index.php?controleur=parametre&methode=afficherAbonnement" class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-effect {{ user.getEstPremium() ? 'border-warning' : '' }}">
                     <div class="card-body text-center">
                         <i class="fas fa-crown fa-3x text-warning mb-3"></i>
                         <h5 class="card-title text-dark">Abonnement</h5>
                         <p class="card-text text-muted small">
-                            {% if user.is_premium %}
+                            {% if user.getEstPremium() %}
                                 Gérer votre abonnement Premium.
                             {% else %}
                                 Passez au niveau supérieur !

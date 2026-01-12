@@ -199,4 +199,89 @@ class ControllerParametre extends Controller
     {
         echo $this->getTwig()->render('mentions_legales.twig');
     }
+
+    /**
+     * @brief Affiche la page d'abonnement
+     * 
+     * @return void
+     */
+    public function afficherAbonnement(): void
+    {
+        // Récupération de l'ID utilisateur via la session 
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+        if (!$idUtilisateur) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion'); 
+            exit;
+        }
+
+        // Initialisation du DAO Utilisateur
+        $userManager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $userManager->find($idUtilisateur);
+
+        // Envoi à la vue
+        echo $this->getTwig()->render('abonnement.twig', [
+            'user' => $utilisateur
+        ]);
+    }
+
+    /**
+     * @brief Upgrade l'utilisateur vers Premium
+     * 
+     * @return void
+     */
+    public function upgraderPremium(): void
+    {
+        // Récupération de l'ID utilisateur via la session 
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+        if (!$idUtilisateur) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion'); 
+            exit;
+        }
+
+        // Initialisation du DAO Utilisateur
+        $userManager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $userManager->find($idUtilisateur);
+
+        if ($utilisateur) {
+            // Mettre à jour le statut Premium
+            $utilisateur->setEstPremium(true);
+            $userManager->modifierUtilisateur($utilisateur);
+        }
+
+        // Redirection vers la page d'abonnement avec message de succès
+        header('Location: index.php?controleur=parametre&methode=afficherAbonnement');
+        exit;
+    }
+
+    /**
+     * @brief Downgrade l'utilisateur vers Basique
+     * 
+     * @return void
+     */
+    public function downgraderPremium(): void
+    {
+        // Récupération de l'ID utilisateur via la session 
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+        if (!$idUtilisateur) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion'); 
+            exit;
+        }
+
+        // Initialisation du DAO Utilisateur
+        $userManager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $userManager->find($idUtilisateur);
+
+        if ($utilisateur) {
+            // Mettre à jour le statut Premium
+            $utilisateur->setEstPremium(false);
+            $userManager->modifierUtilisateur($utilisateur);
+        }
+
+        // Redirection vers la page d'abonnement avec message de succès
+        header('Location: index.php?controleur=parametre&methode=afficherAbonnement');
+        exit;
+    }
 }
