@@ -209,6 +209,3 @@ public function findByAuteurs(array $ids): array
     return $posts;
 }
 }
-?>
-
-
