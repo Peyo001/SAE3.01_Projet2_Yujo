@@ -89,7 +89,7 @@ class AchatDao extends Dao
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat((int)$row['idObjet'], (int)$row['idUtilisateur'], $row['dateAchat']);
+            $achat = new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
             $achats[] = $achat;
         }
         return $achats;
