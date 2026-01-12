@@ -1,0 +1,168 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Changement de mot de passe - Yujo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4 fw-bold text-primary">
+                        <i class="fas fa-key me-2"></i>Changement de mot de passe
+                    </h2>
+
+                    {% if erreurs is defined and erreurs is not empty %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h6 class="alert-heading mb-2"><i class="fas fa-exclamation-circle me-2"></i>Erreurs détectées</h6>
+                        <ul class="mb-0">
+                            {% for erreur in erreurs %}
+                                <li>{{ erreur }}</li>
+                            {% endfor %}
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="index.php?controleur=utilisateur&methode=traiterChangementMotDePasse" novalidate>
+                        <div class="mb-4">
+                            <label for="ancien_mot_de_passe" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2 text-muted"></i>Ancien mot de passe
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg border-secondary" 
+                                id="ancien_mot_de_passe" 
+                                name="ancien_mot_de_passe" 
+                                placeholder="Entrez votre mot de passe actuel"
+                                required>
+                            <small class="text-muted d-block mt-2">Pour des raisons de sécurité, veuillez confirmer votre mot de passe actuel.</small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="mb-4">
+                            <label for="nouveau_mot_de_passe" class="form-label fw-semibold">
+                                <i class="fas fa-shield-alt me-2 text-success"></i>Nouveau mot de passe
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg border-secondary" 
+                                id="nouveau_mot_de_passe" 
+                                name="nouveau_mot_de_passe" 
+                                placeholder="Entrez un nouveau mot de passe"
+                                minlength="8"
+                                required>
+                            <small class="text-muted d-block mt-2">Le mot de passe doit contenir :</small>
+                            <ul class="text-muted small mt-2">
+                                <li><i class="fas fa-check-circle text-success me-1" id="check-length"></i>Au moins 8 caractères</li>
+                                <li><i class="fas fa-check-circle text-success me-1" id="check-lower"></i>Au moins une lettre minuscule</li>
+                                <li><i class="fas fa-check-circle text-success me-1" id="check-upper"></i>Au moins une lettre majuscule</li>
+                                <li><i class="fas fa-check-circle text-success me-1" id="check-digit"></i>Au moins un chiffre</li>
+                                <li><i class="fas fa-check-circle text-success me-1" id="check-special"></i>Au moins un caractère spécial (@$!%*?&)</li>
+                            </ul>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirmation_mot_de_passe" class="form-label fw-semibold">
+                                <i class="fas fa-check-double me-2 text-info"></i>Confirmer le nouveau mot de passe
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg border-secondary" 
+                                id="confirmation_mot_de_passe" 
+                                name="confirmation_mot_de_passe" 
+                                placeholder="Confirmez votre nouveau mot de passe"
+                                required>
+                            <small class="text-muted d-block mt-2" id="match-status"></small>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-lg fw-bold text-white" style="background-color: #e91e63; border: none;">
+                                <i class="fas fa-save me-2"></i>Mettre à jour le mot de passe
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a href="index.php?controleur=parametre&methode=afficherParametre" class="text-decoration-none text-muted">
+                                <i class="fas fa-arrow-left me-2"></i>Retour aux paramètres
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nouveauMdp = document.getElementById('nouveau_mot_de_passe');
+    const confirmationMdp = document.getElementById('confirmation_mot_de_passe');
+
+    // Éléments de vérification
+    const checks = {
+        'check-length': /^.{8,}$/,
+        'check-lower': /[a-z]/,
+        'check-upper': /[A-Z]/,
+        'check-digit': /[0-9]/,
+        'check-special': /[@$!%*?&]/
+    };
+
+    // Validation du nouveau mot de passe
+    nouveauMdp.addEventListener('input', function() {
+        Object.keys(checks).forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checks[id].test(nouveauMdp.value)) {
+                checkbox.classList.add('text-success');
+                checkbox.classList.remove('text-muted');
+            } else {
+                checkbox.classList.remove('text-success');
+                checkbox.classList.add('text-muted');
+            }
+        });
+    });
+
+    // Vérification de correspondance
+    [nouveauMdp, confirmationMdp].forEach(input => {
+        input.addEventListener('input', function() {
+            const matchStatus = document.getElementById('match-status');
+            if (confirmationMdp.value && nouveauMdp.value !== confirmationMdp.value) {
+                matchStatus.textContent = '❌ Les mots de passe ne correspondent pas';
+                matchStatus.classList.add('text-danger');
+                matchStatus.classList.remove('text-success');
+            } else if (confirmationMdp.value && nouveauMdp.value === confirmationMdp.value) {
+                matchStatus.textContent = '✓ Les mots de passe correspondent';
+                matchStatus.classList.add('text-success');
+                matchStatus.classList.remove('text-danger');
+            } else {
+                matchStatus.textContent = '';
+                matchStatus.classList.remove('text-success', 'text-danger');
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    .form-control-lg {
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    .form-control-lg:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(233, 30, 99, 0.3) !important;
+    }
+</style>
+{% endblock %}
