@@ -217,6 +217,14 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
+    /**
+     * @brief Traite les données de connexion utilisateur.
+     * 
+     * Valide les informations de connexion, crée une session utilisateur en cas de succès.
+     * Gère les tentatives de connexion échouées avec un système de blocage temporaire.
+     * 
+     * @return void
+     */
     public function traiterConnexion(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -226,6 +234,34 @@ class ControllerUtilisateur extends Controller
 
         $email = $_POST['email'];
         $password = $_POST['password'];
+
+        // Anti brute-force : après 5 tentatives échouées, blocage 2 minutes
+        $cleTentatives = 'tentatives_connexion';
+        $maintenant = time();
+        if (!isset($_SESSION[$cleTentatives])) { $_SESSION[$cleTentatives] = []; }
+        if (!isset($_SESSION[$cleTentatives][$email])) {
+            $_SESSION[$cleTentatives][$email] = [
+                'compteur' => 0,
+                'bloque_jusqua' => 0,
+                'notif_envoyee' => false
+            ];
+        }
+        $etatTentative = &$_SESSION[$cleTentatives][$email];
+
+        // Si le blocage a expiré, on réinitialise l'état
+        if ($etatTentative['bloque_jusqua'] > 0 && $etatTentative['bloque_jusqua'] <= $maintenant) {
+            $etatTentative = ['compteur' => 0, 'bloque_jusqua' => 0, 'notif_envoyee' => false];
+        }
+
+        // Si l'utilisateur est actuellement bloqué, on empêche la tentative
+        if ($etatTentative['bloque_jusqua'] > $maintenant) {
+            $reste = $etatTentative['bloque_jusqua'] - $maintenant;
+            echo $this->getTwig()->render('connexion.twig', [
+                'error' => "Trop de tentatives. Réessayez dans $reste secondes.",
+                'last_email' => $email
+            ]);
+            exit;
+        }
 
         $manager = new UtilisateurDao($this->getPdo());
         // C'est ici qu'on utilise la nouvelle méthode findByEmail
@@ -241,13 +277,36 @@ class ControllerUtilisateur extends Controller
             $_SESSION['idUtilisateur'] = $user->getIdUtilisateur();
             $_SESSION['pseudo'] = $user->getPseudo();
             $_SESSION['typeCompte'] = $user->getTypeCompte();
+            // Réinitialiser les tentatives pour cet email
+            $_SESSION[$cleTentatives][$email] = ['compteur' => 0, 'bloque_jusqua' => 0, 'notif_envoyee' => false];
             
             // Redirection vers l'accueil ou le fil d'actu
             header('Location: index.php?controleur=accueil&methode=afficher');
             exit;
 
         } else {
-            // ÉCHEC
+            // ÉCHEC : on incrémente le compteur et on bloque si besoin
+            $etatTentative['compteur'] = ($etatTentative['compteur'] ?? 0) + 1;
+            if ($etatTentative['compteur'] >= 5) {
+                $etatTentative['bloque_jusqua'] = time() + 500; // Blocage de 500 secondes
+                // Envoi d'un mail de sécurité (une seule fois) si l'utilisateur existe
+                if ($user && empty($etatTentative['notif_envoyee'])) {
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'IP inconnue';
+                    $sujet = 'Alerte sécurité : tentatives de connexion échouées';
+                    $message = "Bonjour " . $user->getPseudo() . ",\n\n"
+                        . "Nous avons détecté plusieurs tentatives de connexion échouées sur votre compte Yujo.\n"
+                        . "Adresse email : " . $email . "\n"
+                        . "Adresse IP : " . $ip . "\n"
+                        . "Date : " . date('d/m/Y H:i') . "\n\n"
+                        . "Par sécurité, les nouvelles connexions sont temporairement bloquées pendant 2 minutes.\n"
+                        . "Si ce n'était pas vous, nous vous recommandons de changer votre mot de passe.\n\n"
+                        . "— Équipe Yujo";
+                    $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+                    @mail($user->getEmail(), $sujet, $message, $headers);
+                    $etatTentative['notif_envoyee'] = true;
+                }
+            }
+
             echo $this->getTwig()->render('connexion.twig', [
                 'error' => 'Email ou mot de passe incorrect.',
                 'last_email' => $email // Pour ne pas qu'il ait à retaper l'email
