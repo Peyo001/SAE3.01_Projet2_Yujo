@@ -3,10 +3,36 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
+<style>
+    .yujo-hero {
+        background: linear-gradient(135deg, #eb3f73 0%, #c12458 45%, #2c3696 100%);
+        color: #fff;    
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+        animation: yujoFloat 6s ease-in-out infinite;
+    }
+    .yujo-hero h1 {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .yujo-hero .slogan {
+        font-size: 1.05rem;
+        opacity: 0.92;
+    }
+    @keyframes yujoFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+    }
+</style>
+
 <div class="container mt-4">
-    <div class="row mb-4">
+    <div class="row mb-4 g-3 align-items-stretch">
         <div class="col-lg-8">
-            <h4 class="mb-3">Connaissances</h4>
+            <div class="p-4 p-lg-5 yujo-hero h-100 d-flex flex-column justify-content-center">
+                <h1 class="display-5 mb-2">Yujo</h1>
+                <p class="slogan mb-0">Crée tes rooms 3D, joue avec tes amis, partage tes meilleurs moments.</p>
+            </div>
         </div>
         <div class="col-lg-4">
             <a href="index.php?controleur=parametre&methode=afficherParametre#newsletter" class="text-decoration-none">
