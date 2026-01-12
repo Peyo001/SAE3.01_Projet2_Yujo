@@ -135,19 +135,19 @@
             $idCreateur = $_SESSION['idUtilisateur'];   // a modifier, en liant la classe UTILISATEUR
 
             $room = new Room(
-                null,
-                $nom,
-                $visibilite,
-                date('Y-m-d'),
-                0,
-                $idCreateur,
-                null
+                null,            // idRoom
+                $nom,            // nom
+                $visibilite,     // visibilite
+                null,            // personnalisation
+                date('Y-m-d'),   // dateCreation
+                0,               // nbVisit
+                (int)$idCreateur // idCreateur
             );
 
             $managerRoom = new RoomDao($this->getPdo());
-            $managerRoom->insererRoom($room);
+            $managerRoom->creerRoom($room);
 
-            header("Location: index.php?controleur=room&methode=lister");
+            header("Location: index.php?controleur=room&methode=afficherThreejs&idRoom=" . $room->getIdRoom());
             exit;
         }
 
