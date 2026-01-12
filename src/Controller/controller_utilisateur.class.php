@@ -217,6 +217,14 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
+    /**
+     * @brief Traite les données de connexion utilisateur.
+     * 
+     * Valide les informations de connexion, crée une session utilisateur en cas de succès.
+     * Gère les tentatives de connexion échouées avec un système de blocage temporaire.
+     * 
+     * @return void
+     */
     public function traiterConnexion(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -226,6 +234,34 @@ class ControllerUtilisateur extends Controller
 
         $email = $_POST['email'];
         $password = $_POST['password'];
+
+        // Anti brute-force : après 5 tentatives échouées, blocage 2 minutes
+        $cleTentatives = 'tentatives_connexion';
+        $maintenant = time();
+        if (!isset($_SESSION[$cleTentatives])) { $_SESSION[$cleTentatives] = []; }
+        if (!isset($_SESSION[$cleTentatives][$email])) {
+            $_SESSION[$cleTentatives][$email] = [
+                'compteur' => 0,
+                'bloque_jusqua' => 0,
+                'notif_envoyee' => false
+            ];
+        }
+        $etatTentative = &$_SESSION[$cleTentatives][$email];
+
+        // Si le blocage a expiré, on réinitialise l'état
+        if ($etatTentative['bloque_jusqua'] > 0 && $etatTentative['bloque_jusqua'] <= $maintenant) {
+            $etatTentative = ['compteur' => 0, 'bloque_jusqua' => 0, 'notif_envoyee' => false];
+        }
+
+        // Si l'utilisateur est actuellement bloqué, on empêche la tentative
+        if ($etatTentative['bloque_jusqua'] > $maintenant) {
+            $reste = $etatTentative['bloque_jusqua'] - $maintenant;
+            echo $this->getTwig()->render('connexion.twig', [
+                'error' => "Trop de tentatives. Réessayez dans $reste secondes.",
+                'last_email' => $email
+            ]);
+            exit;
+        }
 
         $manager = new UtilisateurDao($this->getPdo());
         // C'est ici qu'on utilise la nouvelle méthode findByEmail
@@ -241,13 +277,36 @@ class ControllerUtilisateur extends Controller
             $_SESSION['idUtilisateur'] = $user->getIdUtilisateur();
             $_SESSION['pseudo'] = $user->getPseudo();
             $_SESSION['typeCompte'] = $user->getTypeCompte();
+            // Réinitialiser les tentatives pour cet email
+            $_SESSION[$cleTentatives][$email] = ['compteur' => 0, 'bloque_jusqua' => 0, 'notif_envoyee' => false];
             
             // Redirection vers l'accueil ou le fil d'actu
             header('Location: index.php?controleur=accueil&methode=afficher');
             exit;
 
         } else {
-            // ÉCHEC
+            // ÉCHEC : on incrémente le compteur et on bloque si besoin
+            $etatTentative['compteur'] = ($etatTentative['compteur'] ?? 0) + 1;
+            if ($etatTentative['compteur'] >= 5) {
+                $etatTentative['bloque_jusqua'] = time() + 500; // Blocage de 500 secondes
+                // Envoi d'un mail de sécurité (une seule fois) si l'utilisateur existe
+                if ($user && empty($etatTentative['notif_envoyee'])) {
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'IP inconnue';
+                    $sujet = 'Alerte sécurité : tentatives de connexion échouées';
+                    $message = "Bonjour " . $user->getPseudo() . ",\n\n"
+                        . "Nous avons détecté plusieurs tentatives de connexion échouées sur votre compte Yujo.\n"
+                        . "Adresse email : " . $email . "\n"
+                        . "Adresse IP : " . $ip . "\n"
+                        . "Date : " . date('d/m/Y H:i') . "\n\n"
+                        . "Par sécurité, les nouvelles connexions sont temporairement bloquées pendant 2 minutes.\n"
+                        . "Si ce n'était pas vous, nous vous recommandons de changer votre mot de passe.\n\n"
+                        . "— Équipe Yujo";
+                    $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+                    @mail($user->getEmail(), $sujet, $message, $headers);
+                    $etatTentative['notif_envoyee'] = true;
+                }
+            }
+
             echo $this->getTwig()->render('connexion.twig', [
                 'error' => 'Email ou mot de passe incorrect.',
                 'last_email' => $email // Pour ne pas qu'il ait à retaper l'email
@@ -459,6 +518,352 @@ class ControllerUtilisateur extends Controller
 
         // Rediriger vers le profil après modification
         echo $this->getTwig()->render('compte.twig', ['utilisateur' => $utilisateur]);
+        exit;
+    }
+
+    /**
+     * @brief Affiche le formulaire de changement de mot de passe.
+     * 
+     * @return void
+     */
+    public function afficherChangementMotDePasse(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->find($_SESSION['idUtilisateur']);
+
+        echo $this->getTwig()->render('changement_mot_de_passe.twig', [
+            'utilisateur' => $utilisateur
+        ]);
+    }
+
+    /**
+     * @brief Traite le changement de mot de passe.
+     * 
+     * Valide l'ancien mot de passe, puis met à jour vers le nouveau.
+     * 
+     * @return void
+     */
+    public function traiterChangementMotDePasse(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=utilisateur&methode=afficherChangementMotDePasse');
+            exit;
+        }
+
+        $ancienMotDePasse = $_POST['ancien_mot_de_passe'] ?? '';
+        $nouveauMotDePasse = $_POST['nouveau_mot_de_passe'] ?? '';
+        $confirmationMotDePasse = $_POST['confirmation_mot_de_passe'] ?? '';
+
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->find($_SESSION['idUtilisateur']);
+
+        $erreurs = [];
+
+        // Vérifier que l'ancien mot de passe est correct
+        if (!password_verify($ancienMotDePasse, $utilisateur->getMotDePasse())) {
+            $erreurs[] = "L'ancien mot de passe est incorrect.";
+        }
+
+        // Vérifier que le nouveau mot de passe respecte les critères
+        if (strlen($nouveauMotDePasse) < 8) {
+            $erreurs[] = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+        }
+        if (!preg_match('/[a-z]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le nouveau mot de passe doit contenir au moins une minuscule.";
+        }
+        if (!preg_match('/[A-Z]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le nouveau mot de passe doit contenir au moins une majuscule.";
+        }
+        if (!preg_match('/[0-9]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le nouveau mot de passe doit contenir au moins un chiffre.";
+        }
+        if (!preg_match('/[@$!%*?&]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le nouveau mot de passe doit contenir au moins un caractère spécial (@$!%*?&).";
+        }
+
+        // Vérifier que les deux nouveaux mots de passe correspondent
+        if ($nouveauMotDePasse !== $confirmationMotDePasse) {
+            $erreurs[] = "Les deux nouveaux mots de passe ne correspondent pas.";
+        }
+
+        if (!empty($erreurs)) {
+            echo $this->getTwig()->render('changement_mot_de_passe.twig', [
+                'utilisateur' => $utilisateur,
+                'erreurs' => $erreurs
+            ]);
+            exit;
+        }
+
+        // Générer un token de confirmation sécurisé
+        $tokenConfirmation = bin2hex(random_bytes(32));
+        $dateExpiration = date('Y-m-d H:i:s', time() + 3600); // Valide 1 heure
+
+        // Stocker le token en session avec les nouvelles données
+        $_SESSION['changement_mdp_attente'] = [
+            'token' => $tokenConfirmation,
+            'nouveau_mdp' => password_hash($nouveauMotDePasse, PASSWORD_DEFAULT),
+            'date_expiration' => $dateExpiration
+        ];
+
+        // Envoyer un mail de confirmation
+        $sujet = 'Confirmation du changement de mot de passe - Yujo';
+        $lienConfirmation = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . '/index.php?controleur=utilisateur&methode=confirmerChangementMotDePasse&token=' . $tokenConfirmation;
+        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
+            . "Vous avez demandé à changer votre mot de passe Yujo.\n\n"
+            . "Cliquez sur le lien ci-dessous pour confirmer ce changement :\n"
+            . $lienConfirmation . "\n\n"
+            . "Ce lien est valide pendant 1 heure.\n\n"
+            . "Si vous n'avez pas demandé ce changement, ignorez cet email.\n\n"
+            . "— Équipe Yujo";
+        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+
+        // Rediriger avec message
+        $_SESSION['flash_success'] = "Un lien de confirmation a été envoyé à votre adresse email. Veuillez confirmer dans l'heure.";
+        header('Location: index.php?controleur=parametre&methode=afficherParametre');
+        exit;
+    }
+
+    /**
+     * @brief Confirme le changement de mot de passe via un token.
+     * 
+     * @return void
+     */
+    public function confirmerChangementMotDePasse(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $token = $_GET['token'] ?? '';
+        if (empty($token) || !isset($_SESSION['changement_mdp_attente'])) {
+            $_SESSION['flash_error'] = "Token invalide ou expiré.";
+            header('Location: index.php?controleur=parametre&methode=afficherParametre');
+            exit;
+        }
+
+        $attente = $_SESSION['changement_mdp_attente'];
+        if ($attente['token'] !== $token || strtotime($attente['date_expiration']) < time()) {
+            unset($_SESSION['changement_mdp_attente']);
+            $_SESSION['flash_error'] = "Le lien de confirmation a expiré. Veuillez réessayer.";
+            header('Location: index.php?controleur=parametre&methode=afficherParametre');
+            exit;
+        }
+
+        // Appliquer le changement de mot de passe
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->find($_SESSION['idUtilisateur']);
+        $utilisateur->setMotDePasse($attente['nouveau_mdp']);
+        $manager->modifierUtilisateur($utilisateur);
+
+        // Nettoyer la session
+        unset($_SESSION['changement_mdp_attente']);
+
+        // Email de notification
+        $sujet = 'Confirmation : Votre mot de passe a été changé - Yujo';
+        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
+            . "Votre mot de passe Yujo a été changé avec succès.\n"
+            . "Date : " . date('d/m/Y H:i') . "\n\n"
+            . "Si vous ne reconnaissez pas cette action, veuillez contacter notre équipe de sécurité immédiatement.\n\n"
+            . "— Équipe Yujo";
+        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+
+        $_SESSION['flash_success'] = "Votre mot de passe a été changé avec succès. Un email de confirmation a été envoyé.";
+        header('Location: index.php?controleur=parametre&methode=afficherParametre');
+        exit;
+    }
+
+    /**
+     * @brief Affiche le formulaire de réinitialisation de mot de passe oublié.
+     * 
+     * @return void
+     */
+    public function afficherMotDePasseOublie(): void
+    {
+        echo $this->getTwig()->render('mot_de_passe_oublie.twig');
+    }
+
+    /**
+     * @brief Traite la demande de réinitialisation de mot de passe.
+     * 
+     * Envoie un mail avec un lien de réinitialisation sécurisé.
+     * 
+     * @return void
+     */
+    public function traiterMotDePasseOublie(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+            exit;
+        }
+
+        $email = $_POST['email'] ?? '';
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->findByEmail($email);
+
+        // Message générique pour éviter de révéler si un email existe
+        if (!$utilisateur) {
+            $_SESSION['flash_info'] = "Si cet email existe, vous recevrez un lien de réinitialisation.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+            exit;
+        }
+
+        // Générer un token de réinitialisation
+        $tokenReinit = bin2hex(random_bytes(32));
+        $dateExpiration = date('Y-m-d H:i:s', time() + 1800); // 30 minutes
+
+        // Stocker le token (dans la vraie app, ce serait en BD avec une colonne token_reinit)
+        $_SESSION['reinit_mdp_' . $utilisateur->getIdUtilisateur()] = [
+            'token' => $tokenReinit,
+            'date_expiration' => $dateExpiration
+        ];
+
+        // Envoyer le mail
+        $sujet = 'Réinitialisation de votre mot de passe - Yujo';
+        $lienReinit = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . '/index.php?controleur=utilisateur&methode=afficherReinitialisationMotDePasse&token=' . $tokenReinit . '&id=' . $utilisateur->getIdUtilisateur();
+        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
+            . "Vous avez demandé à réinitialiser votre mot de passe Yujo.\n\n"
+            . "Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :\n"
+            . $lienReinit . "\n\n"
+            . "Ce lien est valide pendant 30 minutes.\n\n"
+            . "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre compte reste sécurisé.\n\n"
+            . "— Équipe Yujo";
+        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+
+        $_SESSION['flash_info'] = "Si cet email existe, vous recevrez un lien de réinitialisation.";
+        header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+        exit;
+    }
+
+    /**
+     * @brief Affiche le formulaire de nouvelle saisie de mot de passe.
+     * 
+     * @return void
+     */
+    public function afficherReinitialisationMotDePasse(): void
+    {
+        $token = $_GET['token'] ?? '';
+        $idUtilisateur = $_GET['id'] ?? '';
+
+        if (empty($token) || empty($idUtilisateur)) {
+            $_SESSION['flash_error'] = "Lien invalide.";
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        // Vérifier le token
+        $cleSession = 'reinit_mdp_' . $idUtilisateur;
+        if (!isset($_SESSION[$cleSession]) || $_SESSION[$cleSession]['token'] !== $token) {
+            $_SESSION['flash_error'] = "Lien invalide ou expiré.";
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        if (strtotime($_SESSION[$cleSession]['date_expiration']) < time()) {
+            unset($_SESSION[$cleSession]);
+            $_SESSION['flash_error'] = "Le lien a expiré. Veuillez demander une nouvelle réinitialisation.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+            exit;
+        }
+
+        echo $this->getTwig()->render('reinitialisation_mot_de_passe.twig', [
+            'token' => $token,
+            'idUtilisateur' => $idUtilisateur
+        ]);
+    }
+
+    /**
+     * @brief Traite la réinitialisation du mot de passe.
+     * 
+     * @return void
+     */
+    public function traiterReinitialisationMotDePasse(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+            exit;
+        }
+
+        $token = $_POST['token'] ?? '';
+        $idUtilisateur = $_POST['idUtilisateur'] ?? '';
+        $nouveauMotDePasse = $_POST['nouveau_mot_de_passe'] ?? '';
+        $confirmationMotDePasse = $_POST['confirmation_mot_de_passe'] ?? '';
+
+        // Vérifier le token
+        $cleSession = 'reinit_mdp_' . $idUtilisateur;
+        if (!isset($_SESSION[$cleSession]) || $_SESSION[$cleSession]['token'] !== $token || strtotime($_SESSION[$cleSession]['date_expiration']) < time()) {
+            $_SESSION['flash_error'] = "Lien invalide ou expiré.";
+            header('Location: index.php?controleur=utilisateur&methode=afficherMotDePasseOublie');
+            exit;
+        }
+
+        $erreurs = [];
+
+        // Vérifier que le nouveau mot de passe respecte les critères
+        if (strlen($nouveauMotDePasse) < 8) {
+            $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if (!preg_match('/[a-z]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le mot de passe doit contenir au moins une minuscule.";
+        }
+        if (!preg_match('/[A-Z]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le mot de passe doit contenir au moins une majuscule.";
+        }
+        if (!preg_match('/[0-9]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le mot de passe doit contenir au moins un chiffre.";
+        }
+        if (!preg_match('/[@$!%*?&]/', $nouveauMotDePasse)) {
+            $erreurs[] = "Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&).";
+        }
+
+        // Vérifier que les deux mots de passe correspondent
+        if ($nouveauMotDePasse !== $confirmationMotDePasse) {
+            $erreurs[] = "Les deux mots de passe ne correspondent pas.";
+        }
+
+        if (!empty($erreurs)) {
+            echo $this->getTwig()->render('reinitialisation_mot_de_passe.twig', [
+                'token' => $token,
+                'idUtilisateur' => $idUtilisateur,
+                'erreurs' => $erreurs
+            ]);
+            exit;
+        }
+
+        // Appliquer la réinitialisation
+        $manager = new UtilisateurDao($this->getPdo());
+        $utilisateur = $manager->find($idUtilisateur);
+        $utilisateur->setMotDePasse(password_hash($nouveauMotDePasse, PASSWORD_DEFAULT));
+        $manager->modifierUtilisateur($utilisateur);
+
+        // Nettoyer la session
+        unset($_SESSION[$cleSession]);
+
+        // Email de notification
+        $sujet = 'Notification : Votre mot de passe a été réinitialisé - Yujo';
+        $message = "Bonjour " . $utilisateur->getPseudo() . ",\n\n"
+            . "Votre mot de passe Yujo a été réinitialisé avec succès.\n"
+            . "Date : " . date('d/m/Y H:i') . "\n\n"
+            . "Si vous ne reconnaissez pas cette action, veuillez contacter notre équipe de sécurité immédiatement : security@yujo.fr\n\n"
+            . "— Équipe Yujo";
+        $headers = "From: security@yujo.fr\r\nReply-To: security@yujo.fr\r\n";
+        @mail($utilisateur->getEmail(), $sujet, $message, $headers);
+
+        $_SESSION['flash_success'] = "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.";
+        header('Location: index.php?controleur=utilisateur&methode=connexion');
         exit;
     }
 }

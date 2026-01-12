@@ -45,6 +45,18 @@
         </div>
 
         <div class="col-md-4">
+            <a href="index.php?controleur=utilisateur&methode=afficherChangementMotDePasse" class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-effect">
+                    <div class="card-body text-center">
+                        <i class="fas fa-key fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title text-dark">Mot de passe</h5>
+                        <p class="card-text text-muted small">Changez votre mot de passe en toute sécurité.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
             <a href="index.php?controleur=parametre&methode=afficherAbonnement" class="text-decoration-none">
                 <div class="card h-100 shadow-sm hover-effect {{ user.getEstPremium() ? 'border-warning' : '' }}">
                     <div class="card-body text-center">
@@ -222,10 +234,11 @@
         </div>
 
         <div class="col-md-12 col-lg-4">
-            <a href="/logout" class="text-decoration-none" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?');">
+            <a href="index.php?controleur=utilisateur&methode=deconnexion" class="text-decoration-none" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?');">
                 <div class="card h-100 shadow-sm border-danger bg-light-danger hover-danger">
                     <div class="card-body text-center d-flex flex-column justify-content-center">
                         <h6 class="card-title text-danger fw-bold"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</h6>
+                        
                     </div>
                 </div>
             </a>

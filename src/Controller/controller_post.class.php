@@ -40,6 +40,7 @@ class ControllerPost extends Controller
     public function lister(): void
     {
         $manager = new PostDao($this->getPdo());
+        $userManager = new UtilisateurDao($this->getPdo());
 
         if (isset($_GET['id_auteur'])) {
             $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
@@ -47,8 +48,16 @@ class ControllerPost extends Controller
             $posts = $manager->findAll();
         }
 
+        // Récupérer tous les utilisateurs pour afficher les noms des auteurs
+        $utilisateursList = $userManager->findAll();
+        $utilisateurs = [];
+        foreach ($utilisateursList as $u) {
+            $utilisateurs[$u->getIdUtilisateur()] = $u;
+        }
+
         echo $this->getTwig()->render('liste_posts.twig', [
             'posts' => $posts,
+            'utilisateurs' => $utilisateurs,
             'title' => 'Fil d\'actualité'
         ]);
     }
