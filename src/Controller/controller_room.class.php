@@ -1,12 +1,13 @@
-<!-- Controller pour la classe Room -->
-
-<!-- La classe Room intéragit avec :
-        - la page d'accueil (quand un utilisateur post une room ou en modifie une, il peut apparaître sur notre page d'accueil)
-        - la page de profil (un utilisateur peut accéder à sa room depuis sa page d'accueil)
-        - la page de personnalisation d'une room car on a besoin de la room pour pouvoir la modifier -->
-
 <?php
     /**
+     * Controller pour la classe Room
+
+     * La classe Room intéragit avec :
+     * - la page d'accueil (quand un utilisateur post une room ou en modifie une, il peut apparaître sur notre page d'accueil)
+     * - la page de profil (un utilisateur peut accéder à sa room depuis sa page d'accueil)
+     * - la page de personnalisation d'une room car on a besoin de la room pour pouvoir la modifier
+
+     * 
      * ControllerRoom, gère les actions liées aux rooms comme
      * l'affichage, la création, la modification et la suppression d'une room.
      * 
