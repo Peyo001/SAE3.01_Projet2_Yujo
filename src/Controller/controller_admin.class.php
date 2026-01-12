@@ -105,7 +105,7 @@
                 $objetDAO->insererObjet($objet);
             }
 
-            header('Location: index.php?controller=Admin&methode=dashboard');
+            header('Location: index.php?controleur=Admin&methode=dashboard');
             exit;
         }
 
@@ -122,7 +122,7 @@
             //$this->verifierAdmin();
 
             if (!isset($_GET['id'])) {
-                header('Location: index.php?controller=Admin&methode=dashboard');
+                header('Location: index.php?controleur=Admin&methode=dashboard');
                 exit;
             }
 
@@ -257,7 +257,7 @@
                 throw $e;
             }
 
-            header('Location: index.php?controller=Admin&methode=dashboard');
+            header('Location: index.php?controleur=Admin&methode=dashboard');
             exit;
         }
     }
