@@ -296,11 +296,23 @@ class ControllerUtilisateur extends Controller
         $postDao = new PostDao($this->getPdo());
         $amiDao = new AmiDao($this->getPdo());
         $roomDao = new RoomDao($this->getPdo());
+        $achatDao = new AchatDao($this->getPdo());
+        $objetDao = new ObjetDao($this->getPdo());
 
         $amis = $amiDao->findAmis($_SESSION['idUtilisateur']);
         $user = $manager->find($_SESSION['idUtilisateur']);
         $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
         $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
+        
+        // Récupérer les objets possédés par l'utilisateur
+        $achats = $achatDao->findByUtilisateur($user->getIdUtilisateur());
+        $objetsPossedes = [];
+        foreach ($achats as $achat) {
+            $objet = $objetDao->find($achat->getIdObjet());
+            if ($objet) {
+                $objetsPossedes[] = $objet;
+            }
+        }
 
         // Préparer un mapping des amis -> Utilisateur pour afficher les noms
         $utilisateursAmis = [];
@@ -322,6 +334,7 @@ class ControllerUtilisateur extends Controller
             'posts' => $posts,
             'amis' => $amis,
             'rooms' => $rooms,
+            'objetsPossedes' => $objetsPossedes,
             'utilisateursAmis' => $utilisateursAmis,
             'flash_success' => $flashSuccess,
             'flash_error' => $flashError
