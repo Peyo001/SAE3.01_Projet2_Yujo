@@ -179,4 +179,24 @@ class ControllerParametre extends Controller
         header('Location: index.php?controleur=parametre&methode=afficherParametre');
         exit;
     }
+
+    /**
+     * @brief Affiche la page de politique de confidentialité
+     * 
+     * @return void
+     */
+    public function afficherPolitiqueConfidentialite(): void
+    {
+        echo $this->getTwig()->render('politique_confidentialite.twig');
+    }
+
+    /**
+     * @brief Affiche la page de mentions légales
+     * 
+     * @return void
+     */
+    public function afficherMentionsLegales(): void
+    {
+        echo $this->getTwig()->render('mentions_legales.twig');
+    }
 }
