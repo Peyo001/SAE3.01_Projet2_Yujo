@@ -52,30 +52,7 @@
                                 </select>
                                 <button type="button" id="btnAddImageProfile" class="btn btn-outline-secondary btn-sm ms-2" onclick="quickAddImage()">Ajouter une image</button>
                             </div>
-                            <div class="mb-3" id="contenuText">
-                                <label for="contenu" class="form-label">Contenu</label>
-                                <textarea id="contenu" name="contenu" class="form-control" rows="3" placeholder="Exprime-toi..."></textarea>
-                            </div>
-                            <div class="mb-3" id="contenuImage" style="display:none;">
-                                <label for="image" class="form-label">Image</label>
-                                <input type="file" id="image" name="image" class="form-control" accept="image/*">
-                                <small class="text-muted">Formats: jpg, png, gif, webp · max 5MB</small>
-                            </div>
-                            <div class="mb-3" id="contenuLien" style="display:none;">
-                                <label for="lien" class="form-label">Lien URL</label>
-                                <input type="url" id="lien" name="contenu" class="form-control" placeholder="https://exemple.com">
-                            </div>
-                            <div class="mb-3" id="quizFields" style="display:none;">
-                                <label for="titre_quiz" class="form-label">Titre du quiz</label>
-                                <input type="text" id="titre_quiz" name="titre_quiz" class="form-control" placeholder="Mon super quiz">
-                                <label for="description_quiz" class="form-label mt-2">Description</label>
-                                <textarea id="description_quiz" name="description_quiz" class="form-control" rows="3" placeholder="Décris ton quiz"></textarea>
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" id="choix_multiples" name="choix_multiples" value="1">
-                                    <label class="form-check-label" for="choix_multiples">Autoriser les choix multiples</label>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-cta">Publier</button>
+                            <button type="submit" class="btn btn-cta">Créer</button>
                         </form>
                         <script>
                         function togglePostFields(){
@@ -118,25 +95,25 @@
                                             <p class="mb-0 text-muted">{{ post.contenu }}</p>
                                         </div>
                                         <div class="d-flex gap-2 mt-2">
-                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Voir</a>
+                                            <a class="text-decoration-none" >Voir</a>
                                             <span class="text-muted">·</span>
-                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
                                         </div>
                                     {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
                                         <div class="mt-2">
                                             <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 320px; object-fit: cover;">
                                         </div>
                                         <div class="d-flex gap-2 mt-2">
-                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Voir</a>
+                                            <a class="text-decoration-none">Voir</a>
                                             <span class="text-muted">·</span>
-                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
                                         </div>
                                     {% else %}
                                         <p class="mb-1 text-muted">{{ post.contenu }}</p>
                                         <div class="d-flex gap-2">
-                                            <a class="text-decoration-none" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Voir</a>
+                                            <a class="text-decoration-none" >Voir</a>
                                             <span class="text-muted">·</span>
-                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                                            <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
                                         </div>
                                     {% endif %}
                                 </div>

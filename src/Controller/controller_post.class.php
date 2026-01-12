@@ -168,6 +168,9 @@ class ControllerPost extends Controller
             $idAuteur = 1; 
         }
 
+        // Stocker le contenu texte original avant de le remplacer potentiellement par une image
+        $contenuTexte = $contenu;
+
         // Gestion spécifique selon type
         if ($typePost === 'post') {
             // Facultatif: texte OU image, au moins l'un des deux
@@ -199,6 +202,16 @@ class ControllerPost extends Controller
             if ($contenu === '' && !(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK)) {
                 $erreurs[] = "Veuillez écrire un contenu ou ajouter une image.";
             }
+        }
+
+        // Si erreurs, afficher le formulaire
+        if (!empty($erreurs)) {
+            echo $this->getTwig()->render('ajout_post.twig', [
+                'menu' => 'nouveau_post',
+                'erreurs' => $erreurs,
+                'donnees' => $_POST
+            ]);
+            exit;
         }
 
         // Créer le post (contenu est soit texte/lien, soit chemin d'image)
@@ -352,8 +365,13 @@ class ControllerPost extends Controller
         $manager = new PostDao($this->getPdo());
         $manager->supprimerPost($idPost);
 
-
-        header('Location: index.php?controleur=post&methode=lister');
+        // Déterminer la redirection : profil ou fil d'actualité
+        $redirect = $_GET['redirect'] ?? 'lister';
+        if ($redirect === 'profil') {
+            header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+        } else {
+            header('Location: index.php?controleur=post&methode=lister');
+        }
         exit;
     }
 }
