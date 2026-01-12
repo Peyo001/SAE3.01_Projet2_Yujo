@@ -1,38 +1,38 @@
 # Configuration de l'envoi d'emails avec PHPMailer
 
-## 📧 Service d'emails configuré avec succès !
+## Service d'emails configuré avec succès !
 
 Votre application Yujo utilise maintenant **PHPMailer** pour envoyer tous les emails de manière professionnelle et fiable.
 
 ---
 
-## ✅ Ce qui a été fait
+## Ce qui a été fait
 
 ### 1. Installation de PHPMailer
-- ✅ PHPMailer déjà installé via Composer
+- PHPMailer déjà installé via Composer
 
 ### 2. Classe MailService créée
-- 📁 Emplacement : `src/Service/MailService.php`
-- 🎨 Templates HTML élégants avec le design Yujo
-- 📧 Types d'emails disponibles :
+- Emplacement : `src/Service/MailService.php`
+- Templates HTML élégants avec le design Yujo
+- Types d'emails disponibles :
   - Changement de mot de passe (confirmation + notification)
   - Mot de passe oublié (réinitialisation + notification)
   - Alertes de sécurité (tentatives de connexion échouées)
   - Newsletter (bienvenue)
 
 ### 3. Configuration SMTP ajoutée
-- 📁 Fichier : `config/config.json`
-- ⚙️ Paramètres prêts pour Gmail/Outlook/autre SMTP
+- Fichier : `config/config.json`
+- Paramètres prêts pour Gmail/Outlook/autre SMTP
 
 ### 4. Intégration complète
-- ✅ `controller_utilisateur.class.php` : Changement de mot de passe
-- ✅ `controller_utilisateur.class.php` : Mot de passe oublié
-- ✅ `controller_utilisateur.class.php` : Alertes de sécurité
-- ✅ `controller_newsletter.class.php` : Newsletter
+- `controller_utilisateur.class.php` : Changement de mot de passe
+- `controller_utilisateur.class.php` : Mot de passe oublié
+- `controller_utilisateur.class.php` : Alertes de sécurité
+- `controller_newsletter.class.php` : Newsletter
 
 ---
 
-## 🔧 Configuration nécessaire
+## Configuration nécessaire
 
 ### Option 1 : Gmail (Recommandé pour développement)
 
@@ -92,7 +92,7 @@ Votre application Yujo utilise maintenant **PHPMailer** pour envoyer tous les em
 
 ---
 
-## 🧪 Test de l'envoi d'emails
+## Test de l'envoi d'emails
 
 ### Tester la newsletter :
 1. Lancez votre application WAMP
@@ -113,7 +113,7 @@ Votre application Yujo utilise maintenant **PHPMailer** pour envoyer tous les em
 
 ---
 
-## 🐛 Débogage
+## Débogage
 
 ### Les emails ne s'envoient pas ?
 
@@ -139,9 +139,9 @@ Votre application Yujo utilise maintenant **PHPMailer** pour envoyer tous les em
            'Test'
        );
        
-       echo $result ? "✅ Email envoyé !" : "❌ Échec de l'envoi";
+       echo $result ? "Email envoyé !" : "Échec de l'envoi";
    } catch (Exception $e) {
-       echo "❌ Erreur : " . $e->getMessage();
+       echo "Erreur : " . $e->getMessage();
    }
    ```
 
@@ -150,7 +150,7 @@ Votre application Yujo utilise maintenant **PHPMailer** pour envoyer tous les em
 
 ---
 
-## 🎨 Personnalisation des emails
+## Personnalisation des emails
 
 ### Modifier le template HTML :
 Éditez la méthode `genererTemplateHTML()` dans `src/Service/MailService.php`
@@ -180,11 +180,11 @@ public function envoyerEmailBienvenue(Utilisateur $utilisateur): bool
 
 ---
 
-## 📦 Production
+## Production
 
 Pour la production, pensez à :
 
-1. ✅ Activer la vérification SSL :
+1. Activer la vérification SSL :
 ```php
 'ssl' => [
     'verify_peer' => true,
@@ -193,19 +193,19 @@ Pour la production, pensez à :
 ]
 ```
 
-2. ✅ Utiliser un vrai serveur SMTP professionnel :
+2. Utiliser un vrai serveur SMTP professionnel :
    - SendGrid
    - Mailgun
    - Amazon SES
    - OVH Mail
 
-3. ✅ Protéger vos credentials :
+3. Protéger vos credentials :
    - Ne jamais commiter `config.json` avec des vrais mots de passe
    - Utiliser des variables d'environnement
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 - **PHPMailer** : https://github.com/PHPMailer/PHPMailer
 - **Gmail SMTP** : https://support.google.com/mail/answer/7126229
@@ -213,7 +213,7 @@ Pour la production, pensez à :
 
 ---
 
-## ✨ Fonctionnalités des emails
+## Fonctionnalités des emails
 
 ### Design responsive
 - Compatible mobile, desktop, Outlook
@@ -228,13 +228,10 @@ Pour la production, pensez à :
 - Alertes tentatives échouées
 
 ### Templates disponibles
-- ✅ Confirmation changement de mot de passe
-- ✅ Notification changement effectué
-- ✅ Réinitialisation mot de passe oublié
-- ✅ Notification réinitialisation effectuée
-- ✅ Alerte sécurité (tentatives échouées)
-- ✅ Bienvenue newsletter
+- Confirmation changement de mot de passe
+- Notification changement effectué
+- Réinitialisation mot de passe oublié
+- Notification réinitialisation effectuée
+- Alerte sécurité (tentatives échouées)
+- Bienvenue newsletter
 
----
-
-Bon développement ! 🚀
