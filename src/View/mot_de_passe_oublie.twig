@@ -14,8 +14,24 @@
                     <p class="text-center text-muted mb-4">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
 
                     {% if flash_info is defined %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2 fw-bold"></i>
+                            <strong>Demande reçue !</strong><br>
+                            <span class="small">{{ flash_info }}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        
                         <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            <i class="fas fa-info-circle me-2"></i>{{ flash_info }}
+                            <i class="fas fa-envelope me-2"></i>
+                            <strong>Un email a été envoyé</strong><br>
+                            <small>Vérifiez votre boîte de réception (et éventuellement vos spams) pour recevoir le lien de réinitialisation. Ce lien sera valide pendant <strong>30 minutes</strong>.</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                            <i class="fas fa-bell me-2"></i>
+                            <strong>Important :</strong>
+                            <small>Vous allez recevoir un email avec un lien pour réinitialiser votre mot de passe. Assurez-vous que votre adresse email est correcte.</small>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     {% endif %}
@@ -32,7 +48,7 @@
                                 name="email" 
                                 placeholder="votre.email@exemple.com"
                                 required>
-                            <small class="text-muted d-block mt-2">Entrez l'email associé à votre compte Yujo.</small>
+                            <small class="text-muted d-block mt-2">Entrez l'email associé à votre compte Yujo. Vous recevrez un email avec les instructions pour réinitialiser votre mot de passe.</small>
                         </div>
 
                         <div class="d-grid gap-2 mt-5">

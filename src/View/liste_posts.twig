@@ -19,9 +19,15 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="rounded-circle bg-secondary" style="width:36px;height:36px;"></div>
+                                    {% set auteur = utilisateurs[post.idAuteur]|default(null) %}
+                                    {% set avatarAuteur = (auteur and auteur.personnalisation) ? '../public/' ~ auteur.personnalisation : null %}
+                                    <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
+                                        {% if avatarAuteur %}
+                                            <img src="{{ avatarAuteur }}" alt="Avatar de {{ auteur.pseudo|default('auteur') }}" style="width:100%;height:100%;object-fit:cover;">
+                                        {% endif %}
+                                    </div>
                                     <div>
-                                        <strong>Auteur #{{ post.idAuteur }}</strong>
+                                        <strong>{{ auteur.pseudo|default('Auteur inconnu') }}</strong>
                                         <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }}</div>
                                     </div>
                                 </div>
