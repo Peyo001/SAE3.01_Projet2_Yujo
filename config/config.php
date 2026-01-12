@@ -9,7 +9,7 @@ class Config {
      *
      */
 
-    private static $configPath = __DIR__ . '/config.json';
+    private static $configPath = __DIR__ . '/config_local.json';
     private static $dictParameters = null;
 
     /**

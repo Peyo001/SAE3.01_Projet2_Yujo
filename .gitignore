@@ -426,7 +426,7 @@ FodyWeavers.xsd
 
 # Fichiers de configuration
 /config
-/config/config.json
+/config/config_local.json
 /config/configAlwaysdata.json
 
 /node_modules
