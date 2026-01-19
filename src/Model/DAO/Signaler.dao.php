@@ -73,7 +73,7 @@ class SignalerDao extends Dao {
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Signaler($row['idUtilisateur'], $row['idSignalement'], $row['idPost'], $row['dateSignalement'], $row['statut']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**

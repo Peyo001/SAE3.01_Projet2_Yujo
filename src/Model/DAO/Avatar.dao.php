@@ -32,19 +32,7 @@ class AvatarDao extends Dao
         );
     }
     
-    /** 
-     * Hydrate plusieurs lignes de résultats en un tableau d'objets Avatar.
-     * 
-     * @param array $rows Tableau de lignes de résultats de la base de données.
-     * @return Avatar[] Tableau d'objets Avatar.
-     */
-    public function hydrateAll(array $rows): array {
-        $avatars = [];
-        foreach ($rows as $row) {
-            $avatars[] = $this->hydrate($row);
-        }
-        return $avatars;
-    }
+    
 
     //Méthodes
     /**
