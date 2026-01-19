@@ -13,6 +13,24 @@ require_once "Dao.class.php";
      */
     class RoomDao extends Dao
     {
+        /**
+         * Hydrate une ligne de résultat en un objet Room.
+         * 
+         * @param array $row Ligne de résultat de la base de données.
+         * @return Room Retourne un objet Room
+         */
+        public function hydrate(array $row): Room {
+            return new Room(
+                (int)$row['idRoom'],
+                $row['nom'],
+                $row['visibilite'],
+                $row['dateCreation'],
+                (int)$row['nbVisit'],
+                (int)$row['idCreateur'],
+                $row['personnalisation'] ?? null
+            );
+        }
+
         // METHODES
         
         /**
@@ -30,16 +48,7 @@ require_once "Dao.class.php";
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                $room = new Room(
-                    (int)$row['idRoom'],
-                    $row['nom'],
-                    $row['visibilite'],
-                    $row['dateCreation'],
-                    (int)$row['nbVisit'],
-                    (int)$row['idCreateur'],
-                    $row['personnalisation'] ?? null
-                );
-
+                $room = $this->hydrate($row);
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
                 return $room;
             }
@@ -57,21 +66,12 @@ require_once "Dao.class.php";
             $stmt = $this->conn->prepare("SELECT idRoom, nom, visibilite, personnalisation, dateCreation, nbVisit, idCreateur FROM ROOM");
             $stmt->execute();
             $rooms = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $room = new Room(
-                    (int)$row['idRoom'],
-                    $row['nom'],
-                    $row['visibilite'],
-                    $row['dateCreation'],
-                    (int)$row['nbVisit'],
-                    (int)$row['idCreateur'],
-                    $row['personnalisation'] ?? null
-                );
-                
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rooms = $this->hydrateAll($rows);
+            foreach ($rooms as $room) {
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
-                $rooms[] = $room;
             }
+            
             
             return $rooms;
         }
@@ -90,20 +90,10 @@ require_once "Dao.class.php";
             $stmt->execute();
 
             $rooms = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $room = new Room(
-                    (int)$row['idRoom'],
-                    $row['nom'],
-                    $row['visibilite'],
-                    $row['dateCreation'],
-                    (int)$row['nbVisit'],
-                    (int)$row['idCreateur'],
-                    $row['personnalisation'] ?? null
-                );
-
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rooms = $this->hydrateAll($rows);
+            foreach ($rooms as $room) {
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
-                $rooms[] = $room;
             }
 
             return $rooms;
@@ -123,21 +113,10 @@ require_once "Dao.class.php";
             $stmt->execute();
 
             $rooms = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $room = new Room(
-                    (int)$row['idRoom'],
-                    $row['nom'],
-                    $row['visibilite'],
-                    $row['dateCreation'],
-                    (int)$row['nbVisit'],
-                    (int)$row['idCreateur'],
-                    $row['personnalisation'] ?? null
-                );
-
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rooms = $this->hydrateAll($rows);
+            foreach ($rooms as $room) {
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
-
-                $rooms[] = $room;
             }
 
             return $rooms;
@@ -153,24 +132,12 @@ require_once "Dao.class.php";
         public function findPublicRooms(): array {
             $stmt = $this->conn->prepare("SELECT * FROM ROOM WHERE visibilite = 'public'");
             $stmt->execute();
-
             $rooms = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $room = new Room(
-                    (int)$row['idRoom'],
-                    $row['nom'],
-                    $row['visibilite'],
-                    $row['dateCreation'],
-                    (int)$row['nbVisit'],
-                    (int)$row['idCreateur'],
-                    $row['personnalisation'] ?? null
-                );
-
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rooms = $this->hydrateAll($rows);
+            foreach ($rooms as $room) {
                 $room->setObjets($this->findObjetsByRoom($room->getIdRoom()));
-                $rooms[] = $room;
             }
-
             return $rooms;
         }
 
@@ -215,17 +182,8 @@ require_once "Dao.class.php";
             $stmt->execute();
 
             $objets = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $objets[] = new Objet(
-                    (int)$row['idObjet'],
-                    $row['description'],
-                    $row['modele3dPath'],
-                    (int)$row['prix'],
-                    (int)$row['idRoom']
-                );
-            }
-
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $objets = $this->hydrateAll($rows);
             return $objets;
         }
 

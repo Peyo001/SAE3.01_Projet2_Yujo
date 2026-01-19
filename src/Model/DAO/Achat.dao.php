@@ -29,7 +29,7 @@ class AchatDao extends Dao
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -45,10 +45,8 @@ class AchatDao extends Dao
     {
         $achats = [];
         $stmt = $this->conn->query("SELECT * FROM ACHETER");
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
-            $achats[] = $achat;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $achats = $this->hydrateAll($rows);
         return $achats;
     }
 
@@ -69,7 +67,7 @@ class AchatDao extends Dao
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -88,11 +86,41 @@ class AchatDao extends Dao
         $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $achat = new Achat((int)$row['idObjet'], $row['dateAchat'], (int)$row['idUtilisateur']);
-            $achats[] = $achat;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $achats = $this->hydrateAll($rows);
         return $achats;
+    }
+
+    /** 
+     * Hydrate une ligne de résultat en un objet Achat.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Achat|null Retourne un objet Achat ou null si les données sont invalides
+     */
+    public function hydrate(array $row): ?Achat
+    {
+        return new Achat(
+            (int)$row['idObjet'],
+            $row['dateAchat'],
+            (int)$row['idUtilisateur']
+        );
+    }
+
+    /**
+     * Compte le nombre d'achats effectués par un utilisateur spécifique.
+     * 
+     * Cette méthode retourne le nombre total d'achats associés à un identifiant d'utilisateur donné.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @return int Nombre total d'achats effectués par l'utilisateur.
+     */
+    public function countAchatByUtilisateur(int $idUtilisateur): int
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$row['total'];
     }
 
     /**

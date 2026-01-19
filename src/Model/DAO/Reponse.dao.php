@@ -12,6 +12,21 @@ require_once "Dao.class.php";
  */
 class ReponseDao extends Dao
 {   
+    /** 
+     * Hydrate une ligne de résultat en un objet Reponse.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Reponse Retourne un objet Reponse
+     */
+    public function hydrate(array $row): Reponse {
+        return new Reponse(
+            (int)$row['idReponse'],
+            $row['dateReponse'],
+            $row['contenu'],
+            (int)$row['idAuteur'],
+            (int)$row['idPost'],
+        );
+    }
     /**
      * Récupère une réponse spécifique par son identifiant.
      * 
@@ -28,13 +43,7 @@ class ReponseDao extends Dao
         $row = $pdoStatement->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Reponse(
-                $row['idReponse'],
-                $row['dateReponse'],
-                $row['contenu'],
-                $row['idAuteur'],
-                $row['idPost'],
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -70,15 +79,8 @@ class ReponseDao extends Dao
         $stmt->execute();
         
         $reponses = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $reponses[] = new Reponse(
-                (int)$row['idReponse'],
-                $row['contenu'],
-                $row['dateReponse'],
-                (int)$row['idPost'],
-                (int)$row['idAuteur']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $reponses = $this->hydrateAll($rows);
         return $reponses;
     }
 
@@ -93,17 +95,8 @@ class ReponseDao extends Dao
         $stmt = $this->conn->prepare("SELECT * FROM REPONSE");
         $stmt->execute();
         $reponses = [];
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $reponse = new Reponse(
-                $row['idReponse'],
-                $row['dateReponse'],
-                $row['contenu'],
-                $row['idAuteur'],
-                $row['idPost'],
-            );
-            $reponses[] = $reponse;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $reponses = $this->hydrateAll($rows);
         return $reponses;
     }
 

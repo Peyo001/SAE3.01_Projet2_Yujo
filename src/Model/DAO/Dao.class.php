@@ -48,4 +48,13 @@ class Dao {
     public function setConn(PDO $conn): void {
         $this->conn = $conn;
     }
+
+
+    public function hydrateAll(array $tableau): array {
+        $result = [];
+        foreach ($tableau as $tableauAssoc) {
+            $result[] = $this->hydrate($tableauAssoc);
+        }
+        return $result;
+    }
 }

@@ -15,6 +15,21 @@ require_once "Dao.class.php";
  */
 class ComposerDao extends Dao{
 
+    /**
+     * Hydrate une ligne de résultat en un objet Composer.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Composer Retourne un objet Composer
+     */
+    public function hydrate(array $row): Composer {
+        return new Composer(
+            (int)$row['idGroupe'],
+            (int)$row['idUtilisateur'],
+            $row['dateAjout']
+        );
+    }
+
+        
 
     /**
      * Récupère tous les enregistrements de la table COMPOSER pour un utilisateur donné.
@@ -28,7 +43,7 @@ class ComposerDao extends Dao{
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Composer($row['idGroupe'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
 
@@ -46,8 +61,9 @@ class ComposerDao extends Dao{
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Composer($row['idGroupe'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
+
 
 
     /**
@@ -62,7 +78,7 @@ class ComposerDao extends Dao{
         $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Composer($row['idGroupe'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     public function insererComposer(Composer $composer): bool {

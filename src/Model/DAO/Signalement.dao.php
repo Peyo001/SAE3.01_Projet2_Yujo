@@ -12,7 +12,19 @@ require_once 'Dao.class.php';
  * 
  */
 class SignalementDao extends Dao    
-{ 
+{   
+    /** 
+     * Hydrate une ligne de résultat en un objet Signalement.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Signalement Retourne un objet Signalement
+     */
+    public function hydrate(array $row): Signalement {
+        return new Signalement(
+            (int)$row['idSignalement'],
+            $row['raison']
+        );
+    }
 
     /**
      * Récupère tous les signalements de la base de données.
@@ -26,10 +38,8 @@ class SignalementDao extends Dao
         $signalements = [];
         $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT");
         $stmt->execute();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $signalement = new Signalement($row['idSignalement'], $row['raison']);
-            $signalements[] = $signalement;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $signalements = $this->hydrateAll($rows);
         return $signalements;
     }
 
@@ -48,7 +58,7 @@ class SignalementDao extends Dao
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Signalement($row['idSignalement'], $row['raison']);
+            return $this->hydrate($row);
         }
         return null;
     }

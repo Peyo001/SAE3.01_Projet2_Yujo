@@ -12,10 +12,22 @@ require_once "Dao.class.php";
  * $question = $questionDAO->findById(1);
  */
 class QuestionDAO extends Dao{
-
+    
+    /**
+     * Hydrate une ligne de résultat en un objet Question.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Question Retourne un objet Question
+     */
+    public function hydrate(array $row): Question {
+        return new Question(
+            (int)$row['idQuestion'],
+            $row['libelle']
+        );
+    }
     // MÉTHODES
     /**
-     * Trouve une question par son identifiant.
+     * Hydrate un tableau de résultats en un tableau d'objets Question.
      * 
      * @param int $id Identifiant de la question.
      * @return Question|null L'objet Question correspondant ou null si non trouvé.
@@ -27,11 +39,7 @@ class QuestionDAO extends Dao{
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            $question = new Question(
-                (int) $row['idQuestion'],
-                $row['libelle']
-            );
-
+            $question = $this->hydrate($row);  
             $question->setReponses($this->findReponseByQuestion($question->getIdQuestion()));
             return $question;
         }
@@ -50,15 +58,8 @@ class QuestionDAO extends Dao{
         $stmt->execute();
         $questions = [];
 
-        while ($row = $stmt->fetchAll(PDO::FETCH_ASSOC)) {
-            $question = new Question(
-                (int) $row['idQuestion'],
-                $row['libelle']
-            );
-
-            $question->setReponses($this->findReponseByQuestion($question->getIdQuestion()));
-            $questions[] = $question;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $questions = $this->hydrateAll($rows);
         return $questions;
     }
 
@@ -97,14 +98,10 @@ class QuestionDAO extends Dao{
         $stmt->execute();
 
         $reponses = [];
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $reponses[] = new ReponsePossible(
-                (int) $row['idReponsePossible'],
-                $row['libelle'],
-                (bool) $row['estCorrecte']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Utiliser ReponsePossibleDao pour hydrater correctement avec le bon casting de estCorrecte
+        $reponsePossibleDao = new ReponsePossibleDao($this->conn);
+        $reponses = $reponsePossibleDao->hydrateAll($rows);
         return $reponses;
     }
 

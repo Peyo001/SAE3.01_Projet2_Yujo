@@ -13,6 +13,24 @@ require_once "Dao.class.php";
     class ObjetDao extends Dao
     {
 
+        /**
+         * Hydrate une ligne de résultat en un objet Objet.
+         * 
+         * @param array $row Ligne de résultat de la base de données.
+         * @return Objet Retourne un objet Objet
+         */
+        public function hydrate(array $row): Objet {
+            return new Objet(
+                (int)$row['idObjet'],
+                $row['description'],
+                $row['modele3dPath'],
+                (int)$row['prix'],
+                isset($row['idRoom']) ? (int)$row['idRoom'] : null
+            );
+
+        }
+
+
         // METHODES
         /**
          * Trouve un objet dans la base de données par son identifiant.
@@ -29,13 +47,7 @@ require_once "Dao.class.php";
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                return new Objet(
-                    (int)$row['idObjet'],
-                    $row['description'],
-                    $row['modele3dPath'],
-                    (int)$row['prix'],
-                    null
-                );
+                return $this->hydrate($row);
             }
             return null;
         }
@@ -51,16 +63,8 @@ require_once "Dao.class.php";
             $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET");
             $stmt->execute();
             $objets = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $objets[] = new Objet(
-                    (int)$row['idObjet'],
-                    $row['description'],
-                    $row['modele3dPath'],
-                    (int)$row['prix'],
-                    null
-                );
-            }
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $objets = $this->hydrateAll($rows);
             return $objets;
         }
 

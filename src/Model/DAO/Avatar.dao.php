@@ -12,7 +12,40 @@ require_once "Dao.class.php";
  */
 class AvatarDao extends Dao
 {
+    /** 
+     * Hydrate une ligne de résultat en un objet Avatar.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Avatar Retourne un objet Avatar
+     */
+    public function hydrate(array $row): Avatar{
+        return new Avatar(
+            $row['nom'],
+            $row['genre'],
+            $row['dateCreation'],
+            $row['CouleurPeau'],
+            $row['CouleurCheveux'],
+            $row['vetements'],
+            $row['accessoires'],
+            (int)$row['idUtilisateur'],
+            (int)$row['idAvatar']
+        );
+    }
     
+    /** 
+     * Hydrate plusieurs lignes de résultats en un tableau d'objets Avatar.
+     * 
+     * @param array $rows Tableau de lignes de résultats de la base de données.
+     * @return Avatar[] Tableau d'objets Avatar.
+     */
+    public function hydrateAll(array $rows): array {
+        $avatars = [];
+        foreach ($rows as $row) {
+            $avatars[] = $this->hydrate($row);
+        }
+        return $avatars;
+    }
+
     //Méthodes
     /**
      * Récupère tous les avatars enregistrés dans la base de données.
@@ -25,20 +58,8 @@ class AvatarDao extends Dao
         $avatars = [];
         $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR");
         $stmt->execute();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $avatar = new Avatar(
-                $row['nom'],
-                $row['genre'],
-                $row['dateCreation'],
-                $row['CouleurPeau'],
-                $row['CouleurCheveux'],
-                $row['vetements'],
-                $row['accessoires'],
-                (int)$row['idUtilisateur'],
-                (int)$row['idAvatar']
-            );
-            $avatars[] = $avatar;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $avatars = $this->hydrateAll($rows);
         return $avatars;
     }
 
@@ -56,17 +77,7 @@ class AvatarDao extends Dao
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Avatar(
-                $row['nom'],
-                $row['genre'],
-                $row['dateCreation'],
-                $row['CouleurPeau'],
-                $row['CouleurCheveux'],
-                $row['vetements'],
-                $row['accessoires'],
-                (int)$row['idUtilisateur'],
-                (int)$row['idAvatar']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }   
@@ -126,17 +137,7 @@ class AvatarDao extends Dao
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Avatar(
-                $row['nom'],
-                $row['genre'],
-                $row['dateCreation'],
-                $row['CouleurPeau'],
-                $row['CouleurCheveux'],
-                $row['vetements'],
-                $row['accessoires'],
-                (int)$row['idUtilisateur'],
-                (int)$row['idAvatar']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }

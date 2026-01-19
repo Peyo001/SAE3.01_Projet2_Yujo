@@ -12,6 +12,21 @@ require_once "Dao.class.php";
  * $ajout = $ajouterDao->findByIdUtilisateur(1);
  */
 class AjouterDao extends Dao {
+
+    /**
+     * Hydrate une ligne de résultat en un objet Ajouter.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Ajouter|null Retourne un objet Ajouter ou null si les données sont invalides
+     */
+    public function hydrate(array $row): ?Ajouter {
+        return new Ajouter(
+            (int)$row['idObjet'],
+            (int)$row['idUtilisateur'],
+            $row['dateAjout']
+        );
+    }
+
     
 
     /**
@@ -26,7 +41,7 @@ class AjouterDao extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Ajouter($row['idObjet'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
 
@@ -42,7 +57,7 @@ class AjouterDao extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Ajouter($row['idObjet'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -54,7 +69,7 @@ class AjouterDao extends Dao {
         $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Ajouter($row['idObjet'], $row['idUtilisateur'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**

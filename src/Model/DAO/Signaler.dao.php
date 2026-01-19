@@ -14,6 +14,22 @@ require_once "Dao.class.php";
 
 class SignalerDao extends Dao {
 
+    /** 
+     * Hydrate une ligne de résultat en un objet Signaler.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Signaler Retourne un objet Signaler
+     */
+    public function hydrate(array $row): Signaler {
+        return new Signaler(
+            (int)$row['idUtilisateur'],
+            (int)$row['idSignalement'],
+            (int)$row['idPost'],
+            $row['dateSignalement'],
+            $row['statut']
+        );
+    }
+
     /**
      * Récupère tous les signalements.
      * 
@@ -25,7 +41,7 @@ class SignalerDao extends Dao {
         $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Signaler($row['idUtilisateur'], $row['idSignalement'], $row['idPost'], $row['dateSignalement'], $row['statut']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -41,7 +57,7 @@ class SignalerDao extends Dao {
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Signaler($row['idUtilisateur'], $row['idSignalement'], $row['idPost'], $row['dateSignalement'], $row['statut']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
