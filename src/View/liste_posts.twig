@@ -36,10 +36,14 @@
                             {% if post.typePost == 'quiz' %}
                                 <div class="p-3 border rounded-3">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div class="fw-bold">Quiz</div>
-                                        <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficher&id={{ post.idPost }}">Jouer</a>
+                                        <div>
+                                            <div class="fw-bold">Quiz</div>
+                                            {% if quizParPost[post.idPost] is defined %}
+                                                <p class="mb-0 text-muted">{{ quizParPost[post.idPost].titre }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Jouer</a>
                                     </div>
-                                    <p class="mb-0 text-muted">{{ post.contenu }}</p>
                                 </div>
                             {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
                                 <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 380px; object-fit: cover;">

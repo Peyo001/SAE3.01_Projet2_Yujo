@@ -230,7 +230,7 @@
 
                     <input type="hidden" name="id_room" value="1">
 
-                    <button type="submit" class="yujo-btn-primary">🚀 Publier maintenant</button>
+                    <button type="submit" class="yujo-btn-primary" id="btnPublier">🚀 Publier maintenant</button>
                 </form>
 
                 {% if erreurs is defined and erreurs is not empty %}
@@ -270,6 +270,15 @@
                     toggleFields();
                     const fileInput = document.getElementById('image');
                     if (fileInput) fileInput.click();
+                });
+            }
+            // Empêcher le double-clic sur le bouton de publication
+            const form = document.querySelector('form');
+            const btnPublier = document.getElementById('btnPublier');
+            if (form && btnPublier) {
+                form.addEventListener('submit', () => {
+                    btnPublier.disabled = true;
+                    btnPublier.textContent = '⏳ Publication en cours...';
                 });
             }
         });

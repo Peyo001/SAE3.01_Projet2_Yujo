@@ -38,6 +38,7 @@ class ControllerAccueil extends Controller
         $amiManager  = new AmiDao($this->getPdo());
         $postManager = new PostDao($this->getPdo());
         $newsletterManager = new NewsletterDAO($this->getPdo());
+        $quizDao = new QuizDao($this->getPdo());
 
         // --- Récupérer les amis ---
         $amis = $amiManager->findAmis($idUtilisateur); // tableau d'objets Ami
@@ -53,6 +54,17 @@ class ControllerAccueil extends Controller
 
         // --- Récupérer uniquement les posts des amis ---
         $posts = $postManager->findByAuteurs($idsAmis);
+        
+        // Récupérer les quiz associés aux posts de type quiz
+        $quizParPost = [];
+        foreach ($posts as $post) {
+            if ($post->getTypePost() === 'quiz') {
+                $quiz = $quizDao->findByPost($post->getIdPost());
+                if ($quiz) {
+                    $quizParPost[$post->getIdPost()] = $quiz;
+                }
+            }
+        }
 
         // --- Tableau id => Utilisateur pour Twig (clé = idUtilisateur) ---
         $utilisateursList = $userManager->findAll();
@@ -73,6 +85,7 @@ class ControllerAccueil extends Controller
             'amis' => $amis,
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
+            'quizParPost' => $quizParPost,
             'estInscritNewsletter' => $estInscritNewsletter
         ]);
     }

@@ -13,9 +13,12 @@
         resultEl.className = 'mt-2 fw-semibold text-warning';
         return;
       }
-      const allCorrect = selected.every(i => i.dataset.correct === '1');
-      const noMissed = inputs.every(i => i.dataset.correct !== '1' || i.checked);
-      if (allCorrect && noMissed) {
+      // Vérifier si toutes les réponses sélectionnées sont correctes
+      const allSelectedAreCorrect = selected.every(i => i.dataset.correct === '1');
+      // Vérifier si toutes les réponses correctes ont été sélectionnées
+      const allCorrectAreSelected = inputs.every(i => i.dataset.correct !== '1' || i.checked);
+      
+      if (allSelectedAreCorrect && allCorrectAreSelected) {
         resultEl.textContent = "Bravo, bonne réponse !";
         resultEl.className = 'mt-2 fw-semibold text-success';
       } else {
