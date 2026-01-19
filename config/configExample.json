@@ -5,5 +5,14 @@
         "user": "",
         "password": ""
     },
-    "googleAnalyticsId": "G-XXXXXXXXX"
+    "googleAnalyticsId": "",
+    "smtp": {
+        "host": "",
+        "port": ,
+        "encryption": "",
+        "username": "",
+        "password": "",
+        "from_email": "",
+        "from_name": ""
+    }
 }

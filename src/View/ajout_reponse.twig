@@ -33,17 +33,6 @@
                 </ul>
             </div>
             {% endif %}
-
-            {% if erreurs is defined and erreurs is not empty %}
-            <div class="alert alert-danger mt-3" role="alert">
-                <h6 class="mb-2">Veuillez corriger les erreurs suivantes :</h6>
-                <ul class="mb-0">
-                    {% for msg in erreurs %}
-                        <li>{{ msg }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

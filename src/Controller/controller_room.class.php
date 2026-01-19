@@ -139,10 +139,10 @@
                 null,            // idRoom
                 $nom,            // nom
                 $visibilite,     // visibilite
-                null,            // personnalisation
                 date('Y-m-d'),   // dateCreation
                 0,               // nbVisit
-                (int)$idCreateur // idCreateur
+                (int)$idCreateur,// idCreateur
+                null             // personnalisation
             );
 
             $managerRoom = new RoomDao($this->getPdo());
