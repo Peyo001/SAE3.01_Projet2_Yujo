@@ -49,7 +49,13 @@ class Dao {
         $this->conn = $conn;
     }
 
-
+    /**
+     * Méthode abstraite pour hydrater un objet à partir d'un tableau associatif.
+     * 
+     * @param array $tableauAssoc Tableau associatif contenant les données à hydrater.
+     * 
+     * @return mixed L'objet hydraté.
+     */
     public function hydrateAll(array $tableau): array {
         $result = [];
         foreach ($tableau as $tableauAssoc) {
