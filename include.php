@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 			'lifetime' => 0,
 			'path' => '/',
 			'secure' => $secure,
-			'httponly' => true,
+			'httponly' => true,  
 			'samesite' => 'Lax',
 		]);
 	} else {

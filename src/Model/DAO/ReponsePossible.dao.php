@@ -24,7 +24,7 @@ require_once "Dao.class.php";
                 $row['libelle'],
                 (bool)(int)$row['estCorrecte']
             );
-        }
+        }   
 
         // METHODES
         /**

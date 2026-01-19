@@ -10,6 +10,8 @@
  */
 class NewsletterDAO extends Dao
 {
+
+    
     /**
      * Inscrit un email à la newsletter.
      * 
