@@ -14,6 +14,20 @@ require_once "Dao.class.php";
 
 class AmiDao extends Dao
 {
+    /**
+     * Hydrate une ligne de résultat en un objet Ami.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Ami|null Retourne un objet Ami ou null si les données sont invalides
+     */
+    public function hydrate(array $row): Ami {
+        return new Ami(
+            (int)$row['idUtilisateur1'],
+            (int)$row['idUtilisateur2'],
+            $row['dateAjout']
+        );
+    }
+
     
 
      /**
@@ -26,14 +40,8 @@ class AmiDao extends Dao
     public function findAll(): array {
         $amis = [];
         $stmt = $this->conn->query("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM AMI");
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $ami = new Ami(
-                $row['idUtilisateur1'],
-                $row['idUtilisateur2'],
-                $row['dateAjout']
-            );
-            $amis[] = $ami;
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $amis = $this->hydrateAll($rows);
         return $amis;
     }
 
@@ -54,11 +62,7 @@ class AmiDao extends Dao
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Ami(
-                $row['idUtilisateur1'],
-                $row['idUtilisateur2'],
-                $row['dateAjout']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -86,12 +90,12 @@ class AmiDao extends Dao
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // On veut toujours l'autre utilisateur comme "ami"
         if ($row['idUtilisateur1'] == $idUtilisateur) {
-            $amis[] = new Ami($idUtilisateur, $row['idUtilisateur2'], $row['dateAjout']);
+            $amis[] = $this->hydrate($row);                                         
         } else {
-            $amis[] = new Ami($idUtilisateur, $row['idUtilisateur1'], $row['dateAjout']);
+            $amis[] = $this->hydrate($row)->setIdUtilisateur1($row['idUtilisateur2'])->setIdUtilisateur2($row['idUtilisateur1']);
         }
     }
-
+ 
     return $amis;
 }
 

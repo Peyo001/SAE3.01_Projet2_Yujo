@@ -41,11 +41,23 @@ class ControllerPost extends Controller
     {
         $manager = new PostDao($this->getPdo());
         $userManager = new UtilisateurDao($this->getPdo());
+        $quizDao = new QuizDao($this->getPdo());
 
         if (isset($_GET['id_auteur'])) {
             $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
         } else {
             $posts = $manager->findAll();
+        }
+        
+        // Récupérer les quiz associés aux posts de type quiz
+        $quizParPost = [];
+        foreach ($posts as $post) {
+            if ($post->getTypePost() === 'quiz') {
+                $quiz = $quizDao->findByPost($post->getIdPost());
+                if ($quiz) {
+                    $quizParPost[$post->getIdPost()] = $quiz;
+                }
+            }
         }
 
         // Récupérer tous les utilisateurs pour afficher les noms des auteurs
@@ -58,6 +70,7 @@ class ControllerPost extends Controller
         echo $this->getTwig()->render('liste_posts.twig', [
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
+            'quizParPost' => $quizParPost,
             'title' => 'Fil d\'actualité'
         ]);
     }
@@ -214,97 +227,94 @@ class ControllerPost extends Controller
             exit;
         }
 
-        // Créer le post (contenu est soit texte/lien, soit chemin d'image)
-        $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
-
-        $manager = new PostDao($this->getPdo());
-        $succes = $manager->insererPost($post);
-
-        if ($succes) {
-            // Si le type de post est "quiz", créer la question et ses réponses puis le quiz associé
-            if ($typePost === 'quiz') {
-                $idPost = $post->getIdPost();
-                $managerQuiz = new QuizDao($this->getPdo());
-
-                // Éviter la création en double : un seul quiz par post
-                $existingQuiz = $managerQuiz->findByPost($idPost);
-                if ($existingQuiz) {
-                    header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
-                    exit;
-                }
-
-                $titreQuiz = trim($_POST['titre_quiz'] ?? 'Quiz sans titre');
-                $descriptionQuiz = trim($_POST['description_quiz'] ?? '');
-                $choixMultiples = isset($_POST['choix_multiples']) ? (bool)$_POST['choix_multiples'] : false;
-
-                $idQuestion = 0;
-                $questionLibelle = trim($_POST['question_libelle'] ?? '');
-                $reponses = isset($_POST['reponses']) && is_array($_POST['reponses']) ? $_POST['reponses'] : [];
-
-                // Validation minimale côté serveur pour le quiz
-                $validAnswers = [];
-                $correctCount = 0;
-                foreach ($reponses as $r) {
-                    $lib = isset($r['libelle']) ? trim($r['libelle']) : '';
-                    if ($lib !== '') {
-                        $isCorrect = !empty($r['correct']);
-                        $validAnswers[] = [ 'libelle' => $lib, 'correct' => $isCorrect ];
-                        if ($isCorrect) { $correctCount++; }
-                    }
-                }
-                if ($questionLibelle === '') {
-                    $erreurs[] = "La question du quiz est obligatoire.";
-                }
-                if (count($validAnswers) < 2) {
-                    $erreurs[] = "Indique au moins 2 réponses pour le quiz.";
-                }
-                if (!$choixMultiples && $correctCount !== 1) {
-                    $erreurs[] = "Sélectionne exactement une bonne réponse (désactive choix multiples).";
-                }
-
-                if (!empty($erreurs)) {
-                    echo $this->getTwig()->render('ajout_post.twig', [
-                        'menu' => 'nouveau_post',
-                        'erreurs' => $erreurs,
-                        'donnees' => $_POST
-                    ]);
-                    exit;
-                }
-
-                // Créer la question
-                $managerQuestion = new QuestionDAO($this->getPdo());
-                $question = new Question(null, $questionLibelle);
-                if ($managerQuestion->createQuestion($question)) {
-                    $idQuestion = (int)$question->getIdQuestion();
-                }
-
-                if ($idQuestion === 0) {
-                    $erreurs[] = "Impossible de créer la question du quiz.";
-                    echo $this->getTwig()->render('ajout_post.twig', [
-                        'menu' => 'nouveau_post',
-                        'erreurs' => $erreurs,
-                        'donnees' => $_POST
-                    ]);
-                    exit;
-                }
-
-                // Ajouter les réponses possibles
-                if ($idQuestion > 0) {
-                    foreach ($validAnswers as $ans) {
-                        $rp = new ReponsePossible(null, $ans['libelle'], (bool)$ans['correct']);
-                        $managerQuestion->addReponseToQuestion($idQuestion, $rp);
-                    }
-                }
-
-                // Créer le quiz lié au post et à la question
-                $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, $idPost);
-                $managerQuiz->insererQuiz($quiz);
+        if ($typePost === 'post'){
+            // Créer le post (contenu est soit texte/lien, soit chemin d'image)
+            $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
+            $manager = new PostDao($this->getPdo());
+            $succes = $manager->insererPost($post);
+            
+            if ($succes) {
+                header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+                exit;
+            } else {
+                throw new Exception("Erreur lors de la création du post.");
             }
+        }
+
+        elseif ($typePost === 'quiz'){
+            // Si le type de post est "quiz", créer la question et ses réponses puis le quiz associé (SANS post)
+            
+            $managerQuiz = new QuizDao($this->getPdo());
+
+            $titreQuiz = trim($_POST['titre_quiz'] ?? 'Quiz sans titre');
+            $descriptionQuiz = trim($_POST['description_quiz'] ?? '');
+            $choixMultiples = isset($_POST['choix_multiples']) ? (bool)$_POST['choix_multiples'] : false;
+
+            $idQuestion = 0;
+            $questionLibelle = trim($_POST['question_libelle'] ?? '');
+            $reponses = isset($_POST['reponses']) && is_array($_POST['reponses']) ? $_POST['reponses'] : [];
+
+            // Validation minimale côté serveur pour le quiz
+            $validAnswers = [];
+            $correctCount = 0;
+            foreach ($reponses as $r) {
+                $lib = isset($r['libelle']) ? trim($r['libelle']) : '';
+                if ($lib !== '') {
+                    $isCorrect = !empty($r['correct']);
+                    $validAnswers[] = [ 'libelle' => $lib, 'correct' => $isCorrect ];
+                    if ($isCorrect) { $correctCount++; }
+                }
+            }
+            if ($questionLibelle === '') {
+                $erreurs[] = "La question du quiz est obligatoire.";
+            }
+            if (count($validAnswers) < 2) {
+                $erreurs[] = "Indique au moins 2 réponses pour le quiz.";
+            }
+            if (!$choixMultiples && $correctCount !== 1) {
+                $erreurs[] = "Sélectionne exactement une bonne réponse (désactive choix multiples).";
+            }
+
+            if (!empty($erreurs)) {
+                echo $this->getTwig()->render('ajout_post.twig', [
+                    'menu' => 'nouveau_post',
+                    'erreurs' => $erreurs,
+                    'donnees' => $_POST
+                ]);
+                exit;
+            }
+
+            // Créer la question
+            $managerQuestion = new QuestionDAO($this->getPdo());
+            $question = new Question(null, $questionLibelle);
+            if ($managerQuestion->createQuestion($question)) {
+                $idQuestion = (int)$question->getIdQuestion();
+            }
+
+            if ($idQuestion === 0) {
+                $erreurs[] = "Impossible de créer la question du quiz.";
+                echo $this->getTwig()->render('ajout_post.twig', [
+                    'menu' => 'nouveau_post',
+                    'erreurs' => $erreurs,
+                    'donnees' => $_POST
+                ]);
+                exit;
+            }
+
+            // Ajouter les réponses possibles
+            if ($idQuestion > 0) {
+                foreach ($validAnswers as $ans) {
+                    $rp = new ReponsePossible(null, $ans['libelle'], (bool)$ans['correct']);
+                    $managerQuestion->addReponseToQuestion($idQuestion, $rp);
+                }
+            }
+
+            // Créer le quiz SANS post (idPost = null)
+            $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, null);
+            $managerQuiz->insererQuiz($quiz);
             
             header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
             exit;
-        } else {
-            throw new Exception("Erreur lors de la création du post.");
         }
     }
 

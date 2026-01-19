@@ -12,7 +12,17 @@ require_once "Dao.class.php";
  * 
  */
 class PostDao extends Dao
-{
+{   
+    public function hydrate(array $row): Post {
+        return new Post(
+            (int)$row['idPost'],
+            $row['contenu'],
+            $row['typePost'],
+            $row['datePublication'],
+            (int)$row['idAuteur'],
+            (int)$row['idRoom']
+        );
+    }
     /**
      * Crée un nouveau post dans la base de données.
      * 
@@ -77,14 +87,7 @@ class PostDao extends Dao
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new Post(
-                (int)$row['idPost'],
-                $row['contenu'],
-                $row['typePost'],
-                $row['datePublication'],
-                (int)$row['idAuteur'],
-                (int)$row['idRoom']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -105,16 +108,8 @@ class PostDao extends Dao
         $stmt->execute();
         
         $posts = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $posts[] = new Post(
-                (int)$row['idPost'],
-                $row['contenu'],
-                $row['typePost'],
-                $row['datePublication'],
-                (int)$row['idAuteur'],
-                (int)$row['idRoom']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $posts = $this->hydrateAll($rows);  
         return $posts;
     }
 
@@ -130,16 +125,8 @@ class PostDao extends Dao
         $stmt = $this->conn->prepare("SELECT * FROM POST");
         $stmt->execute();
         $posts = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $posts[] = new Post(
-                (int)$row['idPost'],
-                $row['contenu'],
-                $row['typePost'],
-                $row['datePublication'],
-                (int)$row['idAuteur'],
-                (int)$row['idRoom']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $posts = $this->hydrateAll($rows);
         return $posts;
     }
     
@@ -159,16 +146,8 @@ class PostDao extends Dao
         $stmt->execute();
         
         $posts = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $posts[] = new Post(
-                (int)$row['idPost'],
-                $row['contenu'],
-                $row['typePost'],
-                $row['datePublication'],
-                (int)$row['idAuteur'],
-                (int)$row['idRoom']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $posts = $this->hydrateAll($rows);
         return $posts;
     }
 
@@ -195,16 +174,8 @@ public function findByAuteurs(array $ids): array
     $stmt->execute($ids);
 
     $posts = [];
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $posts[] = new Post(
-            (int)$row['idPost'],
-            $row['contenu'],
-            $row['typePost'],
-            $row['datePublication'],
-            (int)$row['idAuteur'],
-            (int)$row['idRoom']
-        );
-    }
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $posts = $this->hydrateAll($rows);
 
     return $posts;
 }

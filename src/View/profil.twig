@@ -50,7 +50,7 @@
                                     <option value="post">Post</option>
                                     <option value="quiz">Quiz</option>
                                 </select>
-                                <button type="button" id="btnAddImageProfile" class="btn btn-outline-secondary btn-sm ms-2" onclick="quickAddImage()">Ajouter une image</button>
+    
                             </div>
                             <button type="submit" class="btn btn-cta">Créer</button>
                         </form>
@@ -89,14 +89,17 @@
                                     {% if post.typePost == 'quiz' %}
                                         <div class="p-3 border rounded-3 mt-2">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <div class="fw-bold">Quiz</div>
+                                                <div>
+                                                    <div class="fw-bold">Quiz</div>
+                                                    {% if quizParPost[post.idPost] is defined %}
+                                                        <p class="mb-0 text-muted">{{ quizParPost[post.idPost].titre }}</p>
+                                                    {% endif %}
+                                                </div>
                                                 <a class="btn btn-sm btn-cta" href="index.php?controleur=post&methode=afficherQuiz&id={{ post.idPost }}">Jouer</a>
                                             </div>
-                                            <p class="mb-0 text-muted">{{ post.contenu }}</p>
                                         </div>
                                         <div class="d-flex gap-2 mt-2">
-                                            <a class="text-decoration-none" >Voir</a>
-                                            <span class="text-muted">·</span>
+                                            <span class="text-muted">Voir ·</span>
                                             <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
                                         </div>
                                     {% elseif post.typePost == 'post' and 'uploads/posts/' in post.contenu %}

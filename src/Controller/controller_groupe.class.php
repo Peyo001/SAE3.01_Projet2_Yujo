@@ -46,6 +46,7 @@ class ControllerGroupe extends Controller
             $groupes = $manager->search($search);
         } else {
             $groupes = $manager->findAll();
+            
         }
 
         echo $this->getTwig()->render('liste_groupes.twig', [

@@ -12,6 +12,19 @@
  */
 class PossederDAO extends Dao {
 
+    /**
+     * Hydrate une ligne de résultat en un objet Posseder.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Posseder Retourne un objet Posseder
+     */
+    public function hydrate(array $row): Posseder {
+        return new Posseder(
+            (int)$row['idObjet'],
+            (int)$row['idRoom'],
+            $row['dateAjout']
+        );
+    }
     // MÉTHODES
     /**
      * Trouve toutes les possessions pour une room donné.
@@ -25,7 +38,7 @@ class PossederDAO extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Posseder($row['idObjet'], $row['idRoom'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -40,7 +53,7 @@ class PossederDAO extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Posseder($row['idObjet'], $row['idRoom'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -52,7 +65,7 @@ class PossederDAO extends Dao {
         $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM POSSEDER");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Posseder($row['idObjet'], $row['idRoom'], $row['dateAjout']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**

@@ -217,7 +217,7 @@ class ControllerUtilisateur extends Controller
         ]);
     }
 
-    /**
+    /** 
      * @brief Traite les données de connexion utilisateur.
      * 
      * Valide les informations de connexion, crée une session utilisateur en cas de succès.
@@ -348,11 +348,23 @@ class ControllerUtilisateur extends Controller
         $roomDao = new RoomDao($this->getPdo());
         $achatDao = new AchatDao($this->getPdo());
         $objetDao = new ObjetDao($this->getPdo());
+        $quizDao = new QuizDao($this->getPdo());
 
         $amis = $amiDao->findAmis($_SESSION['idUtilisateur']);
         $user = $manager->find($_SESSION['idUtilisateur']);
         $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
         $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
+        
+        // Récupérer les quiz associés aux posts de type quiz
+        $quizParPost = [];
+        foreach ($posts as $post) {
+            if ($post->getTypePost() === 'quiz') {
+                $quiz = $quizDao->findByPost($post->getIdPost());
+                if ($quiz) {
+                    $quizParPost[$post->getIdPost()] = $quiz;
+                }
+            }
+        }
         
         // Récupérer les objets possédés par l'utilisateur
         $achats = $achatDao->findByUtilisateur($user->getIdUtilisateur());
@@ -386,6 +398,7 @@ class ControllerUtilisateur extends Controller
             'rooms' => $rooms,
             'objetsPossedes' => $objetsPossedes,
             'utilisateursAmis' => $utilisateursAmis,
+            'quizParPost' => $quizParPost,
             'flash_success' => $flashSuccess,
             'flash_error' => $flashError
         ]);

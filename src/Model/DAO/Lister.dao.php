@@ -12,6 +12,20 @@
  */
 class ListerDAO extends Dao {
 
+    /**
+     * Hydrate une ligne de résultat en un objet Lister.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Lister Retourne un objet Lister
+     */
+    public function hydrate(array $row): Lister {
+        return new Lister(
+            (int)$row['idReponsePossible'],
+            (int)$row['idQuestion']
+        );
+    }
+
+
     // MÉTHODES
     /**
      * Trouve toutes les associations pour une question donnée.
@@ -25,7 +39,7 @@ class ListerDAO extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Lister($row['idReponsePossible'], $row['idQuestion']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -40,7 +54,7 @@ class ListerDAO extends Dao {
         $stmt->execute();
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Lister($row['idReponsePossible'], $row['idQuestion']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**
@@ -52,7 +66,7 @@ class ListerDAO extends Dao {
         $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM LISTER");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        return array_map(fn($row) => new Lister($row['idReponsePossible'], $row['idQuestion']), $rows);
+        return $this->hydrateAll($rows);
     }
 
     /**

@@ -14,6 +14,23 @@ require_once "Dao.class.php";
  */
 class MessageDAO extends Dao{
 
+    /**
+     * Hydrate une ligne de résultat en un objet Message.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Message Retourne un objet Message
+     */
+    public function hydrate(array $row): Message {
+        return new Message(
+            $row['idMessage'],
+            $row['contenu'],
+            $row['dateEnvoi'],
+            $row['idGroupe'],
+            $row['idUtilisateur']
+        );
+    }
+
+
 
     // MÉTHODES
     /**
@@ -29,13 +46,7 @@ class MessageDAO extends Dao{
         $row = $stmt->fetch();
 
         if ($row) {
-            return new Message(
-                $row['idMessage'],
-                $row['contenu'],
-                $row['dateEnvoi'],
-                $row['idGroupe'],
-                $row['idUtilisateur']
-            );
+            return $this->hydrate($row);
         }
 
         return null;
@@ -53,16 +64,8 @@ class MessageDAO extends Dao{
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
         $messages = [];
-
-        while ($row = $stmt->fetch()) {
-            $messages[] = new Message(
-                $row['idMessage'],
-                $row['contenu'],
-                $row['dateEnvoi'],
-                $row['idGroupe'],
-                $row['idUtilisateur']
-            );
-        }
+        $rows = $stmt->fetchAll();
+        $messages = $this->hydrateAll($rows);
 
         return $messages;
     }
@@ -77,18 +80,8 @@ class MessageDAO extends Dao{
         $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
-        $messages = [];
-
-        while ($row = $stmt->fetch()) {
-            $messages[] = new Message(
-                $row['idMessage'],
-                $row['contenu'],
-                $row['dateEnvoi'],
-                $row['idGroupe'],
-                $row['idUtilisateur']
-            );
-        }
-
+        $rows = $stmt->fetchAll();
+        $messages = $this->hydrateAll($rows);
         return $messages;
     }
 
@@ -101,18 +94,8 @@ class MessageDAO extends Dao{
     public function findAll(): array {
         $stmt = $this->conn->prepare("SELECT * FROM MESSAGE");
         $stmt->execute();
-        $messages = [];
-
-        while ($row = $stmt->fetch()) {
-            $messages[] = new Message(
-                $row['idMessage'],
-                $row['contenu'],
-                $row['dateEnvoi'],
-                $row['idGroupe'],
-                $row['idUtilisateur']
-            );
-        }
-
+        $rows = $stmt->fetchAll();
+        $messages = $this->hydrateAll($rows);
         return $messages;
     }
 

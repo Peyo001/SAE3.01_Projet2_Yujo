@@ -12,6 +12,19 @@ require_once "Dao.class.php";
      */
     class ReponsePossibleDao extends Dao
     {
+        /**
+         * Hydrate une ligne de résultat en un objet ReponsePossible.
+         * 
+         * @param array $row Ligne de résultat de la base de données.
+         * @return ReponsePossible Retourne un objet ReponsePossible
+         */
+        public function hydrate(array $row): ReponsePossible {
+            return new ReponsePossible(
+                (int)$row['idReponsePossible'],
+                $row['libelle'],
+                (bool)(int)$row['estCorrecte']
+            );
+        }
 
         // METHODES
         /**
@@ -29,11 +42,7 @@ require_once "Dao.class.php";
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                return new ReponsePossible(
-                    (int)$row['idReponsePossible'],
-                    $row['libelle'],
-                    (bool)$row['estCorrecte']
-                );
+                return $this->hydrate($row);
             }
             return null;
         }
@@ -50,13 +59,8 @@ require_once "Dao.class.php";
             $stmt->execute();
             $reponses = [];
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $reponses[] = new ReponsePossible(
-                    (int)$row['idReponsePossible'],
-                    $row['libelle'],
-                    (bool)$row['estCorrecte']
-                );
-            }
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $reponses = $this->hydrateAll($rows);
             return $reponses;
         }
 
@@ -77,14 +81,8 @@ require_once "Dao.class.php";
             $stmt->bindParam(':idQuestion', $idQuestion, PDO::PARAM_INT);
             $stmt->execute();
             $reponses = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $reponses[] = new ReponsePossible(
-                    (int)$row['idReponsePossible'],
-                    $row['libelle'],
-                    (bool)$row['estCorrecte']
-                );
-            }
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $reponses = $this->hydrateAll($rows);
             return $reponses;
         }
 

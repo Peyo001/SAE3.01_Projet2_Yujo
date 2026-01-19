@@ -76,20 +76,30 @@ class GroupeDao extends Dao
         $stmt = $this->conn->prepare("SELECT * FROM GROUPE");
         $stmt->execute();
         $groupes = [];
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $membres = $this->getMembres($row['idGroupe']);
-            $groupes[] = new Groupe(
-                $row['nomGroupe'],
-                $row['description'],
-                $row['dateCreationGroupe'],
-                $membres,
-                (int)$row['idGroupe']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $groupes = $this->hydrateAll($rows);
 
         return $groupes;
     }
+
+    /**
+     * Hydrate un objet Groupe à partir d'un tableau de données.
+     * 
+     * @param array $data Tableau associatif contenant les données du groupe.
+     * @return Groupe L'objet Groupe hydraté.
+     */
+    public function hydrate(array $data): Groupe
+    {
+        $membres = $this->getMembres($data['idGroupe']);
+        return new Groupe(
+            $data['nomGroupe'],
+            $data['description'],
+            $data['dateCreationGroupe'],
+            $membres,
+            (int)$data['idGroupe']
+        );
+    }
+
 
     /**
      * Recherche des groupes par nom ou description.

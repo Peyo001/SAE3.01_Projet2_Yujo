@@ -12,6 +12,22 @@ require_once "Dao.class.php";
      */
     class QuizDao extends Dao
     {
+        /**
+         * Hydrate une ligne de résultat en un objet Quiz.
+         * 
+         * @param array $row Ligne de résultat de la base de données.
+         * @return Quiz Retourne un objet Quiz
+         */
+        public function hydrate(array $row): Quiz {
+            return new Quiz(
+                (int)$row['idQuiz'],
+                $row['titre'],
+                $row['description'],
+                (bool)$row['choixMultiples'],
+                (int)$row['idQuestion'],
+                (int)$row['idPost']
+            );
+        }
         // METHODES
         /**
          * Trouve un quiz dans la base de données par son identifiant.
@@ -28,14 +44,7 @@ require_once "Dao.class.php";
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                return new Quiz(
-                    (int)$row['idQuiz'],
-                    $row['titre'],
-                    $row['description'],
-                    (bool)$row['choixMultiples'],
-                    (int)$row['idQuestion'],
-                    (int)$row['idPost']
-                );
+                return $this->hydrate($row);
             }
             return null;
         }
@@ -49,14 +58,7 @@ require_once "Dao.class.php";
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) {
-                return new Quiz(
-                    (int)$row['idQuiz'],
-                    $row['titre'],
-                    $row['description'],
-                    (bool)$row['choixMultiples'],
-                    (int)$row['idQuestion'],
-                    (int)$row['idPost']
-                );
+                return $this->hydrate($row);
             }
             return null;
         }
@@ -72,17 +74,8 @@ require_once "Dao.class.php";
             $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM QUIZ");
             $stmt->execute();
             $quizs = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $quizs[] = new Quiz(
-                    (int)$row['idQuiz'],
-                    $row['titre'],
-                    $row['description'],
-                    (bool)$row['choixMultiples'],
-                    (int)$row['idQuestion'],
-                    (int)$row['idPost']
-                );
-            }
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $quizs = $this->hydrateAll($rows);
             return $quizs;
         }
 
@@ -96,8 +89,8 @@ require_once "Dao.class.php";
          */
         public function mettreAJourQuiz(Quiz $quiz): bool {
             $stmt = $this->conn->prepare("UPDATE QUIZ SET titre = :titre, description = :description, choixMultiples = :choixMultiples, idQuestion = :idQuestion, idPost = :idPost WHERE idQuiz = :idQuiz;");
-            $stmt->bindValue(':titre', $quiz->getTitre());
-            $stmt->bindValue(':description', $quiz->getDescription());
+            $stmt->bindValue(':titre', $quiz->getTitre(), PDO::PARAM_STR);
+            $stmt->bindValue(':description', $quiz->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':choixMultiples', $quiz->getChoixMultiples(), PDO::PARAM_BOOL);
             $stmt->bindValue(':idQuestion', $quiz->getIdQuestion(), PDO::PARAM_INT);
             $stmt->bindValue(':idPost', $quiz->getIdPost(), PDO::PARAM_INT);

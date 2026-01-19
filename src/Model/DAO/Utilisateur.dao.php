@@ -12,8 +12,30 @@ require_once "Dao.class.php";
  * $utilisateur = $utilisateurDao->findAll();
  */
 class UtilisateurDao extends Dao
-{
-
+{   
+    /** 
+     * Hydrate une ligne de résultat en un objet Utilisateur.
+     * 
+     * @param array $row Ligne de résultat de la base de données.
+     * @return Utilisateur Retourne un objet Utilisateur
+     */
+    public function hydrate(array $row): Utilisateur {
+        return new Utilisateur(
+            $row['nom'],
+            $row['prenom'],
+            $row['dateNaissance'],
+            $row['genre'],
+            $row['pseudo'],
+            $row['email'],
+            $row['motDePasse'],
+            $row['typeCompte'],
+            (bool)$row['estPremium'],
+            $row['dateInscription'],
+            (int)$row['yuPoints'],
+            (int)$row['idUtilisateur'],
+            $row['personnalisation']
+        );
+    }   
     //METHODES
     /**
      * Récupère un utilisateur spécifique par son identifiant.
@@ -31,21 +53,7 @@ class UtilisateurDao extends Dao
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Utilisateur(
-                $row['nom'],
-                $row['prenom'],
-                $row['dateNaissance'],
-                $row['genre'],
-                $row['pseudo'],
-                $row['email'],
-                $row['motDePasse'],
-                $row['typeCompte'],
-                (bool)$row['estPremium'],
-                $row['dateInscription'],
-                (int)$row['yuPoints'],
-                (int)$row['idUtilisateur'],
-                $row['personnalisation']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -62,24 +70,8 @@ class UtilisateurDao extends Dao
         $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints,personnalisation FROM UTILISATEUR");
         $stmt->execute();
         $users = [];
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $users[] = new Utilisateur(
-                $row['nom'],
-                $row['prenom'],
-                $row['dateNaissance'],
-                $row['genre'],
-                $row['pseudo'],
-                $row['email'],
-                $row['motDePasse'],
-                $row['typeCompte'],
-                (bool)$row['estPremium'],
-                $row['dateInscription'],
-                (int)$row['yuPoints'],
-                (int)$row['idUtilisateur'],
-                $row['personnalisation']
-            );
-        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $users = $this->hydrateAll($rows);
         return $users;
     }
 
@@ -99,21 +91,7 @@ class UtilisateurDao extends Dao
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Utilisateur(
-                $row['nom'],
-                $row['prenom'],
-                $row['dateNaissance'],
-                $row['genre'],
-                $row['pseudo'],
-                $row['email'],
-                $row['motDePasse'],
-                $row['typeCompte'],
-                (bool)$row['estPremium'],
-                $row['dateInscription'],
-                (int)$row['yuPoints'],
-                (int)$row['idUtilisateur'],
-                $row['personnalisation']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
@@ -132,21 +110,7 @@ class UtilisateurDao extends Dao
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            return new Utilisateur(
-                $row['nom'],
-                $row['prenom'],
-                $row['dateNaissance'],
-                $row['genre'],
-                $row['pseudo'],
-                $row['email'],
-                $row['motDePasse'],
-                $row['typeCompte'],
-                (bool)$row['estPremium'],
-                $row['dateInscription'],
-                (int)$row['yuPoints'],
-                (int)$row['idUtilisateur'],
-                $row['personnalisation']
-            );
+            return $this->hydrate($row);
         }
         return null;
     }
