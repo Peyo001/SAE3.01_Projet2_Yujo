@@ -16,14 +16,15 @@
 
     class ControllerAdmin extends Controller {
         
-        /*private function verifierAdmin(): void {
-            if (!isset($_SESSION['user'])) {
+        private function verifierAdmin(): void {
+            if (!isset($_SESSION['idUtilisateur'])) {
+                echo var_dump($_SESSION);
                 exit('DEBUG : pas de session user');
             }
-            if ($_SESSION['user']['role'] !== 'admin') {
+            if ($_SESSION['typeCompte'] !== 'Administrateur') {
                 exit('DEBUG : pas admin');
             }
-        }*/
+        }
 
         /**
          * @brief Affiche le tableau de bord de l'administrateur avec la liste des utilisateurs.
@@ -33,11 +34,10 @@
          * @return void
          */
         public function dashboard(): void {
-            //$this->verifierAdmin();
+            $this->verifierAdmin();
 
             $userDAO = new UtilisateurDAO($this->getPdo());
             $users = $userDAO->findAll();
-
             echo $this->getTwig()->render('admin/dashboard.twig', [
                 'users' => $users
             ]);
@@ -52,7 +52,7 @@
          * @return void
          */
         public function ajouterObjet(): void {
-            //$this->verifierAdmin();
+            $this->verifierAdmin();
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Définition des règles de validation
@@ -119,7 +119,7 @@
          * @return void
          */
         public function supprimerUtilisateur(): void {
-            //$this->verifierAdmin();
+            $this->verifierAdmin();
 
             if (!isset($_GET['id'])) {
                 header('Location: index.php?controleur=Admin&methode=dashboard');

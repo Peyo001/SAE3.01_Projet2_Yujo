@@ -233,6 +233,7 @@
             </a>
         </div>
 
+        {% if user.getTypeCompte() == 'Administrateur' %}
         <div class="col-md-6 col-lg-4">
             <a href="index.php?controleur=admin&methode=dashboard" class="text-decoration-none">
                 <div class="card h-100 shadow-sm border-danger hover-effect">
@@ -244,6 +245,8 @@
                 </div>
             </a>
         </div>
+        {% endif %}
+        
 
         <div class="col-md-6 col-lg-4">
             <a href="index.php?controleur=utilisateur&methode=deconnexion" class="text-decoration-none" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?');">
