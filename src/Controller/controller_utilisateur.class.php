@@ -414,8 +414,97 @@ class ControllerUtilisateur extends Controller
             'utilisateurs' => $utilisateursAll,
             'quizParPost' => $quizParPost,
             'reponsesParPost' => $reponsesParPost,
+            'estProprietaire' => true,
             'flash_success' => $flashSuccess,
             'flash_error' => $flashError
+        ]);
+    }
+
+    /**
+     * Affiche le profil public d'un utilisateur (autre que soi)
+     */
+    public function afficherProfilPublic(): void
+    {
+        $idCible = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($idCible <= 0) {
+            if (isset($_SESSION['idUtilisateur'])) {
+                header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            } else {
+                header('Location: index.php?controleur=utilisateur&methode=connexion');
+            }
+            exit;
+        }
+
+        $manager = new UtilisateurDao($this->getPdo());
+        $postDao = new PostDao($this->getPdo());
+        $amiDao = new AmiDao($this->getPdo());
+        $roomDao = new RoomDao($this->getPdo());
+        $achatDao = new AchatDao($this->getPdo());
+        $objetDao = new ObjetDao($this->getPdo());
+        $quizDao = new QuizDao($this->getPdo());
+        $reponseDao = new ReponseDao($this->getPdo());
+
+        $user = $manager->find($idCible);
+        if (!$user) {
+            echo 'Utilisateur introuvable';
+            return;
+        }
+
+        $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
+        $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
+
+        $quizParPost = [];
+        foreach ($posts as $post) {
+            if ($post->getTypePost() === 'quiz') {
+                $quiz = $quizDao->findByPost($post->getIdPost());
+                if ($quiz) {
+                    $quizParPost[$post->getIdPost()] = $quiz;
+                }
+            }
+        }
+
+        $achats = $achatDao->findByUtilisateur($user->getIdUtilisateur());
+        $objetsPossedes = [];
+        foreach ($achats as $achat) {
+            $objet = $objetDao->find($achat->getIdObjet());
+            if ($objet) {
+                $objetsPossedes[] = $objet;
+            }
+        }
+
+        $amis = $amiDao->findAmis($user->getIdUtilisateur());
+        $utilisateursAmis = [];
+        foreach ($amis as $ami) {
+            $idAmi = $ami->getIdUtilisateur2();
+            if (!isset($utilisateursAmis[$idAmi])) {
+                $u = $manager->find($idAmi);
+                if ($u) { $utilisateursAmis[$idAmi] = $u; }
+            }
+        }
+
+        $utilisateursAll = [];
+        foreach ($manager->findAll() as $u) {
+            $utilisateursAll[$u->getIdUtilisateur()] = $u;
+        }
+
+        $reponsesParPost = [];
+        foreach ($posts as $p) {
+            $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
+        }
+
+        $estProprietaire = isset($_SESSION['idUtilisateur']) && ((int)$_SESSION['idUtilisateur'] === (int)$user->getIdUtilisateur());
+
+        echo $this->getTwig()->render('profil.twig', [
+            'utilisateur' => $user,
+            'posts' => $posts,
+            'amis' => $amis,
+            'rooms' => $rooms,
+            'objetsPossedes' => $objetsPossedes,
+            'utilisateursAmis' => $utilisateursAmis,
+            'utilisateurs' => $utilisateursAll,
+            'quizParPost' => $quizParPost,
+            'reponsesParPost' => $reponsesParPost,
+            'estProprietaire' => $estProprietaire,
         ]);
     }
 
@@ -514,7 +603,48 @@ class ControllerUtilisateur extends Controller
             'amis' => $amis,
             'utilisateursAmis' => $utilisateursAmis,
             'flash_success' => $flashSuccess,
-            'flash_error' => $flashError
+            'flash_error' => $flashError,
+            'estProprietaire' => true
+        ]);
+    }
+
+    /**
+     * Affiche la liste des amis d'un utilisateur public (non propriétaire)
+     */
+    public function afficherAmisPublic(): void
+    {
+        $idCible = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($idCible <= 0) {
+            header('Location: index.php?controleur=accueil&methode=afficher');
+            exit;
+        }
+
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+        $amiDao = new AmiDao($this->getPdo());
+
+        $user = $utilisateurDao->find($idCible);
+        if (!$user) {
+            echo 'Utilisateur introuvable';
+            return;
+        }
+
+        $amis = $amiDao->findAmis($idCible);
+
+        // Mapping id -> utilisateur pour affichage des pseudos
+        $utilisateursAmis = [];
+        foreach ($amis as $ami) {
+            $idAmi = $ami->getIdUtilisateur2();
+            if (!isset($utilisateursAmis[$idAmi])) {
+                $u = $utilisateurDao->find($idAmi);
+                if ($u) { $utilisateursAmis[$idAmi] = $u; }
+            }
+        }
+
+        echo $this->getTwig()->render('amis.twig', [
+            'utilisateur' => $user,
+            'amis' => $amis,
+            'utilisateursAmis' => $utilisateursAmis,
+            'estProprietaire' => false
         ]);
     }
     
