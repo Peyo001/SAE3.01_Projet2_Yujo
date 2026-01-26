@@ -20,7 +20,9 @@
                             <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }} · {{ post.typePost|capitalize }}</div>
                         </div>
                     </div>
-                    <a class="text-danger small text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                    {% if estAuteur %}
+                        <a class="text-danger small text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                    {% endif %}
                 </div>
 
                 {% if post.typePost == 'post' and 'uploads/posts/' in post.contenu %}

@@ -3,7 +3,7 @@
  * Classe Post
  * 
  * Cette classe représente un post créé par un utilisateur dans une room.
- * Elle permet de créer un objet Post et de l'utiliser avec les propriétés idPost, contenu, typePost, datePublication, idAuteur et idRoom.
+ * Elle permet de créer un objet Post et de l'utiliser avec les propriétés idPost, contenu, typePost, visibilite, datePublication, idAuteur.
  * 
  * Exemple d'utilisation : 
  * $post = new Post();
@@ -21,14 +21,14 @@ class Post
     // Type du post (par exemple, texte, quiz, défi, etc.)
     private ?string $typePost = null;
 
+    // Visibilité du post (public/prive)
+    private ?string $visibilite = null;
+
     // Date de publication du post
     private ?string $datePublication = null;
 
     // Identifiant de l'utilisateur ayant créé le post
     private ?int $idAuteur = null;
-
-    // Identifiant de la room où le post est publié
-    private ?int $idRoom = null;
 
 
     //CONSTRUCTEUR
@@ -40,17 +40,18 @@ class Post
      * @param ?int $idPost Identifiant du post (peut être nul si non défini).
      * @param ?string $contenu Contenu du post (peut être nul si non défini).
      * @param ?string $typePost Type du post (peut être nul si non défini).
+     * @param ?string $visibilite Visibilité du post ('public' ou 'prive').
      * @param ?string $datePublication Date de publication du post (peut être nul si non défini).
      * @param ?int $idAuteur Identifiant de l'auteur du post (peut être nul si non défini).
-     * @param ?int $idRoom Identifiant de la room où le post est publié (peut être nul si non défini).  
+     *  
      */
-    public function __construct(?int $idPost, ?string $contenu, ?string $typePost, ?string $datePublication, ?int $idAuteur, ?int $idRoom) {
+    public function __construct(?int $idPost, ?string $contenu, ?string $typePost, ?string $visibilite, ?string $datePublication, ?int $idAuteur) {
         $this->setIdPost($idPost);
         $this->setContenu($contenu);
         $this->setTypePost($typePost);
+        $this->setVisibilite($visibilite ?? 'public');
         $this->setDatePublication($datePublication);
         $this->setIdAuteur($idAuteur);
-        $this->setIdRoom($idRoom);
     }
 
     // Getters
@@ -76,6 +77,13 @@ class Post
     public function getTypePost(): ?string { return $this->typePost; }
 
     /**
+     * Récupère la visibilité du post.
+     * 
+     * @return ?string 'public' ou 'prive'
+     */
+    public function getVisibilite(): ?string { return $this->visibilite; }
+
+    /**
      * Récupère la date de publication du post.
      * 
      * @return ?string La date de publication du post, ou null si non défini.
@@ -89,12 +97,7 @@ class Post
      */
     public function getIdAuteur(): ?int { return $this->idAuteur; }
 
-    /**
-     * Récupère l'identifiant de la room dans laquelle le post a été publié.
-     * 
-     * @return ?int L'identifiant de la room, ou null si non défini.
-     */
-    public function getIdRoom(): ?int { return $this->idRoom; }
+    
 
     // Setters
     /**
@@ -119,6 +122,13 @@ class Post
     public function setTypePost(string $typePost): void { $this->typePost = $typePost; }
 
     /**
+     * Définit la visibilité du post.
+     * 
+     * @param string $visibilite 'public' ou 'prive'.
+     */
+    public function setVisibilite(string $visibilite): void { $this->visibilite = $visibilite; }
+
+    /**
      * Définit la date de publication du post.
      * 
      * @param string $datePublication La date de publication à définir.
@@ -132,11 +142,4 @@ class Post
      * @param int $idAuteur L'identifiant de l'auteur à définir.
      */
     public function setIdAuteur(int $idAuteur): void { $this->idAuteur = $idAuteur; }
-
-    /**
-     * Définit l'identifiant de la room où le post est publié.
-     * 
-     * @param int $idRoom L'identifiant de la room à définir.
-     */
-    public function setIdRoom(int $idRoom): void { $this->idRoom = $idRoom; }
 }
