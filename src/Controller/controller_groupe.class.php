@@ -35,6 +35,7 @@ class ControllerGroupe extends Controller
      * 
      * Utilise la méthode findAll() de la classe GroupeDao pour récupérer tous les groupes
      * et rend la vue 'liste_groupes.twig' avec les données des groupes.
+     * Filtre les groupes privés: seuls les groupes publics et les groupes privés dont l'utilisateur est membre sont affichés.
      * 
      * @return void
      */
@@ -42,15 +43,29 @@ class ControllerGroupe extends Controller
     {   
         $manager = new GroupeDao($this->getPdo());
         $search = isset($_GET['search']) ? $this->sanitize($_GET['search']) : '';
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
         if ($search !== '') {
             $groupes = $manager->search($search);
         } else {
             $groupes = $manager->findAll();
-            
         }
 
+        // Filtrer les groupes privés
+        $groupesFiltres = array_filter($groupes, function($groupe) use ($idUtilisateur) {
+            // Si le groupe est public, l'afficher
+            if (!$groupe->estPrive()) {
+                return true;
+            }
+            // Si le groupe est privé, l'afficher seulement si l'utilisateur en est membre
+            if ($idUtilisateur && in_array($idUtilisateur, $groupe->getMembres())) {
+                return true;
+            }
+            return false;
+        });
+
         echo $this->getTwig()->render('liste_groupes.twig', [
-            'groupes' => $groupes,
+            'groupes' => $groupesFiltres,
             'title' => 'Les Groupes',
             'search' => $search
         ]);
@@ -84,6 +99,7 @@ class ControllerGroupe extends Controller
         }
 
         $messages = $messageDao->findByIdGroupe($id);
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
 
         // Préparer une liste des utilisateurs (auteurs des messages) pour l'affichage des noms
         $utilisateurDao = new UtilisateurDao($this->getPdo());
@@ -108,11 +124,30 @@ class ControllerGroupe extends Controller
             }
         }
 
+        // Récupérer les amis de l'utilisateur connecté
+        $touslesAmis = [];
+        if ($idUtilisateur) {
+            $amiDao = new AmiDao($this->getPdo());
+            $amis = $amiDao->findAmis($idUtilisateur);
+            // Hydrater les amis avec les informations utilisateur
+            foreach ($amis as $ami) {
+                $u = $utilisateurDao->find($ami->getIdUtilisateur2());
+                if ($u) {
+                    $touslesAmis[] = $u;
+                }
+            }
+        }
+
+        // Récupérer l'ID du créateur directement depuis le groupe
+        $idCreateur = $groupe->getIdCreateur();
+
         echo $this->getTwig()->render('groupe.twig', [
             'groupe' => $groupe,
             'user_connected' => $_SESSION['idUtilisateur'] ?? null,
             'messages' => $messages,
-            'utilisateurs' => $utilisateurs
+            'utilisateurs' => $utilisateurs,
+            'touslesAmis' => $touslesAmis,
+            'idCreateur' => $idCreateur
         ]);
     }
 
@@ -170,6 +205,10 @@ class ControllerGroupe extends Controller
                 'obligatoire' => false,
                 'type' => 'string',
                 'longueur_max' => 1000
+            ],
+            'confidentialite' => [
+                'obligatoire' => true,
+                'type' => 'string'
             ]
         ];
 
@@ -188,10 +227,11 @@ class ControllerGroupe extends Controller
 
         $nom = $this->sanitize($_POST['nom_groupe']);
         $description = $this->sanitize($_POST['description'] ?? '');
+        $confidentialite = $_POST['confidentialite'] === 'prive';
         $dateCreation = date('Y-m-d H:i:s');
         $idCreateur = $_SESSION['idUtilisateur'];
 
-        $groupe = new Groupe($nom, $description, $dateCreation, [], null);
+        $groupe = new Groupe($nom, $description, $dateCreation, [], null, $confidentialite, $idCreateur);
 
         $manager = new GroupeDao($this->getPdo());
 
@@ -291,6 +331,275 @@ class ControllerGroupe extends Controller
         $messageDao->insererMessage($message);
 
         header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+        exit;
+    }
+
+    /**
+     * @brief Modifie la confidentialité d'un groupe
+     *
+     * Permet uniquement au créateur du groupe de modifier sa confidentialité (privé/public).
+     */
+    public function modifierConfidentialite(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idGroupe = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $confidentialite = isset($_POST['confidentialite']) ? $_POST['confidentialite'] : 'public';
+
+        if ($idGroupe === 0) {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        $estPrive = ($confidentialite === 'prive');
+        $groupeDao = new GroupeDao($this->getPdo());
+        $groupe = $groupeDao->find($idGroupe);
+
+        if (!$groupe) {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        // Vérifier que l'utilisateur connecté est le créateur du groupe
+        if ($_SESSION['idUtilisateur'] !== $groupe->getIdCreateur()) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Mettre à jour la confidentialité
+        $groupeDao->modifierConfidentialite($idGroupe, $estPrive);
+
+        header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+        exit;
+    }
+
+    /**
+     * @brief Affiche les invitations en attente de l'utilisateur connecté
+     */
+    public function afficherInvitations(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idUtilisateur = $_SESSION['idUtilisateur'];
+        $invitationDao = new InvitationDao($this->getPdo());
+        $invitations = $invitationDao->findByInvite($idUtilisateur);
+
+        // Récupérer les informations des groupes et des utilisateurs
+        $groupeDao = new GroupeDao($this->getPdo());
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+        
+        $groupes = [];
+        $utilisateurs = [];
+        
+        foreach ($invitations as $inv) {
+            if (!isset($groupes[$inv->getIdGroupe()])) {
+                $groupes[$inv->getIdGroupe()] = $groupeDao->find($inv->getIdGroupe());
+            }
+            if (!isset($utilisateurs[$inv->getIdHote()])) {
+                $utilisateurs[$inv->getIdHote()] = $utilisateurDao->find($inv->getIdHote());
+            }
+        }
+
+        echo $this->getTwig()->render('invitations.twig', [
+            'invitations' => $invitations,
+            'groupes' => $groupes,
+            'utilisateurs' => $utilisateurs,
+            'title' => 'Mes invitations'
+        ]);
+    }
+
+    /**
+     * @brief Envoie une invitation à rejoindre un groupe
+     */
+    public function envoyerInvitation(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idGroupe = isset($_POST['idGroupe']) ? (int)$_POST['idGroupe'] : 0;
+        $idInvite = isset($_POST['idUtilisateur']) ? (int)$_POST['idUtilisateur'] : 0;
+        $idHote = $_SESSION['idUtilisateur'];
+
+        if ($idGroupe === 0 || $idInvite === 0) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        $groupeDao = new GroupeDao($this->getPdo());
+        $invitationDao = new InvitationDao($this->getPdo());
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+
+        $groupe = $groupeDao->find($idGroupe);
+        $utilisateurInvite = $utilisateurDao->find($idInvite);
+
+        if (!$groupe || !$utilisateurInvite) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Vérifier que l'hôte est membre du groupe
+        if (!in_array($idHote, $groupe->getMembres())) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Vérifier que l'utilisateur invité n'est pas déjà membre
+        if (in_array($idInvite, $groupe->getMembres())) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Vérifier qu'il n'existe pas déjà une invitation en attente
+        if ($invitationDao->existeInvitationEnAttente($idGroupe, $idHote, $idInvite)) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Créer l'invitation
+        $invitation = new Invitation(
+            $idHote,
+            $idInvite,
+            $idGroupe,
+            date('Y-m-d H:i:s'),
+            'en_attente'
+        );
+
+        $invitationDao->creerInvitation($invitation);
+
+        header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+        exit;
+    }
+
+    /**
+     * @brief Accepte une invitation à rejoindre un groupe
+     */
+    public function accepterInvitation(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idHote = isset($_GET['idHote']) ? (int)$_GET['idHote'] : 0;
+        $idGroupe = isset($_GET['idGroupe']) ? (int)$_GET['idGroupe'] : 0;
+        $idInvite = $_SESSION['idUtilisateur'];
+
+        if ($idHote === 0 || $idGroupe === 0) {
+            header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+            exit;
+        }
+
+        $invitationDao = new InvitationDao($this->getPdo());
+        $invitation = $invitationDao->find($idHote, $idInvite, $idGroupe);
+
+        if (!$invitation || $invitation->getStatut() !== 'en_attente') {
+            header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+            exit;
+        }
+
+        // Ajouter l'utilisateur au groupe
+        $groupeDao = new GroupeDao($this->getPdo());
+        $groupe = $groupeDao->find($idGroupe);
+
+        if ($groupe) {
+            $groupeDao->ajouterMembre($groupe, $idInvite, date('Y-m-d H:i:s'));
+        }
+
+        // Supprimer l'invitation
+        $invitationDao->supprimerInvitation($idHote, $idInvite, $idGroupe, $invitation->getDateInvitation());
+
+        header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+        exit;
+    }
+
+    /**
+     * @brief Refuse une invitation à rejoindre un groupe
+     */
+    public function refuserInvitation(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idHote = isset($_GET['idHote']) ? (int)$_GET['idHote'] : 0;
+        $idGroupe = isset($_GET['idGroupe']) ? (int)$_GET['idGroupe'] : 0;
+        $idInvite = $_SESSION['idUtilisateur'];
+
+        if ($idHote === 0 || $idGroupe === 0) {
+            header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+            exit;
+        }
+
+        $invitationDao = new InvitationDao($this->getPdo());
+        $invitation = $invitationDao->find($idHote, $idInvite, $idGroupe);
+
+        if (!$invitation || $invitation->getStatut() !== 'en_attente') {
+            header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+            exit;
+        }
+
+        // Supprimer l'invitation
+        $invitationDao->supprimerInvitation($idHote, $idInvite, $idGroupe, $invitation->getDateInvitation());
+
+        header('Location: index.php?controleur=groupe&methode=afficherInvitations');
+        exit;
+    }
+
+    /**
+     * @brief Permet à un utilisateur de quitter un groupe
+     */
+    public function quitterGroupe(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $idGroupe = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $idUtilisateur = $_SESSION['idUtilisateur'];
+
+        if ($idGroupe === 0) {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        $groupeDao = new GroupeDao($this->getPdo());
+        $groupe = $groupeDao->find($idGroupe);
+
+        if (!$groupe) {
+            header('Location: index.php?controleur=groupe&methode=lister');
+            exit;
+        }
+
+        // Vérifier que l'utilisateur est bien membre du groupe
+        if (!in_array($idUtilisateur, $groupe->getMembres())) {
+            header('Location: index.php?controleur=groupe&methode=afficher&id=' . $idGroupe);
+            exit;
+        }
+
+        // Supprimer l'utilisateur du groupe
+        $groupeDao->supprimerMembre($idGroupe, $idUtilisateur);
+
+        header('Location: index.php?controleur=groupe&methode=lister');
         exit;
     }
 }
