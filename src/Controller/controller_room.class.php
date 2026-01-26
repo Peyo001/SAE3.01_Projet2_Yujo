@@ -84,8 +84,23 @@
                 exit;
             }
 
-            echo $this->getTwig()->render('room_threejs.twig', [
-                'room' => $room
+            // Récupère les objets de la room avec leurs positions 3D
+            $objetsAvecPositions = $managerRoom->findObjetsRoomAvecPositions((int)$idRoom);
+
+            // Récupère les objets achetés disponibles (non encore placés dans la room)
+            $achatDao = new AchatDao($this->getPdo());
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+            $objetsDisponibles = [];
+            
+            if ($idUtilisateur && $room->getIdCreateur() == $idUtilisateur) {
+                $objetsDisponibles = $achatDao->findObjetsAchetesNonPlaces((int)$idUtilisateur, (int)$idRoom);
+            }
+
+            echo $this->getTwig()->render('room_threejs_new.twig', [
+                'room' => $room,
+                'objetsPlaces' => $objetsAvecPositions,
+                'objetsDisponibles' => $objetsDisponibles,
+                'estProprietaire' => ($idUtilisateur && $room->getIdCreateur() == $idUtilisateur)
             ]);
         }
 
@@ -218,6 +233,171 @@
         public function rejoindre() {
             
             // A implémenter plus tard
+            exit;
+        }
+
+        /**
+         * @brief Ajoute un objet acheté dans la room avec une position 3D.
+         * 
+         * Méthode appelée en AJAX pour placer un objet dans la room.
+         * Vérifie que l'utilisateur a acheté l'objet et qu'il est propriétaire de la room.
+         * 
+         * @return void (renvoie du JSON)
+         */
+        public function ajouterObjetDansRoom() {
+            header('Content-Type: application/json');
+            
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+                exit;
+            }
+
+            $idRoom = (int)($_POST['idRoom'] ?? 0);
+            $idObjet = (int)($_POST['idObjet'] ?? 0);
+            $positionX = (float)($_POST['positionX'] ?? 0.0);
+            $positionY = (float)($_POST['positionY'] ?? 0.0);
+            $positionZ = (float)($_POST['positionZ'] ?? 0.0);
+            $rotationX = (float)($_POST['rotationX'] ?? 0.0);
+            $rotationY = (float)($_POST['rotationY'] ?? 0.0);
+            $rotationZ = (float)($_POST['rotationZ'] ?? 0.0);
+            $scale = (float)($_POST['scale'] ?? 1.0);
+
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+            if (!$idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Non authentifié']);
+                exit;
+            }
+
+            // Vérifie que la room existe et appartient à l'utilisateur
+            $managerRoom = new RoomDao($this->getPdo());
+            $room = $managerRoom->find($idRoom);
+
+            if (!$room || $room->getIdCreateur() != $idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Room non trouvée ou non autorisée']);
+                exit;
+            }
+
+            // Vérifie que l'utilisateur a acheté l'objet
+            $achatDao = new AchatDao($this->getPdo());
+            $achat = $achatDao->findByObjetUtilisateur($idObjet, (int)$idUtilisateur);
+
+            if (!$achat) {
+                echo json_encode(['success' => false, 'message' => 'Objet non acheté']);
+                exit;
+            }
+
+            // Ajoute l'objet dans la room avec sa position
+            $success = $managerRoom->ajouterObjetAvecPosition(
+                $idRoom, $idObjet, $positionX, $positionY, $positionZ,
+                $rotationX, $rotationY, $rotationZ, $scale
+            );
+
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Objet ajouté à la room']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout']);
+            }
+            exit;
+        }
+
+        /**
+         * @brief Met à jour la position d'un objet dans la room.
+         * 
+         * Méthode appelée en AJAX pour déplacer/faire pivoter/redimensionner un objet.
+         * 
+         * @return void (renvoie du JSON)
+         */
+        public function updateObjetPosition() {
+            header('Content-Type: application/json');
+            
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+                exit;
+            }
+
+            $idRoom = (int)($_POST['idRoom'] ?? 0);
+            $idObjet = (int)($_POST['idObjet'] ?? 0);
+            $positionX = (float)($_POST['positionX'] ?? 0.0);
+            $positionY = (float)($_POST['positionY'] ?? 0.0);
+            $positionZ = (float)($_POST['positionZ'] ?? 0.0);
+            $rotationX = (float)($_POST['rotationX'] ?? 0.0);
+            $rotationY = (float)($_POST['rotationY'] ?? 0.0);
+            $rotationZ = (float)($_POST['rotationZ'] ?? 0.0);
+            $scale = (float)($_POST['scale'] ?? 1.0);
+
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+            if (!$idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Non authentifié']);
+                exit;
+            }
+
+            // Vérifie que la room existe et appartient à l'utilisateur
+            $managerRoom = new RoomDao($this->getPdo());
+            $room = $managerRoom->find($idRoom);
+
+            if (!$room || $room->getIdCreateur() != $idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Room non trouvée ou non autorisée']);
+                exit;
+            }
+
+            // Met à jour la position de l'objet
+            $success = $managerRoom->updateObjetPosition(
+                $idRoom, $idObjet, $positionX, $positionY, $positionZ,
+                $rotationX, $rotationY, $rotationZ, $scale
+            );
+
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Position mise à jour']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour']);
+            }
+            exit;
+        }
+
+        /**
+         * @brief Retire un objet de la room.
+         * 
+         * Méthode appelée en AJAX pour retirer un objet de la room.
+         * L'objet reste dans l'inventaire de l'utilisateur.
+         * 
+         * @return void (renvoie du JSON)
+         */
+        public function retirerObjetDeRoom() {
+            header('Content-Type: application/json');
+            
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+                exit;
+            }
+
+            $idRoom = (int)($_POST['idRoom'] ?? 0);
+            $idObjet = (int)($_POST['idObjet'] ?? 0);
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+            if (!$idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Non authentifié']);
+                exit;
+            }
+
+            // Vérifie que la room existe et appartient à l'utilisateur
+            $managerRoom = new RoomDao($this->getPdo());
+            $room = $managerRoom->find($idRoom);
+
+            if (!$room || $room->getIdCreateur() != $idUtilisateur) {
+                echo json_encode(['success' => false, 'message' => 'Room non trouvée ou non autorisée']);
+                exit;
+            }
+
+            // Retire l'objet de la room
+            $success = $managerRoom->retirerObjetDeRoom($idRoom, $idObjet);
+
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Objet retiré de la room']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors du retrait']);
+            }
             exit;
         }
     }
