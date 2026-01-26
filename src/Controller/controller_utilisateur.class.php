@@ -494,6 +494,11 @@ class ControllerUtilisateur extends Controller
 
         $estProprietaire = isset($_SESSION['idUtilisateur']) && ((int)$_SESSION['idUtilisateur'] === (int)$user->getIdUtilisateur());
 
+        if (!$estProprietaire) {
+            // Sur un profil public (non propriétaire), n'afficher que les posts publics
+            $posts = array_values(array_filter($posts, function($p){ return $p->getVisibilite() === 'public'; }));
+        }
+
         echo $this->getTwig()->render('profil.twig', [
             'utilisateur' => $user,
             'posts' => $posts,

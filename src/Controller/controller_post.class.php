@@ -80,8 +80,13 @@ class ControllerPost extends Controller
             if (isset($_SESSION['idUtilisateur'])) {
                 $estProprietaire = ((int)$_SESSION['idUtilisateur'] === (int)$idAuteurFiltre);
             }
+            if (!$estProprietaire) {
+                // Fil public d'un autre utilisateur: filtrer aux posts publics
+                $posts = array_values(array_filter($posts, function($p){ return $p->getVisibilite() === 'public'; }));
+            }
         } else {
-            // par défaut, si connecté, on considère que c'est son propre fil
+            // Fil global: n'afficher que les posts publics
+            $posts = array_values(array_filter($posts, function($p){ return $p->getVisibilite() === 'public'; }));
             $estProprietaire = isset($_SESSION['idUtilisateur']);
         }
 
@@ -122,6 +127,13 @@ class ControllerPost extends Controller
             return;
         }
 
+        // Interdire l'accès aux posts privés si non auteur
+        $currentUserId = isset($_SESSION['idUtilisateur']) ? (int)$_SESSION['idUtilisateur'] : null;
+        if ($post->getVisibilite() === 'prive' && $post->getIdAuteur() !== $currentUserId) {
+            header('Location: index.php?controleur=post&methode=lister');
+            exit;
+        }
+
         // Récupérer les réponses associées au post
         $reponses = $reponseDao->findResponsesByPost($post->getIdPost());
         // Mapping des utilisateurs pour afficher les pseudos
@@ -133,7 +145,8 @@ class ControllerPost extends Controller
         echo $this->getTwig()->render('post.twig', [
             'post' => $post,
             'reponses' => $reponses,
-            'utilisateurs' => $utilisateurs
+            'utilisateurs' => $utilisateurs,
+            'estAuteur' => ($currentUserId !== null && $post->getIdAuteur() === $currentUserId)
         ]);
     }
 
@@ -181,9 +194,10 @@ class ControllerPost extends Controller
                 'type' => 'string',
                 'valeurs_acceptables' => ['post', 'quiz']
             ],
-            'id_room' => [
-                'obligatoire' => false,
-                'type' => 'integer'
+            'visibilite' => [
+                'obligatoire' => true,
+                'type' => 'string',
+                'valeurs_acceptables' => ['public','prive']
             ]
         ];
 
@@ -206,7 +220,8 @@ class ControllerPost extends Controller
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $contenu = $this->sanitize($contenu);
         }
-        $idRoom = (int)($_POST['id_room'] ?? 1); 
+        $visibilite = $_POST['visibilite'] ?? 'public';
+        $visibilite = $visibilite === 'prive' ? 'prive' : 'public';
         
         if (isset($_SESSION['idUtilisateur'])) {
             $idAuteur = (int) $_SESSION['idUtilisateur'];
@@ -235,13 +250,20 @@ class ControllerPost extends Controller
                     $unique = uniqid('post_', true) . '.' . $ext;
                     $targetPath = $targetDir . '/' . $unique;
                     if (!is_dir($targetDir)) {
-                        @mkdir($targetDir, 0775, true);
+                        if (!mkdir($targetDir, 0775, true) && !is_dir($targetDir)) {
+                            $erreurs[] = "Impossible de créer le répertoire d'upload (uploads/posts).";
+                        }
                     }
-                    if (move_uploaded_file($tmp, $targetPath)) {
+                    if (empty($erreurs) && !is_writable($targetDir)) {
+                        @chmod($targetDir, 0775);
+                    }
+                    if (empty($erreurs) && is_writable($targetDir) && move_uploaded_file($tmp, $targetPath)) {
                         // chemin web relatif
                         $contenu = 'uploads/posts/' . $unique;
                     } else {
-                        $erreurs[] = "Échec de l'envoi de l'image.";
+                        if (empty($erreurs)) {
+                            $erreurs[] = "Échec de l'envoi de l'image (droits d'écriture manquants sur uploads/posts).";
+                        }
                     }
                 }
             }
@@ -262,7 +284,7 @@ class ControllerPost extends Controller
 
         if ($typePost === 'post'){
             // Créer le post (contenu est soit texte/lien, soit chemin d'image)
-            $post = new Post(null, $contenu, $typePost, date('Y-m-d H:i:s'), $idAuteur, $idRoom);
+            $post = new Post(null, $contenu, $typePost, $visibilite, date('Y-m-d H:i:s'), $idAuteur);
             $manager = new PostDao($this->getPdo());
             $succes = $manager->insererPost($post);
             
@@ -345,7 +367,7 @@ class ControllerPost extends Controller
             // Créer d'abord le Post de type "quiz" puis lier le Quiz au Post
             $managerPost = new PostDao($this->getPdo());
             $contenuQuizPost = $descriptionQuiz !== '' ? $descriptionQuiz : '';
-            $postQuiz = new Post(null, $contenuQuizPost, 'quiz', date('Y-m-d H:i:s'), $idAuteur, $idRoom);
+            $postQuiz = new Post(null, $contenuQuizPost, 'quiz', $visibilite, date('Y-m-d H:i:s'), $idAuteur);
             $succesPost = $managerPost->insererPost($postQuiz);
             if (!$succesPost || !$postQuiz->getIdPost()) {
                 $erreurs[] = "Impossible de créer le post du quiz.";
@@ -411,7 +433,6 @@ class ControllerPost extends Controller
      */
     public function supprimer(): void
     {
-
         $idPost = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($idPost === 0) {
@@ -420,14 +441,40 @@ class ControllerPost extends Controller
         }
 
         $manager = new PostDao($this->getPdo());
+        $post = $manager->find($idPost);
+
+        if (!$post) {
+            header('Location: index.php?controleur=post&methode=lister');
+            exit;
+        }
+
+        $currentUserId = isset($_SESSION['idUtilisateur']) ? (int)$_SESSION['idUtilisateur'] : null;
+        if ($currentUserId === null || $post->getIdAuteur() !== $currentUserId) {
+            // Non autorisé: rediriger sans effectuer la suppression
+            $redirect = $_GET['redirect'] ?? 'lister';
+            $idAuteurFiltre = isset($_GET['id_auteur']) ? (int)$_GET['id_auteur'] : null;
+            if ($redirect === 'profil') {
+                header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
+            } else {
+                $url = 'index.php?controleur=post&methode=lister';
+                if ($idAuteurFiltre) { $url .= '&id_auteur=' . $idAuteurFiltre; }
+                header('Location: ' . $url);
+            }
+            exit;
+        }
+
+        // Autorisé: suppression du post
         $manager->supprimerPost($idPost);
 
-        // Déterminer la redirection : profil ou fil d'actualité
+        // Redirection après suppression: conserver le contexte si fourni
         $redirect = $_GET['redirect'] ?? 'lister';
+        $idAuteurFiltre = isset($_GET['id_auteur']) ? (int)$_GET['id_auteur'] : null;
         if ($redirect === 'profil') {
             header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
         } else {
-            header('Location: index.php?controleur=post&methode=lister');
+            $url = 'index.php?controleur=post&methode=lister';
+            if ($idAuteurFiltre) { $url .= '&id_auteur=' . $idAuteurFiltre; }
+            header('Location: ' . $url);
         }
         exit;
     }
