@@ -109,5 +109,17 @@ class PossederDAO extends Dao {
         $stmt->bindValue(':idObjet', $posseder->getIdObjet(), PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    /**
+     * Supprime toutes les relations POSSEDER pour un objet donné (toutes rooms).
+     * 
+     * @param int $idObjet Identifiant de l'objet.
+     * @return bool True si la suppression s'est exécutée (peut supprimer 0..n lignes).
+     */
+    public function supprimerParObjet(int $idObjet): bool {
+        $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idObjet = :idObjet");
+        $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
  

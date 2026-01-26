@@ -1,0 +1,73 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Mes amis{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-6 fw-bold text-primary">Mes amis</h1>
+            <p class="text-muted mb-0">@{{ utilisateur.pseudo }}</p>
+        </div>
+    </div>
+
+    {% if flash_success %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ flash_success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endif %}
+    {% if flash_error %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ flash_error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Ajouter un ami</h5>
+                    <form method="post" action="index.php?controleur=utilisateur&methode=ajouterAmi">
+                        <div class="mb-3">
+                            <label for="pseudo_ami" class="form-label">Pseudo de l'ami</label>
+                            <input type="text" id="pseudo_ami" name="pseudo_ami" class="form-control" required minlength="3" maxlength="150" placeholder="Ex: SuperJean">
+                        </div>
+                        <button type="submit" class="btn btn-cta">Ajouter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Vos amis</h5>
+                    {% if amis is not empty %}
+                        <ul class="list-group list-group-flush">
+                            {% for a in amis %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-secondary" style="width:28px;height:28px;"></div>
+                                        <span>
+                                            {% if utilisateursAmis[a.idUtilisateur2] is defined %}
+                                                {{ utilisateursAmis[a.idUtilisateur2].pseudo }}
+                                            {% else %}
+                                                Utilisateur #{{ a.idUtilisateur2 }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">Vous n'avez pas encore d'amis.</p>
+                        <p class="small text-muted">Ajoutez-en un en entrant son pseudo.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

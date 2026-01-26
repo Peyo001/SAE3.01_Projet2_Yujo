@@ -329,8 +329,22 @@ class ControllerPost extends Controller
                 }
             }
 
-            // Créer le quiz SANS post (idPost = null)
-            $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, null);
+            // Créer d'abord le Post de type "quiz" puis lier le Quiz au Post
+            $managerPost = new PostDao($this->getPdo());
+            $contenuQuizPost = $descriptionQuiz !== '' ? $descriptionQuiz : '';
+            $postQuiz = new Post(null, $contenuQuizPost, 'quiz', date('Y-m-d H:i:s'), $idAuteur, $idRoom);
+            $succesPost = $managerPost->insererPost($postQuiz);
+            if (!$succesPost || !$postQuiz->getIdPost()) {
+                $erreurs[] = "Impossible de créer le post du quiz.";
+                echo $this->getTwig()->render('ajout_post.twig', [
+                    'menu' => 'nouveau_post',
+                    'erreurs' => $erreurs,
+                    'donnees' => $_POST
+                ]);
+                exit;
+            }
+
+            $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, (int)$postQuiz->getIdPost());
             $managerQuiz->insererQuiz($quiz);
             
             header('Location: index.php?controleur=utilisateur&methode=afficherProfil');

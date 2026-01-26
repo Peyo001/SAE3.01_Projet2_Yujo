@@ -98,6 +98,24 @@ require_once "Dao.class.php";
         }
 
         /**
+         * Récupère une liste d'objets par leurs identifiants.
+         *
+         * @param int[] $ids Liste d'identifiants d'objets.
+         * @return Objet[] Tableau d'objets trouvés.
+         */
+        public function findByIds(array $ids): array {
+            if (empty($ids)) { return []; }
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix FROM OBJET WHERE idObjet IN ($placeholders)");
+            foreach ($ids as $i => $id) {
+                $stmt->bindValue($i + 1, (int)$id, PDO::PARAM_INT);
+            }
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            return $this->hydrateAll($rows);
+        }
+
+        /**
          * Met à jour un objet dans la base de données.
          * 
          * Cette méthode met à jour les informations d'un objet existant en base de données.
