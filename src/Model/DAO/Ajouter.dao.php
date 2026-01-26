@@ -101,5 +101,17 @@ class AjouterDao extends Dao {
     }
 
 
+    /**
+     * Supprime toutes les relations AJOUTER pour un objet donné.
+     * 
+     * @param int $idObjet Identifiant de l'objet.
+     * @return bool True si la suppression s'est exécutée (peut supprimer 0..n lignes).
+     */
+    public function supprimerParObjet(int $idObjet): bool {
+        $stmt = $this->conn->prepare("DELETE FROM AJOUTER WHERE idObjet = :idObjet");
+        $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     
 }

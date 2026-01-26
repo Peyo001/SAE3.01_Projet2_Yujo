@@ -92,7 +92,11 @@ class AmiDao extends Dao
         if ($row['idUtilisateur1'] == $idUtilisateur) {
             $amis[] = $this->hydrate($row);                                         
         } else {
-            $amis[] = $this->hydrate($row)->setIdUtilisateur1($row['idUtilisateur2'])->setIdUtilisateur2($row['idUtilisateur1']);
+            $ami = $this->hydrate($row);
+            // Inverser les rôles pour que idUtilisateur2 soit toujours "l'ami"
+            $ami->setIdUtilisateur1((int)$row['idUtilisateur2']);
+            $ami->setIdUtilisateur2((int)$row['idUtilisateur1']);
+            $amis[] = $ami;
         }
     }
  
