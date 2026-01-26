@@ -352,6 +352,7 @@ class ControllerUtilisateur extends Controller
 
         $amis = $amiDao->findAmis($_SESSION['idUtilisateur']);
         $user = $manager->find($_SESSION['idUtilisateur']);
+
         $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
         $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
         
@@ -461,6 +462,46 @@ class ControllerUtilisateur extends Controller
 
         header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
         exit;
+    }
+
+    /**
+     * Affiche la liste des amis de l'utilisateur connecté avec un formulaire d'ajout.
+     */
+    public function afficherAmis(): void
+    {
+        if (!isset($_SESSION['idUtilisateur'])) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        $utilisateurDao = new UtilisateurDao($this->getPdo());
+        $amiDao = new AmiDao($this->getPdo());
+
+        $amis = $amiDao->findAmis($_SESSION['idUtilisateur']);
+        $user = $utilisateurDao->find($_SESSION['idUtilisateur']);
+
+        // Mapping id -> utilisateur pour affichage des pseudos
+        $utilisateursAmis = [];
+        foreach ($amis as $ami) {
+            $idAmi = $ami->getIdUtilisateur2();
+            if (!isset($utilisateursAmis[$idAmi])) {
+                $u = $utilisateurDao->find($idAmi);
+                if ($u) { $utilisateursAmis[$idAmi] = $u; }
+            }
+        }
+
+        // Flash messages
+        $flashSuccess = $_SESSION['flash_success'] ?? null;
+        $flashError = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        echo $this->getTwig()->render('amis.twig', [
+            'utilisateur' => $user,
+            'amis' => $amis,
+            'utilisateursAmis' => $utilisateursAmis,
+            'flash_success' => $flashSuccess,
+            'flash_error' => $flashError
+        ]);
     }
     
     public function afficherCompte(): void
