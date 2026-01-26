@@ -181,9 +181,17 @@ require_once "Dao.class.php";
             $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
             $stmt->execute();
 
-            $objets = [];
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $objets = $this->hydrateAll($rows);
+            $objets = [];
+            foreach ($rows as $row) {
+                $objets[] = new Objet(
+                    isset($row['idObjet']) ? (int)$row['idObjet'] : null,
+                    $row['description'] ?? null,
+                    $row['modele3dPath'] ?? null,
+                    isset($row['prix']) ? (int)$row['prix'] : null,
+                    isset($row['idRoom']) ? (int)$row['idRoom'] : null
+                );
+            }
             return $objets;
         }
 

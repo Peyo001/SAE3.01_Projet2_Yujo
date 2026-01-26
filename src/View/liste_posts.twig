@@ -6,10 +6,28 @@
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="mb-1">Votre fil d'actualité</h1>
-                <p class="text-muted mb-0">Vos derniers posts</p>
+                <h1 class="mb-1">
+                    {% if estProprietaire %}
+                        Votre fil d'actualité
+                    {% elseif auteur is defined and auteur %}
+                        Fil d'actualité de {{ auteur.pseudo }}
+                    {% else %}
+                        Fil d'actualité
+                    {% endif %}
+                </h1>
+                <p class="text-muted mb-0">
+                    {% if estProprietaire %}
+                        Vos derniers posts
+                    {% elseif auteur is defined and auteur %}
+                        Derniers posts de {{ auteur.pseudo }}
+                    {% else %}
+                        Derniers posts
+                    {% endif %}
+                </p>
             </div>
+            {% if estProprietaire %}
             <a class="btn btn-cta" href="index.php?controleur=post&methode=afficherFormulaireInsertion">Publier</a>
+            {% endif %}
         </div>
 
         <div class="row g-3">

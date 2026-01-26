@@ -62,15 +62,17 @@
                 <div class="text-center">
                     {% set amiData = utilisateurs[ami.idUtilisateur2]|default(null) %}
                     {% set avatarAmi = (amiData and amiData.personnalisation) ? '../public/' ~ amiData.personnalisation : null %}
-                    <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white mb-1 overflow-hidden"
-                         style="width:60px;height:60px;">
-                        {% if avatarAmi %}
-                            <img src="{{ avatarAmi }}" alt="Avatar de {{ amiData.pseudo|default('ami') }}" style="width:100%;height:100%;object-fit:cover;">
-                        {% endif %}
-                    </div>
-                    <small>
-                        {{ utilisateurs[ami.idUtilisateur2].pseudo|default('Utilisateur inconnu') }}
-                    </small>
+                    <a href="index.php?controleur=utilisateur&methode=afficherProfilPublic&id={{ ami.idUtilisateur2 }}" class="text-decoration-none text-body">
+                        <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white mb-1 overflow-hidden"
+                             style="width:60px;height:60px;">
+                            {% if avatarAmi %}
+                                <img src="{{ avatarAmi }}" alt="Avatar de {{ amiData.pseudo|default('ami') }}" style="width:100%;height:100%;object-fit:cover;">
+                            {% endif %}
+                        </div>
+                        <small>
+                            {{ utilisateurs[ami.idUtilisateur2].pseudo|default('Utilisateur inconnu') }}
+                        </small>
+                    </a>
                 </div>
             {% endfor %}
         </div>
@@ -91,17 +93,19 @@
                                 <div class="d-flex align-items-center gap-2">
                                     {% set auteur = utilisateurs[post.idAuteur]|default(null) %}
                                     {% set avatarAuteur = (auteur and auteur.personnalisation) ? '../public/' ~ auteur.personnalisation : null %}
-                                    <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
-                                        {% if avatarAuteur %}
-                                            <img src="{{ avatarAuteur }}" alt="Avatar de {{ auteur.pseudo|default('auteur') }}" style="width:100%;height:100%;object-fit:cover;">
-                                        {% endif %}
-                                    </div>
-                                    <div>
-                                        <strong>
-                                            {{ utilisateurs[post.idAuteur].pseudo|default('Auteur inconnu') }}
-                                        </strong>
-                                        <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }}</div>
-                                    </div>
+                                    <a href="index.php?controleur=utilisateur&methode=afficherProfilPublic&id={{ post.idAuteur }}" class="d-flex align-items-center gap-2 text-decoration-none text-body">
+                                        <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
+                                            {% if avatarAuteur %}
+                                                <img src="{{ avatarAuteur }}" alt="Avatar de {{ auteur.pseudo|default('auteur') }}" style="width:100%;height:100%;object-fit:cover;">
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>
+                                                {{ utilisateurs[post.idAuteur].pseudo|default('Auteur inconnu') }}
+                                            </strong>
+                                            <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }}</div>
+                                        </div>
+                                    </a>
                                 </div>
                                 <span class="badge bg-primary">{{ post.typePost|capitalize }}</span>
                             </div>
