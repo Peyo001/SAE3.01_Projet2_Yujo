@@ -12,17 +12,7 @@ require_once "Dao.class.php";
  * 
  */
 class PostDao extends Dao
-{   
-    public function hydrate(array $row): Post {
-        return new Post(
-            (int)$row['idPost'],
-            $row['contenu'],
-            $row['typePost'],
-            $row['datePublication'],
-            (int)$row['idAuteur'],
-            (int)$row['idRoom']
-        );
-    }
+{
     /**
      * Crée un nouveau post dans la base de données.
      * 
@@ -34,15 +24,17 @@ class PostDao extends Dao
     public function insererPost(Post $post): bool
     {
         $stmt = $this->conn->prepare("
-            INSERT INTO POST (contenu, typePost, datePublication, idAuteur, idRoom)
-            VALUES (:contenu, :typePost, :datePublication, :idAuteur, :idRoom)
-        ");
+
+        INSERT INTO POST (contenu, typePost, visibilite, datePublication, idAuteur)
+        VALUES (:contenu, :typePost, :visibilite, :datePublication, :idAuteur)
+    ");
+
 
         $stmt->bindValue(':contenu', $post->getContenu(), PDO::PARAM_STR);
         $stmt->bindValue(':typePost', $post->getTypePost(), PDO::PARAM_STR);
+        $stmt->bindValue(':visibilite', $post->getVisibilite() ?? 'public', PDO::PARAM_STR);
         $stmt->bindValue(':datePublication', $post->getDatePublication(), PDO::PARAM_STR);
         $stmt->bindValue(':idAuteur', $post->getIdAuteur(), PDO::PARAM_INT);
-        $stmt->bindValue(':idRoom', $post->getIdRoom(), PDO::PARAM_INT);
 
         $success = $stmt->execute();
 
@@ -87,7 +79,14 @@ class PostDao extends Dao
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return $this->hydrate($row);
+            return new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['visibilite'] ?? 'public',
+                $row['datePublication'],
+                (int)$row['idAuteur']
+            );
         }
         return null;
     }
@@ -108,8 +107,16 @@ class PostDao extends Dao
         $stmt->execute();
         
         $posts = [];
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $posts = $this->hydrateAll($rows);  
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['visibilite'] ?? 'public',
+                $row['datePublication'],
+                (int)$row['idAuteur']
+            );
+        }
         return $posts;
     }
 
@@ -125,8 +132,16 @@ class PostDao extends Dao
         $stmt = $this->conn->prepare("SELECT * FROM POST");
         $stmt->execute();
         $posts = [];
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $posts = $this->hydrateAll($rows);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['visibilite'] ?? 'public',
+                $row['datePublication'],
+                (int)$row['idAuteur']
+            );
+        }
         return $posts;
     }
     
@@ -141,14 +156,8 @@ class PostDao extends Dao
      */
     public function findPostsByRoom(int $idRoom): array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idRoom = :idRoom ORDER BY datePublication DESC");
-        $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        $posts = [];
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $posts = $this->hydrateAll($rows);
-        return $posts;
+        // idRoom supprimé du modèle POST: compatibilité temporaire -> renvoie vide
+        return [];
     }
 
 /**
@@ -174,9 +183,20 @@ public function findByAuteurs(array $ids): array
     $stmt->execute($ids);
 
     $posts = [];
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $posts = $this->hydrateAll($rows);
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $posts[] = new Post(
+            (int)$row['idPost'],
+            $row['contenu'],
+            $row['typePost'],
+            $row['visibilite'] ?? 'public',
+            $row['datePublication'],
+            (int)$row['idAuteur']
+        );
+    }
 
     return $posts;
 }
 }
+?>
+
+
