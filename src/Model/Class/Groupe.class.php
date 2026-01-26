@@ -26,7 +26,13 @@ class Groupe
     private ?string $dateCreationGroupe;
 
     // Liste des membres du groupe, sous forme de tableau
-    private array $membres = [];    
+    private array $membres = [];
+    
+    // Confidentialité du groupe (true = privé, false = public)
+    private bool $estPrive = false;
+    
+    // Identifiant du créateur du groupe
+    private ?int $idCreateur;    
 
     // CONSTRUCTEUR
     /**
@@ -39,19 +45,25 @@ class Groupe
      * @param ?string $dateCreation Date de création du groupe (peut être nulle).
      * @param array $membres Liste des membres du groupe (par défaut un tableau vide).
      * @param ?int $idGroupe Identifiant unique du groupe (nullable).
+     * @param bool $estPrive Confidentialité du groupe - true pour privé, false pour public (par défaut false).
+     * @param ?int $idCreateur Identifiant du créateur du groupe (nullable).
      */
     public function __construct(
         string $nomGroupe,
         ?string $descriptionGroupe,
         ?string $dateCreation,
         array $membres = [],
-        ?int $idGroupe = null
+        ?int $idGroupe = null,
+        bool $estPrive = false,
+        ?int $idCreateur = null
     ) {
         $this->setIdGroupe($idGroupe);
         $this->setNomGroupe($nomGroupe);
         $this->setDescriptionGroupe($descriptionGroupe);
         $this->setDateCreation($dateCreation);
         $this->setMembres($membres);
+        $this->setEstPrive($estPrive);
+        $this->setIdCreateur($idCreateur);
     }
 
 
@@ -121,6 +133,26 @@ class Groupe
         return $this->membres;
     }
 
+    /**
+     * Récupère si le groupe est privé.
+     * 
+     * @return bool true si le groupe est privé, false si public.
+     */
+    public function estPrive(): bool
+    {
+        return $this->estPrive;
+    }
+
+    /**
+     * Récupère l'identifiant du créateur du groupe.
+     * 
+     * @return ?int Identifiant du créateur, ou null si non défini.
+     */
+    public function getIdCreateur(): ?int
+    {
+        return $this->idCreateur;
+    }
+
     //SETTERS
 
     /**
@@ -171,6 +203,26 @@ class Groupe
     public function setMembres(array $membres): void
     {
         $this->membres = $membres;
+    }
+
+    /**
+     * Définit la confidentialité du groupe.
+     * 
+     * @param bool $estPrive true pour privé, false pour public.
+     */
+    public function setEstPrive(bool $estPrive): void
+    {
+        $this->estPrive = $estPrive;
+    }
+
+    /**
+     * Définit l'identifiant du créateur du groupe.
+     * 
+     * @param ?int $idCreateur L'identifiant du créateur à définir.
+     */
+    public function setIdCreateur(?int $idCreateur): void
+    {
+        $this->idCreateur = $idCreateur;
     }
 
     //METHODES

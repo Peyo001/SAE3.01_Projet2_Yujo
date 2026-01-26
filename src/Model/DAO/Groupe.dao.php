@@ -58,7 +58,9 @@ class GroupeDao extends Dao
                 $row['description'],
                 $row['dateCreationGroupe'],
                 $membres,
-                (int)$row['idGroupe']
+                (int)$row['idGroupe'],
+                isset($row['estPrive']) ? (bool)$row['estPrive'] : false,
+                isset($row['idCreateur']) ? (int)$row['idCreateur'] : null
             );
         }
         return null;
@@ -96,7 +98,9 @@ class GroupeDao extends Dao
             $data['description'],
             $data['dateCreationGroupe'],
             $membres,
-            (int)$data['idGroupe']
+            (int)$data['idGroupe'],
+            isset($data['estPrive']) ? (bool)$data['estPrive'] : false,
+            isset($data['idCreateur']) ? (int)$data['idCreateur'] : null
         );
     }
 
@@ -121,7 +125,9 @@ class GroupeDao extends Dao
                 $row['description'],
                 $row['dateCreationGroupe'],
                 $membres,
-                (int)$row['idGroupe']
+                (int)$row['idGroupe'],
+                isset($row['estPrive']) ? (bool)$row['estPrive'] : false,
+                isset($row['idCreateur']) ? (int)$row['idCreateur'] : null
             );
         }
 
@@ -139,12 +145,14 @@ class GroupeDao extends Dao
     public function insererGroupe(Groupe $groupe): bool
     {
         $stmt = $this->conn->prepare("
-            INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe) 
-            VALUES (:nomGroupe, :description, :dateCreationGroupe)
+            INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe, estPrive, idCreateur) 
+            VALUES (:nomGroupe, :description, :dateCreationGroupe, :estPrive, :idCreateur)
         ");
         $stmt->bindValue(':nomGroupe', $groupe->getNomGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':description', $groupe->getDescriptionGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':dateCreationGroupe', $groupe->getDateCreation(), PDO::PARAM_STR);
+        $stmt->bindValue(':estPrive', $groupe->estPrive() ? 1 : 0, PDO::PARAM_INT);
+        $stmt->bindValue(':idCreateur', $groupe->getIdCreateur(), PDO::PARAM_INT);
 
         $res = $stmt->execute();
         if ($res) {
@@ -170,6 +178,23 @@ class GroupeDao extends Dao
         return $stmt->execute();
     }
 
+    /**
+     * Modifie la confidentialité d'un groupe.
+     * 
+     * Cette méthode permet de modifier le type de confidentialité d'un groupe (privé/public).
+     * 
+     * @param int $idGroupe L'identifiant du groupe à modifier.
+     * @param bool $estPrive true pour rendre le groupe privé, false pour le rendre public.
+     * @return bool Retourne true si la modification a réussi, sinon false.
+     */
+    public function modifierConfidentialite(int $idGroupe, bool $estPrive): bool
+    {
+        $stmt = $this->conn->prepare("UPDATE GROUPE SET estPrive = :estPrive WHERE idGroupe = :idGroupe");
+        $stmt->bindValue(':estPrive', $estPrive ? 1 : 0, PDO::PARAM_INT);
+        $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     
      /**
      * Ajoute un membre au groupe.
@@ -183,14 +208,32 @@ class GroupeDao extends Dao
      */
     public function ajouterMembre(Groupe $groupe, int $idUtilisateur, string $dateAjout): bool
     {
-        if ($groupe->estMembre($idUtilisateur)) {
-            return false; 
-        }
+        // Supprimer l'utilisateur s'il existe déjà (pour permettre de réajouter après avoir quitté)
+        $this->supprimerMembre($groupe->getIdGroupe(), $idUtilisateur);
+        
+        // Ajouter l'utilisateur au groupe
         $stmt = $this->conn->prepare("INSERT INTO COMPOSER (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
         $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
         return $stmt->execute(); 
-    }    
+    }
+
+    /**
+     * Supprime un membre du groupe.
+     * 
+     * Cette méthode permet de supprimer un membre d'un groupe.
+     * 
+     * @param int $idGroupe L'identifiant du groupe.
+     * @param int $idUtilisateur L'identifiant de l'utilisateur à supprimer.
+     * @return bool Retourne true si la suppression a réussi, sinon false.
+     */
+    public function supprimerMembre(int $idGroupe, int $idUtilisateur): bool
+    {
+        $stmt = $this->conn->prepare("DELETE FROM COMPOSER WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 ?>
