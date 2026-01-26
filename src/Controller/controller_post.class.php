@@ -43,9 +43,9 @@ class ControllerPost extends Controller
         $userManager = new UtilisateurDao($this->getPdo());
         $quizDao = new QuizDao($this->getPdo());
         $reponseDao = new ReponseDao($this->getPdo());
-
-        if (isset($_GET['id_auteur'])) {
-            $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
+        $idAuteurFiltre = isset($_GET['id_auteur']) ? (int)$_GET['id_auteur'] : null;
+        if ($idAuteurFiltre) {
+            $posts = $manager->findPostsByAuteur($idAuteurFiltre);
         } else {
             $posts = $manager->findAll();
         }
@@ -73,13 +73,26 @@ class ControllerPost extends Controller
         foreach ($posts as $p) {
             $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
         }
+        $auteurFil = null;
+        $estProprietaire = false;
+        if ($idAuteurFiltre) {
+            $auteurFil = $userManager->find($idAuteurFiltre);
+            if (isset($_SESSION['idUtilisateur'])) {
+                $estProprietaire = ((int)$_SESSION['idUtilisateur'] === (int)$idAuteurFiltre);
+            }
+        } else {
+            // par défaut, si connecté, on considère que c'est son propre fil
+            $estProprietaire = isset($_SESSION['idUtilisateur']);
+        }
 
         echo $this->getTwig()->render('liste_posts.twig', [
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
             'quizParPost' => $quizParPost,
             'reponsesParPost' => $reponsesParPost,
-            'title' => 'Fil d\'actualité'
+            'title' => 'Fil d\'actualité',
+            'auteur' => $auteurFil,
+            'estProprietaire' => $estProprietaire
         ]);
     }
 
@@ -329,8 +342,22 @@ class ControllerPost extends Controller
                 }
             }
 
-            // Créer le quiz SANS post (idPost = null)
-            $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, null);
+            // Créer d'abord le Post de type "quiz" puis lier le Quiz au Post
+            $managerPost = new PostDao($this->getPdo());
+            $contenuQuizPost = $descriptionQuiz !== '' ? $descriptionQuiz : '';
+            $postQuiz = new Post(null, $contenuQuizPost, 'quiz', date('Y-m-d H:i:s'), $idAuteur, $idRoom);
+            $succesPost = $managerPost->insererPost($postQuiz);
+            if (!$succesPost || !$postQuiz->getIdPost()) {
+                $erreurs[] = "Impossible de créer le post du quiz.";
+                echo $this->getTwig()->render('ajout_post.twig', [
+                    'menu' => 'nouveau_post',
+                    'erreurs' => $erreurs,
+                    'donnees' => $_POST
+                ]);
+                exit;
+            }
+
+            $quiz = new Quiz(null, $titreQuiz, $descriptionQuiz, $choixMultiples, $idQuestion, (int)$postQuiz->getIdPost());
             $managerQuiz->insererQuiz($quiz);
             
             header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
