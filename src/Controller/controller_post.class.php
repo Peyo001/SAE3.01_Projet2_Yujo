@@ -43,9 +43,9 @@ class ControllerPost extends Controller
         $userManager = new UtilisateurDao($this->getPdo());
         $quizDao = new QuizDao($this->getPdo());
         $reponseDao = new ReponseDao($this->getPdo());
-
-        if (isset($_GET['id_auteur'])) {
-            $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
+        $idAuteurFiltre = isset($_GET['id_auteur']) ? (int)$_GET['id_auteur'] : null;
+        if ($idAuteurFiltre) {
+            $posts = $manager->findPostsByAuteur($idAuteurFiltre);
         } else {
             $posts = $manager->findAll();
         }
@@ -73,13 +73,26 @@ class ControllerPost extends Controller
         foreach ($posts as $p) {
             $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
         }
+        $auteurFil = null;
+        $estProprietaire = false;
+        if ($idAuteurFiltre) {
+            $auteurFil = $userManager->find($idAuteurFiltre);
+            if (isset($_SESSION['idUtilisateur'])) {
+                $estProprietaire = ((int)$_SESSION['idUtilisateur'] === (int)$idAuteurFiltre);
+            }
+        } else {
+            // par défaut, si connecté, on considère que c'est son propre fil
+            $estProprietaire = isset($_SESSION['idUtilisateur']);
+        }
 
         echo $this->getTwig()->render('liste_posts.twig', [
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
             'quizParPost' => $quizParPost,
             'reponsesParPost' => $reponsesParPost,
-            'title' => 'Fil d\'actualité'
+            'title' => 'Fil d\'actualité',
+            'auteur' => $auteurFil,
+            'estProprietaire' => $estProprietaire
         ]);
     }
 
