@@ -161,6 +161,34 @@ class AchatDao extends Dao
     }
 
     /**
+     * Supprime tous les achats liés à un objet (pour nettoyer avant suppression d'objet).
+     *
+     * @param int $idObjet Identifiant de l'objet.
+     * @return bool True si la suppression s'exécute (0..n lignes possibles).
+     */
+    public function supprimerParObjet(int $idObjet): bool
+    {
+        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet");
+        $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
+     * Supprime l'achat d'un objet pour un utilisateur précis.
+     *
+     * @param int $idObjet Identifiant de l'objet.
+     * @param int $idUtilisateur Identifiant de l'utilisateur.
+     * @return bool True si au moins la requête s'exécute (0..n lignes supprimées).
+     */
+    public function supprimerParObjetEtUtilisateur(int $idObjet, int $idUtilisateur): bool
+    {
+        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur");
+        $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
      * Liste des idObjet déjà achetés par un utilisateur.
      * 
      * Cette méthode récupère les identifiants des objets achetés par un utilisateur spécifique.

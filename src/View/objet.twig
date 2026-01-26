@@ -12,7 +12,6 @@
                 <p class="mb-2"><strong>Prix:</strong> {{ objet.prix }} crédits</p>
                 <p class="mb-2"><strong>Modèle 3D:</strong> {{ objet.modele3dPath }}</p>
                 <div class="d-flex gap-2 mt-3">
-                    <a class="btn btn-outline-secondary" href="index.php?controleur=objet&methode=modifier&idObjet={{ objet.idObjet }}">Modifier</a>
                     <a class="btn btn-outline-danger" href="index.php?controleur=objet&methode=supprimer&idObjet={{ objet.idObjet }}" onclick="return confirm('Supprimer cet objet ?');">Supprimer</a>
                 </div>
             </div>

@@ -3,34 +3,68 @@
 {% block title %}Post #{{ post.idPost }}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-12">
-             <h1>Détail du Post</h1>
-             <a href="index.php?controleur=post&methode=lister"><- Retour</a>
-             <hr>
-        </div>
+    <div class="container py-3">
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    {% set auteur = (utilisateurs is defined) ? utilisateurs[post.idAuteur]|default(null) : null %}
+                    <div class="d-flex align-items-center gap-2">
+                        {% set avatarAuteur = (auteur and auteur.personnalisation) ? '../public/' ~ auteur.personnalisation : null %}
+                        <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
+                            {% if avatarAuteur %}
+                                <img src="{{ avatarAuteur }}" alt="Avatar de {{ auteur.pseudo|default('auteur') }}" style="width:100%;height:100%;object-fit:cover;">
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ auteur.pseudo|default('Auteur inconnu') }}</strong>
+                            <div class="text-muted small">{{ post.datePublication|date('d/m/Y H:i') }} · {{ post.typePost|capitalize }}</div>
+                        </div>
+                    </div>
+                    <a class="text-danger small text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}">Supprimer</a>
+                </div>
 
-        <div class="col-9">
-            <p class="text-body-primary" style="font-size: 1.2em;">
-                {{ post.contenu }}
-            </p>
-        </div>
-
-        <div class="col-3">
-            <div class="">
-                <h6>Informations</h6>
-                <ul>
-                    <li><strong>Date :</strong> {{ post.datePublication }}</li>
-                    <li><strong>Type :</strong> {{ post.typePost }}</li>
-                    <li><strong>Auteur ID :</strong> {{ post.idAuteur }}</li>
-                    <li><strong>Room ID :</strong> {{ post.idRoom }}</li>
-                </ul>
-                
-                <br>
-                <a href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}" style="color: red; font-size: 0.8em;">
-                    Supprimer ce post
-                </a>
+                {% if post.typePost == 'post' and 'uploads/posts/' in post.contenu %}
+                    <img src="{{ post.contenu }}" alt="Image du post" class="img-fluid rounded" style="max-height: 420px; object-fit: cover;">
+                {% else %}
+                    <p class="mb-0" style="white-space: pre-wrap; font-size: 1.05rem; color: #212529;">{{ post.contenu }}</p>
+                {% endif %}
             </div>
+        </div>
+
+        <div class="col-12 col-lg-8 px-0" id="comments">
+            <h5 class="mb-3">Commentaires</h5>
+            {% if reponses is defined and reponses|length > 0 %}
+                <ul class="list-group mb-3">
+                    {% for r in reponses %}
+                        {% set comAuteur = (utilisateurs is defined) ? utilisateurs[r.idAuteur]|default(null) : null %}
+                        <li class="list-group-item">
+                            <div class="small text-muted">
+                                Le {{ r.dateReponse }} —
+                                {% if comAuteur %}
+                                    {{ comAuteur.pseudo }}
+                                {% else %}
+                                    Utilisateur #{{ r.idAuteur }}
+                                {% endif %}
+                            </div>
+                            <div>{{ r.contenu }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Aucune réponse pour l'instant.</p>
+            {% endif %}
+
+            <h6>Ajouter un commentaire</h6>
+            {% if erreurReponse is defined and erreurReponse %}
+                <div class="alert alert-danger">{{ erreurReponse }}</div>
+            {% endif %}
+            <form action="index.php?controleur=post&methode=repondre&id={{ post.idPost }}" method="post">
+                <div class="mb-2">
+                    <textarea name="contenu" class="form-control" rows="3" placeholder="Écrire une réponse..."></textarea>
+                </div>
+                <input type="hidden" name="redirect" value="index.php?controleur=post&methode=afficher&id={{ post.idPost }}#comments">
+                <button type="submit" class="btn btn-primary">Répondre</button>
+            </form>
         </div>
     </div>
 {% endblock %}

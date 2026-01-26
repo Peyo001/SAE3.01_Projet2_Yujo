@@ -41,6 +41,11 @@
             $idRoom = $_GET['idRoom'] ?? null;
             $db=Database::getInstance()->getConnection();
             $managerObjet = new ObjetDao($this->getPdo());
+            $achatDao = new AchatDao($this->getPdo());
+            $objetsPossedesIds = [];
+            if (isset($_SESSION['idUtilisateur'])) {
+                $objetsPossedesIds = $achatDao->listObjetsAchetesByUtilisateur((int)$_SESSION['idUtilisateur']);
+            }
 
             if ($idRoom) {
                 $objets = $managerObjet->findByRoom($idRoom);
@@ -51,7 +56,30 @@
 
             echo $this->getTwig()->render('liste_objets.twig', [
                 'objets' => $objets,
-                'idRoom' => $idRoom
+                'idRoom' => $idRoom,
+                'objetsPossedesIds' => $objetsPossedesIds
+            ]);
+        }
+
+        /**
+         * Liste uniquement les objets achetés par l'utilisateur connecté.
+         */
+        public function listerMesObjets() {
+            if (!isset($_SESSION['idUtilisateur'])) {
+                header('Location: index.php?controleur=utilisateur&methode=connexion');
+                exit;
+            }
+
+            $achatDao = new AchatDao($this->getPdo());
+            $objetDao = new ObjetDao($this->getPdo());
+
+            $objetsPossedesIds = $achatDao->listObjetsAchetesByUtilisateur((int)$_SESSION['idUtilisateur']);
+            $objets = $objetDao->findByIds($objetsPossedesIds);
+
+            echo $this->getTwig()->render('liste_objets.twig', [
+                'objets' => $objets,
+                'idRoom' => null,
+                'objetsPossedesIds' => $objetsPossedesIds
             ]);
         }
 
@@ -162,66 +190,8 @@
          * @return void
          */
         public function modifier() {
-            $idObjet = $_GET['idObjet'] ?? null;
-            if (!$idObjet) {
-                die("Erreur : aucun objet spécifié.");
-            }
-
-            $managerObjet = new ObjetDao($this->getPdo());
-            $objet = $managerObjet->find($idObjet);
-            if (!$objet) {
-                die("Objet introuvable.");
-            }
-
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('edition_objet.twig', [
-                    'objet' => $objet
-                ]);
-                return;
-            }
-
-            // Validation serveur des données de modification
-            $regles = [
-                'description' => [
-                    'obligatoire' => true,
-                    'type' => 'string',
-                    'longueur_min' => 2,
-                    'longueur_max' => 200
-                ],
-                'modele3dPath' => [
-                    'obligatoire' => true,
-                    'type' => 'string',
-                    'longueur_max' => 300,
-                    'format' => '/^[A-Za-z0-9_\-\.\/]+$/'
-                ],
-                'prix' => [
-                    'obligatoire' => true,
-                    'type' => 'integer',
-                    'plage_min' => 0
-                ]
-            ];
-
-            $validator = new Validator($regles);
-            $donneesValides = $validator->valider($_POST);
-            if (!$donneesValides) {
-                echo $this->getTwig()->render('edition_objet.twig', [
-                    'objet' => $objet,
-                    'erreurs' => $validator->getMessagesErreurs(),
-                    'donnees' => [
-                        'description' => $_POST['description'] ?? '',
-                        'modele3dPath' => $_POST['modele3dPath'] ?? '',
-                        'prix' => $_POST['prix'] ?? ''
-                    ]
-                ]);
-                return;
-            }
-
-            $objet->setDescription($this->sanitize($_POST['description']));
-            $objet->setModele3dPath($this->sanitize($_POST['modele3dPath']));
-            $objet->setPrix((int)$_POST['prix']);
-
-            $managerObjet->mettreAJourObjet($objet);
-            header("Location: index.php?controleur=objet&methode=afficher&idObjet=".$idObjet);
+            // Fonctionnalité désactivée : redirection vers la liste des objets
+            header("Location: index.php?controleur=objet&methode=lister");
             exit;
         }
 
@@ -247,7 +217,19 @@
                 die("Objet introuvable.");
             }
 
-            $managerObjet->supprimerObjet($idObjet);
+            // Nettoyer les dépendances (relations) avant suppression de l'objet
+            $ajouterDao = new AjouterDao($this->getPdo());
+            $possederDao = new PossederDAO($this->getPdo());
+            $achatDao = new AchatDao($this->getPdo());
+            // Supprimer toutes les entrées AJOUTER liées à cet objet
+            $ajouterDao->supprimerParObjet((int)$idObjet);
+            // Supprimer toutes les entrées POSSEDER liées à cet objet
+            $possederDao->supprimerParObjet((int)$idObjet);
+            // Supprimer toutes les entrées ACHETER liées à cet objet
+            $achatDao->supprimerParObjet((int)$idObjet);
+
+            // Supprimer l'objet
+            $managerObjet->supprimerObjet((int)$idObjet);
 
             // Retour à la room si fournie, sinon liste générale
             if ($idRoom) {
@@ -255,6 +237,32 @@
             } else {
                 header("Location: index.php?controleur=objet&methode=lister");
             }
+            exit;
+        }
+
+        /**
+         * Retire un objet acheté par l'utilisateur (sans supprimer l'objet de la boutique).
+         */
+        public function supprimerDeMesObjets() {
+            if (!isset($_SESSION['idUtilisateur'])) {
+                header('Location: index.php?controleur=utilisateur&methode=connexion');
+                exit;
+            }
+            $idObjet = $_GET['idObjet'] ?? null;
+            if (!$idObjet) {
+                die("Erreur : aucun objet spécifié.");
+            }
+
+            $achatDao = new AchatDao($this->getPdo());
+            $possederDao = new PossederDAO($this->getPdo());
+
+            // Retirer l'achat pour l'utilisateur courant
+            $achatDao->supprimerParObjetEtUtilisateur((int)$idObjet, (int)$_SESSION['idUtilisateur']);
+            // Retirer d'éventuelles placements dans des rooms de l'utilisateur (cleanup global)
+            $possederDao->supprimerParObjet((int)$idObjet);
+
+            $_SESSION['flash_success'] = "Objet retiré de vos objets.";
+            header('Location: index.php?controleur=objet&methode=lister');
             exit;
         }
     }
