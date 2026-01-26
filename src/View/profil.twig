@@ -78,7 +78,7 @@
                         <h5 class="mb-3">Vos posts</h5>
                         {% if posts is not empty %}
                             {% for post in posts %}
-                                <div class="mb-3 pb-3 border-bottom">
+                                <div class="mb-3 pb-3 border-bottom" id="post-{{ post.idPost }}">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <strong>{{ utilisateur.pseudo }}</strong>
@@ -111,12 +111,82 @@
                                             <span class="text-muted">·</span>
                                             <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
                                         </div>
+                                        <div class="mt-2">
+                                            {% set rep = reponsesParPost[post.idPost]|default([]) %}
+                                            <details>
+                                                <summary class="btn btn-sm btn-outline-primary">Commentaires ({{ rep|length }})</summary>
+                                                <div class="mt-2">
+                                                    {% if rep|length > 0 %}
+                                                        <ul class="list-group mb-3">
+                                                            {% for r in rep %}
+                                                                {% set comAuteur = utilisateurs[r.idAuteur]|default(null) %}
+                                                                <li class="list-group-item">
+                                                                    <div class="small text-muted">
+                                                                        Le {{ r.dateReponse }} —
+                                                                        {% if comAuteur %}
+                                                                            {{ comAuteur.pseudo }}
+                                                                        {% else %}
+                                                                            Utilisateur #{{ r.idAuteur }}
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div>{{ r.contenu }}</div>
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% else %}
+                                                        <p class="text-muted">Aucun commentaire pour l'instant.</p>
+                                                    {% endif %}
+                                                    <form action="index.php?controleur=post&methode=repondre&id={{ post.idPost }}" method="post">
+                                                        <div class="mb-2">
+                                                            <textarea name="contenu" class="form-control" rows="2" placeholder="Écrire un commentaire..."></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="redirect" value="index.php?controleur=utilisateur&methode=afficherProfil#post-{{ post.idPost }}">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Publier</button>
+                                                    </form>
+                                                </div>
+                                            </details>
+                                        </div>
                                     {% else %}
                                         <p class="mb-1 text-muted">{{ post.contenu }}</p>
                                         <div class="d-flex gap-2">
                                             <a class="text-decoration-none" >Voir</a>
                                             <span class="text-muted">·</span>
                                             <a class="text-danger text-decoration-none" href="index.php?controleur=post&methode=supprimer&id={{ post.idPost }}&redirect=profil">Supprimer</a>
+                                        </div>
+                                        <div class="mt-2">
+                                            {% set rep = reponsesParPost[post.idPost]|default([]) %}
+                                            <details>
+                                                <summary class="btn btn-sm btn-outline-primary">Commentaires ({{ rep|length }})</summary>
+                                                <div class="mt-2">
+                                                    {% if rep|length > 0 %}
+                                                        <ul class="list-group mb-3">
+                                                            {% for r in rep %}
+                                                                {% set comAuteur = utilisateurs[r.idAuteur]|default(null) %}
+                                                                <li class="list-group-item">
+                                                                    <div class="small text-muted">
+                                                                        Le {{ r.dateReponse }} —
+                                                                        {% if comAuteur %}
+                                                                            {{ comAuteur.pseudo }}
+                                                                        {% else %}
+                                                                            Utilisateur #{{ r.idAuteur }}
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div>{{ r.contenu }}</div>
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% else %}
+                                                        <p class="text-muted">Aucun commentaire pour l'instant.</p>
+                                                    {% endif %}
+                                                    <form action="index.php?controleur=post&methode=repondre&id={{ post.idPost }}" method="post">
+                                                        <div class="mb-2">
+                                                            <textarea name="contenu" class="form-control" rows="2" placeholder="Écrire un commentaire..."></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="redirect" value="index.php?controleur=utilisateur&methode=afficherProfil#post-{{ post.idPost }}">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Publier</button>
+                                                    </form>
+                                                </div>
+                                            </details>
                                         </div>
                                     {% endif %}
                                 </div>
