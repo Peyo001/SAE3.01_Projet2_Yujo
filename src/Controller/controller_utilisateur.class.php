@@ -689,7 +689,7 @@ class ControllerUtilisateur extends Controller
 
             if (isset($typesAutorises[$typeMime]) && $_FILES['photo_profil']['size'] <= 2 * 1024 * 1024) {
                 $extension = $typesAutorises[$typeMime];
-                $dossierUpload = __DIR__ . '/../../public/uploads/avatars/';
+                $dossierUpload = __DIR__ . '/../../public/uploads/imageProfil/';
                 if (!is_dir($dossierUpload)) {
                     @mkdir($dossierUpload, 0775, true);
                 }
@@ -697,7 +697,7 @@ class ControllerUtilisateur extends Controller
                 $cheminDestination = $dossierUpload . $nomFichier;
                 if (move_uploaded_file($cheminTemporaire, $cheminDestination)) {
                     // Stocker le chemin relatif pour l'affichage
-                    $utilisateur->setPersonnalisation('uploads/avatars/' . $nomFichier);
+                    $utilisateur->setPersonnalisation('uploads/imageProfil/' . $nomFichier);
                 }
             }
         }
