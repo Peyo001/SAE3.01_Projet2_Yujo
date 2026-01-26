@@ -42,6 +42,7 @@ class ControllerPost extends Controller
         $manager = new PostDao($this->getPdo());
         $userManager = new UtilisateurDao($this->getPdo());
         $quizDao = new QuizDao($this->getPdo());
+        $reponseDao = new ReponseDao($this->getPdo());
 
         if (isset($_GET['id_auteur'])) {
             $posts = $manager->findPostsByAuteur($_GET['id_auteur']);
@@ -67,10 +68,17 @@ class ControllerPost extends Controller
             $utilisateurs[$u->getIdUtilisateur()] = $u;
         }
 
+        // Récupérer les réponses pour chaque post (simple et suffisant ici)
+        $reponsesParPost = [];
+        foreach ($posts as $p) {
+            $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
+        }
+
         echo $this->getTwig()->render('liste_posts.twig', [
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
             'quizParPost' => $quizParPost,
+            'reponsesParPost' => $reponsesParPost,
             'title' => 'Fil d\'actualité'
         ]);
     }
@@ -92,6 +100,8 @@ class ControllerPost extends Controller
         }
 
         $manager = new PostDao($this->getPdo());
+        $reponseDao = new ReponseDao($this->getPdo());
+        $userManager = new UtilisateurDao($this->getPdo());
         $post = $manager->find($_GET['id']);
 
         if (!$post) {
@@ -99,8 +109,18 @@ class ControllerPost extends Controller
             return;
         }
 
+        // Récupérer les réponses associées au post
+        $reponses = $reponseDao->findResponsesByPost($post->getIdPost());
+        // Mapping des utilisateurs pour afficher les pseudos
+        $utilisateurs = [];
+        foreach ($userManager->findAll() as $u) {
+            $utilisateurs[$u->getIdUtilisateur()] = $u;
+        }
+
         echo $this->getTwig()->render('post.twig', [
-            'post' => $post
+            'post' => $post,
+            'reponses' => $reponses,
+            'utilisateurs' => $utilisateurs
         ]);
     }
 
@@ -381,6 +401,67 @@ class ControllerPost extends Controller
             header('Location: index.php?controleur=utilisateur&methode=afficherProfil');
         } else {
             header('Location: index.php?controleur=post&methode=lister');
+        }
+        exit;
+    }
+
+    /**
+     * Permet d'ajouter une réponse à un post (version simple).
+     */
+    public function repondre(): void
+    {
+        $idPost = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($idPost === 0) {
+            header('Location: index.php?controleur=post&methode=lister');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=post&methode=afficher&id=' . $idPost);
+            exit;
+        }
+
+        $contenu = isset($_POST['contenu']) ? trim($_POST['contenu']) : '';
+        $contenu = $this->sanitize($contenu);
+
+        if ($contenu === '') {
+            // Si un redirect est fourni, y retourner, sinon recharger la page du post avec erreur
+            $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : null;
+            if ($redirect && str_starts_with($redirect, 'index.php')) {
+                header('Location: ' . $redirect);
+                exit;
+            }
+            $manager = new PostDao($this->getPdo());
+            $reponseDao = new ReponseDao($this->getPdo());
+            $post = $manager->find($idPost);
+            $reponses = $reponseDao->findResponsesByPost($idPost);
+            echo $this->getTwig()->render('post.twig', [
+                'post' => $post,
+                'reponses' => $reponses,
+                'erreurReponse' => "Le contenu de la réponse est vide."
+            ]);
+            return;
+        }
+
+        $idAuteur = isset($_SESSION['idUtilisateur']) ? (int)$_SESSION['idUtilisateur'] : 1;
+
+        $reponse = new Reponse(
+            null,
+            date('Y-m-d H:i:s'),
+            $contenu,
+            $idAuteur,
+            $idPost
+        );
+
+        $dao = new ReponseDao($this->getPdo());
+        $ok = $dao->insererReponse($reponse);
+
+        // Redirection: prioriser un retour fourni (avec ancre), sinon page du post avec ancre #comments
+        $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : null;
+        if ($redirect && str_starts_with($redirect, 'index.php')) {
+            header('Location: ' . $redirect);
+        } else {
+            header('Location: index.php?controleur=post&methode=afficher&id=' . $idPost . '#comments');
         }
         exit;
     }

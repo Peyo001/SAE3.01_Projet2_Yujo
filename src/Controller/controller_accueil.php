@@ -39,6 +39,7 @@ class ControllerAccueil extends Controller
         $postManager = new PostDao($this->getPdo());
         $newsletterManager = new NewsletterDAO($this->getPdo());
         $quizDao = new QuizDao($this->getPdo());
+        $reponseDao = new ReponseDao($this->getPdo());
 
         // --- Récupérer les amis ---
         $amis = $amiManager->findAmis($idUtilisateur); // tableau d'objets Ami
@@ -73,6 +74,12 @@ class ControllerAccueil extends Controller
             // suppose getIdUtilisateur() existe dans le modèle Utilisateur
             $utilisateurs[$u->getIdUtilisateur()] = $u;
         }
+
+        // --- Réponses par post pour les commentaires sur la page d'accueil ---
+        $reponsesParPost = [];
+        foreach ($posts as $p) {
+            $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
+        }
         
         // Vérifier si l'utilisateur est inscrit à la newsletter
         $utilisateurConnecte = $userManager->find($idUtilisateur);
@@ -86,6 +93,7 @@ class ControllerAccueil extends Controller
             'posts' => $posts,
             'utilisateurs' => $utilisateurs,
             'quizParPost' => $quizParPost,
+            'reponsesParPost' => $reponsesParPost,
             'estInscritNewsletter' => $estInscritNewsletter
         ]);
     }
