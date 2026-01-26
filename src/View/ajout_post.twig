@@ -3,284 +3,150 @@
 {% block title %}Nouveau Post{% endblock %}
 
 {% block content %}
-    <style>
-    body {  
-            margin: 40px;
-        }
-        .yujo-form-container {
-            background: linear-gradient(135deg, #f9f6ff 0%, #fff 100%);
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            position: relative;
-            padding: 28px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(122, 60, 255, 0.12);
-        }
-        .yujo-form-container::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            z-index: -1;
-            margin: -2px;
-            border-radius: inherit;
-            background: linear-gradient(135deg, #7a3cff, #eb3f73);
-        }
-        .yujo-input, .yujo-select, .yujo-textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid #e8dcff;
-            background: #fff;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-        .yujo-input:focus, .yujo-select:focus, .yujo-textarea:focus {
-            outline: none;
-            border-color: #7a3cff;
-            box-shadow: 0 0 0 3px rgba(122, 60, 255, 0.1);
-        }
-        .yujo-label {
-            font-weight: 600;
-            color: #2d1b69;
-            margin-bottom: 8px;
-            display: block;
-            font-size: 14px;
-        }
-        .yujo-btn-primary {
-            background: linear-gradient(135deg, #7a3cff 0%, #c12458 100%);
-            color: #fff;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(122, 60, 255, 0.3);
-        }
-        .yujo-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(122, 60, 255, 0.4);
-        }
-        .yujo-btn-secondary {
-            background: #fff;
-            color: #7a3cff;
-            border: 2px solid #7a3cff;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .yujo-btn-secondary:hover {
-            background: #7a3cff;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        .yujo-quiz-section {
-            padding: 20px;
-            border: 2px solid #e8dcff;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #fff 0%, #faf8ff 100%);
-        }
-        .yujo-answer-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 10px;
-            padding: 10px;
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #f0e8ff;
-            transition: all 0.2s ease;
-        }
-        .yujo-answer-row:hover {
-            border-color: #d6c4ff;
-            box-shadow: 0 2px 8px rgba(122, 60, 255, 0.08);
-        }
-        .yujo-checkbox {
-            width: 20px;
-            height: 20px;
-            accent-color: #7a3cff;
-            cursor: pointer;
-        }
-        .yujo-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            background: linear-gradient(135deg, #7a3cff, #c12458);
-            color: #fff;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        .yujo-back-link {
-            color: #7a3cff;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-        .yujo-back-link:hover {
-            color: #c12458;
-            transform: translateX(-4px);
-        }
-    </style>
-    <body>
-        <div class="row" style="margin-top: 32px;">
-            <div class="col-12" style="margin-bottom: 24px;">
-                <span class="yujo-badge">✨ Nouveau contenu</span>
-                <h1 style="margin-bottom:16px; color:#2d1b69; font-weight:800;">Créer un nouveau post</h1>
-                <a href="index.php?controleur=accueil&methode=afficher" class="yujo-back-link">
-                    <span>←</span> Retour à l'accueil
-                </a>
-            </div>
-
-            <div class="col-12 col-lg-10 col-xl-9">
-                <form action="index.php?controleur=post&methode=traiterFormulaireInsertion" method="post" enctype="multipart/form-data" class="yujo-form-container" style="margin-bottom: 40px;">
-                    <div style="margin-bottom: 24px; display:flex; gap:14px; align-items:end; flex-wrap:wrap;">
-                        <div style="flex:1 1 280px;">
-                            <label for="type_post" class="yujo-label">📝 Type de contenu</label>
-                            <select name="type_post" id="type_post" onchange="toggleFields()" class="yujo-select">
-                                <option value="post" {% if donnees.type_post|default('post') == 'post' %}selected{% endif %}>💬 Post texte/image</option>
-                                <option value="quiz" {% if donnees.type_post|default('post') == 'quiz' %}selected{% endif %}>🎯 Quiz interactif</option>
-                            </select>
-                        </div>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h1 class="h4 mb-0">Créer un nouveau post</h1>
                     </div>
+                    <div class="card-body">
+                        {% if erreurs is defined and erreurs is not empty %}
+                            <div class="alert alert-danger">
+                                <div class="fw-semibold mb-2">Veuillez corriger les erreurs suivantes :</div>
+                                <ul class="mb-0">
+                                    {% for msg in erreurs %}
+                                        <li>{{ msg }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
 
-                    <div id="postFields" style="margin-bottom: 20px;">
-                        <label for="contenu" class="yujo-label">💭 Votre message</label>
-                        <textarea name="contenu" id="contenu" rows="6" class="yujo-textarea" minlength="1" maxlength="5000" placeholder="Partagez vos pensées avec la communauté Yujo...">{{ donnees.contenu|default('') }}</textarea>
+                        <form action="index.php?controleur=post&methode=traiterFormulaireInsertion" method="post" enctype="multipart/form-data">
+                            <div class="row g-3 mb-2">
+                                <div class="col-12 col-md-6">
+                                    <label for="type_post" class="form-label">Type de contenu</label>
+                                    <select name="type_post" id="type_post" class="form-select" onchange="toggleFields()">
+                                        <option value="post" {% if donnees.type_post|default('post') == 'post' %}selected{% endif %}>Post texte / image</option>
+                                        <option value="quiz" {% if donnees.type_post|default('post') == 'quiz' %}selected{% endif %}>Quiz interactif</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="visibilite" class="form-label">Visibilité</label>
+                                    <select name="visibilite" id="visibilite" class="form-select">
+                                        <option value="public" {% if donnees.visibilite|default('public') == 'public' %}selected{% endif %}>Public</option>
+                                        <option value="prive" {% if donnees.visibilite|default('public') == 'prive' %}selected{% endif %}>Privé</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="postFields" class="mb-3">
+                                <label for="contenu" class="form-label">Votre message</label>
+                                <textarea name="contenu" id="contenu" rows="6" class="form-control" minlength="1" maxlength="5000" placeholder="Écrire votre message...">{{ donnees.contenu|default('') }}</textarea>
+                            </div>
+
+                            <div id="imageFields" class="mb-3" style="display: none;">
+                                <label for="image" class="form-label">Choisir une image</label>
+                                <input type="file" name="image" id="image" accept="image/*" class="form-control">
+                                <div class="form-text">Formats acceptés: JPG, PNG, GIF, WebP — Taille max: 5MB</div>
+                            </div>
+
+                            <div id="quizFields" class="mb-3" style="display: none;">
+                                <div class="border rounded p-3">
+                                    <h2 class="h6">Configuration du quiz</h2>
+                                    <div class="mb-3">
+                                        <label for="titre_quiz" class="form-label">Titre du quiz</label>
+                                        <input type="text" name="titre_quiz" id="titre_quiz" class="form-control" placeholder="Ex: Quiz sur les capitales européennes">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description_quiz" class="form-label">Description</label>
+                                        <textarea name="description_quiz" id="description_quiz" rows="3" class="form-control" placeholder="Décrivez votre quiz..."></textarea>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" name="choix_multiples" value="1" class="form-check-input" id="choix_multiples">
+                                        <label class="form-check-label" for="choix_multiples">Autoriser les choix multiples</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="question_libelle" class="form-label">Question principale</label>
+                                        <input type="text" name="question_libelle" id="question_libelle" class="form-control" placeholder="Quelle est la capitale de la France ?">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Réponses possibles</label>
+                                        <div class="text-muted small mb-2">Ajoutez au moins 2 réponses et cochez la ou les bonnes réponses.</div>
+
+                                        <div class="row g-2 align-items-center mb-2">
+                                            <div class="col-1 text-end">1.</div>
+                                            <div class="col-9"><input type="text" name="reponses[0][libelle]" class="form-control" placeholder="Réponse 1"></div>
+                                            <div class="col-2 form-check">
+                                                <input type="checkbox" class="form-check-input" id="rep0" name="reponses[0][correct]" value="1">
+                                                <label class="form-check-label" for="rep0">Correcte</label>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 align-items-center mb-2">
+                                            <div class="col-1 text-end">2.</div>
+                                            <div class="col-9"><input type="text" name="reponses[1][libelle]" class="form-control" placeholder="Réponse 2"></div>
+                                            <div class="col-2 form-check">
+                                                <input type="checkbox" class="form-check-input" id="rep1" name="reponses[1][correct]" value="1">
+                                                <label class="form-check-label" for="rep1">Correcte</label>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 align-items-center mb-2">
+                                            <div class="col-1 text-end">3.</div>
+                                            <div class="col-9"><input type="text" name="reponses[2][libelle]" class="form-control" placeholder="Réponse 3 (optionnel)"></div>
+                                            <div class="col-2 form-check">
+                                                <input type="checkbox" class="form-check-input" id="rep2" name="reponses[2][correct]" value="1">
+                                                <label class="form-check-label" for="rep2">Correcte</label>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2 align-items-center">
+                                            <div class="col-1 text-end">4.</div>
+                                            <div class="col-9"><input type="text" name="reponses[3][libelle]" class="form-control" placeholder="Réponse 4 (optionnel)"></div>
+                                            <div class="col-2 form-check">
+                                                <input type="checkbox" class="form-check-input" id="rep3" name="reponses[3][correct]" value="1">
+                                                <label class="form-check-label" for="rep3">Correcte</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-cta" id="btnPublier">Publier</button>
+                            </div>
+                        </form>
                     </div>
-
-                    <div id="imageFields" style="margin-bottom: 20px; display: none;">
-                        <label for="image" class="yujo-label">🖼️ Choisir une image</label>
-                        <input type="file" name="image" id="image" accept="image/*" class="yujo-input" style="padding:10px;">
-                        <small style="color:#8b7ba8; display:block; margin-top:8px;">📌 Formats acceptés: JPG, PNG, GIF, WebP · Taille max: 5MB</small>
-                    </div>
-
-                    <div id="quizFields" class="yujo-quiz-section" style="margin-bottom: 20px; display: none;">
-                        <h3 style="color:#7a3cff; margin-bottom:20px; font-size:18px; font-weight:700;">🎯 Configuration du Quiz</h3>
-                        
-                        <div style="margin-bottom:18px;">
-                            <label for="titre_quiz" class="yujo-label">🏆 Titre du quiz</label>
-                            <input type="text" name="titre_quiz" id="titre_quiz" class="yujo-input" placeholder="Ex: Quiz sur les capitales européennes">
-                        </div>
-                        
-                        <div style="margin-bottom:18px;">
-                            <label for="description_quiz" class="yujo-label">📄 Description</label>
-                            <textarea name="description_quiz" id="description_quiz" rows="3" class="yujo-textarea" placeholder="Décrivez votre quiz pour donner envie aux joueurs..."></textarea>
-                        </div>
-                        
-                        <div style="margin-bottom:20px;">
-                            <label style="display:inline-flex; align-items:center; gap:10px; cursor:pointer; padding:12px; background:#fff; border-radius:10px; border:2px solid #e8dcff;">
-                                <input type="checkbox" name="choix_multiples" value="1" class="yujo-checkbox">
-                                <span style="font-weight:600; color:#2d1b69;">✅ Autoriser les choix multiples</span>
-                            </label>
-                        </div>
-                        
-                        <div style="margin-bottom:18px;">
-                            <label for="question_libelle" class="yujo-label">❓ Question principale</label>
-                            <input type="text" name="question_libelle" id="question_libelle" class="yujo-input" placeholder="Quelle est la capitale de la France ?">
-                        </div>
-                        
-                        <div style="margin-top:20px;">
-                            <label class="yujo-label">📊 Réponses possibles</label>
-                            <small style="color:#8b7ba8; display:block; margin-bottom:12px;">Ajoutez au moins 2 réponses et cochez la ou les bonnes réponses.</small>
-                            
-                            <div class="yujo-answer-row">
-                                <span style="color:#7a3cff; font-weight:700; min-width:24px;">1.</span>
-                                <input type="text" name="reponses[0][libelle]" placeholder="Réponse 1" class="yujo-input" style="flex:1;">
-                                <label style="display:flex; align-items:center; gap:8px; white-space:nowrap; cursor:pointer;">
-                                    <input type="checkbox" name="reponses[0][correct]" value="1" class="yujo-checkbox">
-                                    <span style="font-weight:600; color:#2d1b69;">Correcte</span>
-                                </label>
-                            </div>
-                            
-                            <div class="yujo-answer-row">
-                                <span style="color:#7a3cff; font-weight:700; min-width:24px;">2.</span>
-                                <input type="text" name="reponses[1][libelle]" placeholder="Réponse 2" class="yujo-input" style="flex:1;">
-                                <label style="display:flex; align-items:center; gap:8px; white-space:nowrap; cursor:pointer;">
-                                    <input type="checkbox" name="reponses[1][correct]" value="1" class="yujo-checkbox">
-                                    <span style="font-weight:600; color:#2d1b69;">Correcte</span>
-                                </label>
-                            </div>
-                            
-                            <div class="yujo-answer-row">
-                                <span style="color:#8b7ba8; font-weight:700; min-width:24px;">3.</span>
-                                <input type="text" name="reponses[2][libelle]" placeholder="Réponse 3 (optionnel)" class="yujo-input" style="flex:1;">
-                                <label style="display:flex; align-items:center; gap:8px; white-space:nowrap; cursor:pointer;">
-                                    <input type="checkbox" name="reponses[2][correct]" value="1" class="yujo-checkbox">
-                                    <span style="font-weight:600; color:#2d1b69;">Correcte</span>
-                                </label>
-                            </div>
-                            
-                            <div class="yujo-answer-row">
-                                <span style="color:#8b7ba8; font-weight:700; min-width:24px;">4.</span>
-                                <input type="text" name="reponses[3][libelle]" placeholder="Réponse 4 (optionnel)" class="yujo-input" style="flex:1;">
-                                <label style="display:flex; align-items:center; gap:8px; white-space:nowrap; cursor:pointer;">
-                                    <input type="checkbox" name="reponses[3][correct]" value="1" class="yujo-checkbox">
-                                    <span style="font-weight:600; color:#2d1b69;">Correcte</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="id_room" value="1">
-
-                    <button type="submit" class="yujo-btn-primary" id="btnPublier">🚀 Publier maintenant</button>
-                </form>
+                </div>
 
                 {% if erreurs is defined and erreurs is not empty %}
-                <div style="margin-top:24px; padding:20px; background:#fff0f0; border:2px solid #ff6b6b; border-radius:16px;">
-                    <h6 style="color:#c92a2a; font-weight:700; margin-bottom:12px;">⚠️ Veuillez corriger les erreurs suivantes :</h6>
-                    <ul style="margin:0; padding-left:20px; color:#c92a2a;">
-                        {% for msg in erreurs %}
-                            <li style="margin-bottom:6px;">{{ msg }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                {# Erreurs déjà affichées dans la carte ci-dessus #}
                 {% endif %}
             </div>
         </div>
-    </body >
-        <script>
+    </div>
+
+    {% block scripts %}
+    <script>
         function toggleFields() {
             const type = document.getElementById('type_post').value;
             const imageFields = document.getElementById('imageFields');
             const quizFields = document.getElementById('quizFields');
             const postFields = document.getElementById('postFields');
 
-            imageFields.style.display = type === 'post' ? 'block' : 'none';
-            quizFields.style.display = type === 'quiz' ? 'block' : 'none';
-            if (postFields) {
-                postFields.style.display = (type === 'post') ? 'block' : 'none';
-            }
+            if (imageFields) imageFields.style.display = (type === 'post') ? 'block' : 'none';
+            if (quizFields) quizFields.style.display = (type === 'quiz') ? 'block' : 'none';
+            if (postFields) postFields.style.display = (type === 'post') ? 'block' : 'none';
         }
-        document.addEventListener('DOMContentLoaded', toggleFields);
-        // Bouton pour basculer rapidement en mode image et ouvrir le sélecteur
         document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('btnAddImage');
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    const typeSel = document.getElementById('type_post');
-                    typeSel.value = 'post';
-                    toggleFields();
-                    const fileInput = document.getElementById('image');
-                    if (fileInput) fileInput.click();
-                });
-            }
-            // Empêcher le double-clic sur le bouton de publication
+            toggleFields();
             const form = document.querySelector('form');
             const btnPublier = document.getElementById('btnPublier');
             if (form && btnPublier) {
                 form.addEventListener('submit', () => {
                     btnPublier.disabled = true;
-                    btnPublier.textContent = '⏳ Publication en cours...';
+                    btnPublier.textContent = 'Publication en cours...';
                 });
             }
         });
-        </script>
+    </script>
     {% endblock %}
+{% endblock %}
