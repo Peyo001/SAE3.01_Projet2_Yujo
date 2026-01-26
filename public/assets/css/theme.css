@@ -1,7 +1,8 @@
 /* Theme global inspiré du bloc newsletter : cartes claires, boutons arrondis, couleurs rose/bleu. */
 
 :root {
-  --yujo-primary: #0d6efd; /* Bootstrap primary */
+  /* Couleur primaire foncée alignée avec l'entête/pied (#2c3696) */
+  --yujo-primary: #2c3696;
   --yujo-accent: #e91e63;  /* Rose bouton newsletter */
   --yujo-purple: #6f42c1;  /* Violet */
   --yujo-muted: #6c757d;
@@ -9,6 +10,10 @@
   --yujo-card-radius: 14px;
   --yujo-btn-radius: 999px;
   --yujo-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+
+  /* Override Bootstrap 5 variables pour propager le bleu foncé */
+  --bs-primary: #2c3696;
+  --bs-primary-rgb: 44, 54, 150;
 }
 
 body {
@@ -29,9 +34,42 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--yujo-primary);
-  border-color: var(--yujo-primary);
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  /* Bootstrap button variable overrides for consistency */
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #242d7d;
+  --bs-btn-hover-border-color: #242d7d;
+  --bs-btn-active-bg: #1d2568;
+  --bs-btn-active-border-color: #1d2568;
 }
+
+/* Harmoniser les variantes liées à primary */
+.btn-outline-primary {
+  color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+}
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+}
+
+.badge.bg-primary { background-color: var(--bs-primary) !important; }
+.text-primary { color: var(--bs-primary) !important; }
+.border-primary { border-color: var(--bs-primary) !important; }
+
+/* Links and pagination in primary tone */
+.link-primary { color: var(--bs-primary) !important; }
+.link-primary:hover, .link-primary:focus { color: #242d7d !important; }
+.page-link { color: var(--bs-primary); }
+.page-link:hover { color: #242d7d; }
+.active>.page-link, .page-link.active { background-color: var(--bs-primary); border-color: var(--bs-primary); }
 
 .btn-accent {
   background-color: var(--yujo-accent);

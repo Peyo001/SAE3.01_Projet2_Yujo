@@ -355,6 +355,12 @@ class ControllerUtilisateur extends Controller
 
         $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
         $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
+        $reponseDao = new ReponseDao($this->getPdo());
+        // Mapping global des utilisateurs pour afficher les pseudos dans les commentaires
+        $utilisateursAll = [];
+        foreach ($manager->findAll() as $u) {
+            $utilisateursAll[$u->getIdUtilisateur()] = $u;
+        }
         
         // Récupérer les quiz associés aux posts de type quiz
         $quizParPost = [];
@@ -391,6 +397,12 @@ class ControllerUtilisateur extends Controller
         $flashSuccess = $_SESSION['flash_success'] ?? null;
         $flashError = $_SESSION['flash_error'] ?? null;
         unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        // Récupérer les réponses par post pour affichage des commentaires
+        $reponsesParPost = [];
+        foreach ($posts as $p) {
+            $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
+        }
         
         echo $this->getTwig()->render('profil.twig', [
             'utilisateur' => $user,
@@ -399,7 +411,9 @@ class ControllerUtilisateur extends Controller
             'rooms' => $rooms,
             'objetsPossedes' => $objetsPossedes,
             'utilisateursAmis' => $utilisateursAmis,
+            'utilisateurs' => $utilisateursAll,
             'quizParPost' => $quizParPost,
+            'reponsesParPost' => $reponsesParPost,
             'flash_success' => $flashSuccess,
             'flash_error' => $flashError
         ]);
