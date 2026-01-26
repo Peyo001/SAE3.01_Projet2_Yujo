@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room 3D - {{ room.getNom() }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 100%; height: 100%; background: #0a0e27; font-family: 'Segoe UI', sans-serif; color: #fff; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
+        .panel { position: absolute; background: rgba(10, 14, 39, 0.92); border: 2px solid #ff0080; border-radius: 10px; padding: 15px; z-index: 100; backdrop-filter: blur(8px); }
+        .top-bar { top: 15px; left: 50%; transform: translateX(-50%); max-width: 90%; display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .title { font-size: 20px; font-weight: 700; color: #ff0080; white-space: nowrap; }
+        .btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 8px 14px; background: linear-gradient(135deg, #e53282, #ff0080); border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(229, 50, 130, 0.4); }
+        .btn.active { background: linear-gradient(135deg, #4b2cb7, #8a2be2); box-shadow: 0 0 20px rgba(138, 43, 226, 0.6); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sidebar-left { bottom: 15px; left: 15px; width: 300px; max-height: 70vh; overflow-y: auto; }
+        .sidebar-right { bottom: 15px; right: 15px; width: 280px; max-height: 70vh; overflow-y: auto; }
+        .sidebar-left h3, .sidebar-right h3 { color: #ff0080; margin-bottom: 12px; font-size: 14px; font-weight: 700; }
+        .objets-section { margin-bottom: 15px; }
+        .objets-section h4 { color: #4ade80; margin-bottom: 8px; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .obj-btn { padding: 10px; background: linear-gradient(135deg, #2a2a4e, #4a2a7e); border: 2px solid rgba(229, 50, 130, 0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 18px; text-align: center; transition: all 0.2s; position: relative; }
+        .obj-btn:hover { border-color: #ff0080; background: linear-gradient(135deg, #3a3a5e, #5a3a8e); box-shadow: 0 0 15px rgba(229, 50, 130, 0.3); }
+        .obj-btn.placed { opacity: 0.5; }
+        .obj-btn .price { position: absolute; top: 2px; right: 4px; font-size: 10px; color: #ffd700; }
+        .info { font-size: 12px; padding: 8px; background: rgba(229, 50, 130, 0.1); border-radius: 6px; margin-bottom: 6px; border-left: 3px solid #ff0080; }
+        .info-label { color: #aaa; }
+        .info-value { color: #4ade80; font-weight: 700; margin-left: 8px; }
+        .hint { font-size: 11px; color: #888; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); line-height: 1.4; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(229, 50, 130, 0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(229, 50, 130, 0.8); }
+        .message { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: rgba(74, 222, 128, 0.9); color: white; padding: 12px 24px; border-radius: 8px; z-index: 200; display: none; }
+        .message.error { background: rgba(239, 68, 68, 0.9); }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- Message de notification -->
+<div class="message" id="message"></div>
+
+<!-- Top Bar -->
+<div class="panel top-bar">
+    <h1 class="title">{{ room.getNom() }} 🏠</h1>
+    <div class="btns">
+        <button class="btn" onclick="resetCam()">📷 Vue</button>
+        <button class="btn" id="rotBtn" onclick="toggleRotate()">🔄 Déplac.</button>
+        {% if estProprietaire %}
+        <button class="btn" onclick="saveRoom()">💾 Sauvegarder</button>
+        <button class="btn" onclick="clearSelectedObject()">🗑️ Retirer</button>
+        {% endif %}
+        <button class="btn" onclick="window.location.href='index.php?controleur=room&methode=lister'">🚪 Retour</button>
+    </div>
+</div>
+
+<!-- Objects -->
+<div class="panel sidebar-left">
+    {% if estProprietaire %}
+    <div class="objets-section">
+        <h3>📦 Mes objets achetés</h3>
+        <h4>Disponibles ({{ objetsDisponibles|length }})</h4>
+        <div class="grid" id="grid-disponibles">
+            {% for objet in objetsDisponibles %}
+            <button class="obj-btn" 
+                    data-id="{{ objet.getIdObjet() }}" 
+                    data-model="{{ objet.getModele3dPath() }}"
+                    data-description="{{ objet.getDescription() }}"
+                    title="{{ objet.getDescription() }}"
+                    onclick="addObjetToRoom({{ objet.getIdObjet() }}, '{{ objet.getDescription() }}')">
+                🎁
+                <span class="price">{{ objet.getPrix() }}Y</span>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="objets-section">
+        <h3>🎯 Objets dans la room</h3>
+        <h4>Placés ({{ objetsPlaces|length }})</h4>
+        <div id="objets-places-list">
+            {% for objetRoom in objetsPlaces %}
+            <div class="info" data-objet-id="{{ objetRoom.getIdObjet() }}">
+                {{ objetRoom.getDescription() }} - 
+                <span class="info-value">{{ objetRoom.getPositionX()|number_format(1) }}, {{ objetRoom.getPositionY()|number_format(1) }}, {{ objetRoom.getPositionZ()|number_format(1) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Info -->
+<div class="panel sidebar-right">
+    <h3>ℹ️ Infos</h3>
+    <div class="info"><span class="info-label">Mode:</span><span class="info-value" id="mode">Caméra</span></div>
+    <div class="info"><span class="info-label">Objets:</span><span class="info-value" id="count">{{ objetsPlaces|length }}</span></div>
+    <div class="info"><span class="info-label">FPS:</span><span class="info-value" id="fps">60</span></div>
+    <div class="info"><span class="info-label">Pos:</span><span class="info-value" id="pos">0,0,0</span></div>
+    <div class="info"><span class="info-label">Rot:</span><span class="info-value" id="rot">0°</span></div>
+    <div class="hint">
+        <strong>Contrôles:</strong><br/>
+        • Souris = Cam/Obj<br/>
+        • R = Toggle Mode<br/>
+        • Clic = Sélection<br/>
+        • Scroll = Zoom
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/OBJLoader.js"></script>
+<script>
+// Variables globales
+const idRoom = {{ room.getIdRoom() }};
+const estProprietaire = {{ estProprietaire ? 'true' : 'false' }};
+
+// --- Configuration de base Three.js ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0e27);
+
+const canvas = document.getElementById('canvas');
+const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+camera.position.set(12, 8, 12);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+renderer.shadowMap.enabled = true;
+
+// --- Eclairage principal (ambiant + directionnel pour les ombres) ---
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+sun.position.set(10, 15, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+scene.add(sun);
+
+// --- Sol de la room ---
+const floorGeo = new THREE.PlaneGeometry(10, 10);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x0f3460 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// --- Murs de la room ---
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x2a2a4e });
+
+const leftWall = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 0.2), wallMat);
+leftWall.position.set(0, 3, -5.1);
+leftWall.castShadow = true;
+leftWall.receiveShadow = true;
+scene.add(leftWall);
+
+const backWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 6, 10), wallMat);
+backWall.position.set(-5.1, 3, 0);
+backWall.castShadow = true;
+backWall.receiveShadow = true;
+scene.add(backWall);
+
+// --- Conteneurs et etat de scene ---
+const objets = [];
+let selected = null;
+let draggingMode = 'move';
+
+// --- Hydratation des objets déjà placés (cotes serveur) ---
+const objetsPlaces = [
+    {% for objetRoom in objetsPlaces %}
+    {
+        idObjet: {{ objetRoom.getIdObjet() }},
+        description: "{{ objetRoom.getDescription() }}",
+        modele3dPath: "{{ objetRoom.getModele3dPath() }}",
+        positionX: {{ objetRoom.getPositionX() }},
+        positionY: {{ objetRoom.getPositionY() }},
+        positionZ: {{ objetRoom.getPositionZ() }},
+        rotationX: {{ objetRoom.getRotationX() }},
+        rotationY: {{ objetRoom.getRotationY() }},
+        rotationZ: {{ objetRoom.getRotationZ() }},
+        scale: {{ objetRoom.getScale() }}
+    }{{ not loop.last ? ',' : '' }}
+    {% endfor %}
+];
+
+// --- Instancie chaque objet 3D dans la scene ---
+objetsPlaces.forEach(obj => {
+    createObjet3D(obj);
+});
+
+function createObjet3D(objData) {
+    const size = objData.scale || 1.0;
+    const modelPath = objData.modele3dPath;
+    
+    // Fonction pour ajouter un mesh à la scène (position, rotation, ombres)
+    function addToScene(mesh) {
+        if (!mesh) return;
+        
+        // Appliquer une échelle beaucoup plus petite pour les modèles 3D (réduire par 100)
+        const finalScale = (size || 1.0) * 0.01;
+        
+        mesh.position.set(objData.positionX, objData.positionY, objData.positionZ);
+        mesh.rotation.set(objData.rotationX, objData.rotationY, objData.rotationZ);
+        mesh.scale.setScalar(finalScale);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        mesh.userData = { 
+            idObjet: objData.idObjet, 
+            description: objData.description,
+            rotX: objData.rotationX, 
+            rotY: objData.rotationY, 
+            rotZ: objData.rotationZ 
+        };
+        
+        scene.add(mesh);
+        objets.push(mesh);
+    }
+    
+    // Fallback: cube par défaut si le chargement échoue
+    function createCubeFallback() {
+        const color = 0x8B4513 + Math.random() * 0x444444;
+        const mat = new THREE.MeshStandardMaterial({ color: color, emissive: 0 });
+        return new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat);
+    }
+    
+    // Si pas de chemin, utiliser le cube
+    if (!modelPath) {
+        console.warn('[Loader] No model path for', objData.description);
+        addToScene(createCubeFallback());
+        return;
+    }
+    
+    // Déterminer l'extension
+    const urlClean = modelPath.split('?')[0];
+    const ext = urlClean.split('.').pop().toLowerCase();
+    
+    console.log('[Loader] Loading', ext.toUpperCase(), modelPath);
+    
+    // Charge GLB/GLTF (support Draco si dispo)
+    if (ext === 'glb' || ext === 'gltf') {
+        const gltfLoader = new THREE.GLTFLoader();
+        
+        // Configurer Draco decoder si disponible
+        if (typeof THREE.DRACOLoader !== 'undefined') {
+            const dracoLoader = new THREE.DRACOLoader();
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+            gltfLoader.setDRACOLoader(dracoLoader);
+        }
+        
+        gltfLoader.load(
+            modelPath,
+            (gltf) => {
+                console.log('[Loader] GLTF loaded successfully');
+                const model = gltf.scene || gltf.scenes?.[0];
+                if (model) {
+                    addToScene(model);
+                } else {
+                    console.warn('[Loader] No scene in GLTF');
+                    addToScene(createCubeFallback());
+                }
+            },
+            (progress) => {
+                console.log('[Loader] Loading progress', (progress.loaded / progress.total * 100).toFixed(0) + '%');
+            },
+            (error) => {
+                console.error('[Loader] GLTF load error', error);
+                addToScene(createCubeFallback());
+            }
+        );
+    // Charge OBJ simple
+    } else if (ext === 'obj') {
+        const objLoader = new THREE.OBJLoader();
+        objLoader.load(
+            modelPath,
+            (object) => {
+                console.log('[Loader] OBJ loaded successfully');
+                addToScene(object);
+            },
+            (progress) => {
+                console.log('[Loader] Loading progress', (progress.loaded / progress.total * 100).toFixed(0) + '%');
+            },
+            (error) => {
+                console.error('[Loader] OBJ load error', error);
+                addToScene(createCubeFallback());
+            }
+        );
+    } else {
+        console.warn('[Loader] Unknown extension:', ext);
+        addToScene(createCubeFallback());
+    }
+}
+
+function addObjetToRoom(idObjet, description) {
+    if (!estProprietaire) {
+        showMessage('Vous devez être propriétaire pour ajouter des objets', 'error');
+        return;
+    }
+
+    // Création par défaut au centre (persiste via backend)
+    const formData = new FormData();
+    formData.append('idRoom', idRoom);
+    formData.append('idObjet', idObjet);
+    formData.append('positionX', 0);
+    formData.append('positionY', 0.5);
+    formData.append('positionZ', 0);
+    formData.append('rotationX', 0);
+    formData.append('rotationY', 0);
+    formData.append('rotationZ', 0);
+    formData.append('scale', 1.0);
+
+    fetch('index.php?controleur=room&methode=ajouterObjetDansRoom', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Objet ajouté à la room!');
+            // Créer l'objet dans la scène
+            const newObj = createObjet3D({
+                idObjet: idObjet,
+                description: description,
+                positionX: 0,
+                positionY: 0.5,
+                positionZ: 0,
+                rotationX: 0,
+                rotationY: 0,
+                rotationZ: 0,
+                scale: 1.0
+            });
+            updateCount();
+            // Recharger la page pour mettre à jour la liste
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showMessage(data.message || 'Erreur lors de l\'ajout', 'error');
+        }
+    })
+    .catch(error => {
+        showMessage('Erreur réseau', 'error');
+        console.error(error);
+    });
+}
+
+function saveRoom() {
+    if (!estProprietaire) {
+        showMessage('Vous devez être propriétaire pour sauvegarder', 'error');
+        return;
+    }
+
+    if (!selected) {
+        showMessage('Aucun objet sélectionné', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('idRoom', idRoom);
+    formData.append('idObjet', selected.userData.idObjet);
+    formData.append('positionX', selected.position.x);
+    formData.append('positionY', selected.position.y);
+    formData.append('positionZ', selected.position.z);
+    formData.append('rotationX', selected.userData.rotX);
+    formData.append('rotationY', selected.userData.rotY);
+    formData.append('rotationZ', selected.userData.rotZ);
+    formData.append('scale', 1.0);
+
+    fetch('index.php?controleur=room&methode=updateObjetPosition', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Position sauvegardée!');
+        } else {
+            showMessage(data.message || 'Erreur lors de la sauvegarde', 'error');
+        }
+    })
+    .catch(error => {
+        showMessage('Erreur réseau', 'error');
+        console.error(error);
+    });
+}
+
+function clearSelectedObject() {
+    if (!estProprietaire || !selected) {
+        showMessage('Aucun objet sélectionné', 'error');
+        return;
+    }
+
+    if (!confirm('Retirer cet objet de la room?')) return;
+
+    const formData = new FormData();
+    formData.append('idRoom', idRoom);
+    formData.append('idObjet', selected.userData.idObjet);
+
+    fetch('index.php?controleur=room&methode=retirerObjetDeRoom', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Objet retiré!');
+            scene.remove(selected);
+            objets.splice(objets.indexOf(selected), 1);
+            selected = null;
+            updateCount();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showMessage(data.message || 'Erreur lors du retrait', 'error');
+        }
+    })
+    .catch(error => {
+        showMessage('Erreur réseau', 'error');
+        console.error(error);
+    });
+}
+
+function showMessage(text, type = 'success') {
+    const msgEl = document.getElementById('message');
+    msgEl.textContent = text;
+    msgEl.className = 'message ' + (type === 'error' ? 'error' : '');
+    msgEl.style.display = 'block';
+    setTimeout(() => msgEl.style.display = 'none', 3000);
+}
+
+// --- Selection visuelle d'un objet (highlight emissive) ---
+function select(obj) {
+    if (selected) {
+        selected.traverse((child) => {
+            if (child.isMesh && child.material && child.material.emissive) {
+                child.material.emissive.setHex(0x000000);
+            }
+        });
+    }
+    selected = obj;
+    if (obj) {
+        obj.traverse((child) => {
+            if (child.isMesh && child.material && child.material.emissive) {
+                child.material.emissive.setHex(0xFF0080);
+            }
+        });
+    }
+}
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// --- Raycasting pour selection (inclut enfants des groupes GLB) ---
+window.addEventListener('click', (e) => {
+    mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(objets, true);
+    if (hits.length > 0) {
+        let obj = hits[0].object;
+        while (obj.parent && !objets.includes(obj)) {
+            obj = obj.parent;
+        }
+        select(obj);
+    } else {
+        select(null);
+    }
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'r' || e.key === 'R') {
+        draggingMode = draggingMode === 'move' ? 'rotate' : 'move';
+        toggleRotate();
+    }
+});
+
+let drag = false, lastPos = { x: 0, y: 0 }, camAngle = { x: 0, y: 0 };
+
+// --- Drag souris: mouvement cam ou objet selon contexte ---
+document.addEventListener('mousedown', (e) => { 
+    drag = true; 
+    lastPos = { x: e.clientX, y: e.clientY }; 
+});
+
+document.addEventListener('mousemove', (e) => {
+    const dx = e.clientX - lastPos.x;
+    const dy = e.clientY - lastPos.y;
+
+    if (drag && !selected) {
+        camAngle.y += dx * 0.008;
+        camAngle.x = Math.max(-0.6, Math.min(0.6, camAngle.x + dy * 0.008));
+        const d = 12;
+        const camX = Math.sin(camAngle.y) * Math.cos(camAngle.x) * d;
+        const camY = Math.sin(camAngle.x + Math.PI / 4) * d * 0.8;
+        const camZ = Math.cos(camAngle.y) * Math.cos(camAngle.x) * d;
+        camera.position.set(camX, camY, camZ);
+        camera.lookAt(0, 0.5, 0);
+    }
+
+    if (drag && selected && estProprietaire) {
+        if (draggingMode === 'move') {
+            const moveSpeed = 0.02;
+            const screenDx = dx * moveSpeed;
+            const screenDy = dy * moveSpeed;
+            
+            const rightVec = new THREE.Vector3(
+                Math.cos(camAngle.y),
+                0,
+                Math.sin(camAngle.y)
+            );
+            const forwardVec = new THREE.Vector3(
+                -Math.sin(camAngle.y),
+                0,
+                Math.cos(camAngle.y)
+            );
+            
+            selected.position.addScaledVector(rightVec, screenDx);
+            selected.position.addScaledVector(forwardVec, screenDy);
+            
+            const maxDist = 4.8;
+            const dist = Math.sqrt(selected.position.x ** 2 + selected.position.z ** 2);
+            if (dist > maxDist) {
+                const ratio = maxDist / dist;
+                selected.position.x *= ratio;
+                selected.position.z *= ratio;
+            }
+        } else if (draggingMode === 'rotate') {
+            selected.userData.rotY += dx * 0.015;
+            selected.userData.rotX += dy * 0.015;
+            selected.rotation.order = 'YXZ';
+            selected.rotation.y = selected.userData.rotY;
+            selected.rotation.x = selected.userData.rotX;
+        }
+    }
+
+    lastPos = { x: e.clientX, y: e.clientY };
+});
+
+document.addEventListener('mouseup', () => { drag = false; });
+
+// --- Zoom molette ---
+let zoom = 0;
+document.addEventListener('wheel', (e) => { e.preventDefault(); zoom += e.deltaY * 0.01; }, { passive: false });
+
+// --- Reset camera ---
+function resetCam() { 
+    camera.position.set(12, 8, 12); 
+    camera.lookAt(0, 0.5, 0); 
+    camAngle = { x: 0, y: 0 }; 
+}
+
+// --- Met a jour le compteur d'objets ---
+function updateCount() { 
+    document.getElementById('count').textContent = objets.length; 
+}
+
+// --- Bascule mode move/rotate ---
+function toggleRotate() { 
+    draggingMode = draggingMode === 'move' ? 'rotate' : 'move'; 
+    const btn = document.getElementById('rotBtn');
+    const modeSpan = document.getElementById('mode');
+    if (draggingMode === 'rotate') {
+        btn.classList.add('active');
+        btn.textContent = '🔀 Rotation';
+        modeSpan.textContent = '🔀 Rotation';
+    } else {
+        btn.classList.remove('active');
+        btn.textContent = '🔄 Déplac.';
+        modeSpan.textContent = 'Caméra/Déplac.';
+    }
+}
+
+// --- Boucle d'animation (render + UI FPS/pos/rot) ---
+let fps = 0, frames = 0, fpsTime = Date.now();
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    frames++;
+    if (Date.now() >= fpsTime + 1000) {
+        fps = frames;
+        document.getElementById('fps').textContent = fps;
+        frames = 0;
+        fpsTime = Date.now();
+    }
+
+    if (Math.abs(zoom) > 0.001) {
+        const dist = Math.sqrt(camera.position.x ** 2 + camera.position.y ** 2 + camera.position.z ** 2);
+        const newDist = Math.max(5, Math.min(30, dist + zoom * 50));
+        const dir = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z).normalize();
+        camera.position.copy(dir.multiplyScalar(newDist));
+        camera.lookAt(0, 0, 0);
+        zoom *= 0.9;
+    }
+
+    const pos = selected ? selected.position : camera.position;
+    document.getElementById('pos').textContent = `${pos.x.toFixed(1)},${pos.y.toFixed(1)},${pos.z.toFixed(1)}`;
+
+    if (selected) {
+        const rotDeg = (selected.userData.rotY * 180 / Math.PI).toFixed(0);
+        document.getElementById('rot').textContent = `${rotDeg}°`;
+    } else {
+        document.getElementById('rot').textContent = '0°';
+    }
+
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+updateCount();
+</script>
+
+</body>
+</html>

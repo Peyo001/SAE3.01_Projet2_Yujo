@@ -1,5 +1,6 @@
 <?php
 require_once "Dao.class.php";
+require_once __DIR__ . "/../Class/ObjetRoom.class.php";
     /**
      * Classe RoomDao
      * 
@@ -180,19 +181,167 @@ require_once "Dao.class.php";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
             $stmt->execute();
-
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Chaque ligne correspond à un Objet, pas à une Room : on hydrate manuellement
             $objets = [];
             foreach ($rows as $row) {
                 $objets[] = new Objet(
-                    isset($row['idObjet']) ? (int)$row['idObjet'] : null,
+                    (int)$row['idObjet'],
                     $row['description'] ?? null,
                     $row['modele3dPath'] ?? null,
-                    isset($row['prix']) ? (int)$row['prix'] : null,
+                    (int)$row['prix'],
                     isset($row['idRoom']) ? (int)$row['idRoom'] : null
                 );
             }
+
             return $objets;
+        }
+
+        /**
+         * Récupère tous les objets d'une room avec leurs positions 3D.
+         * 
+         * Cette méthode récupère les objets avec leurs coordonnées de position, rotation et échelle.
+         * 
+         * @param int $idRoom Identifiant de la room
+         * @return ObjetRoom[] Tableau d'objets ObjetRoom avec positions 3D
+         */
+        public function findObjetsRoomAvecPositions(int $idRoom): array {
+            $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix, 
+                           p.idRoom, p.positionX, p.positionY, p.positionZ,
+                           p.rotationX, p.rotationY, p.rotationZ, p.scale, p.dateAjout
+                    FROM OBJET o
+                    INNER JOIN POSSEDER p ON p.idObjet = o.idObjet
+                    WHERE p.idRoom = :idRoom";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $objets = [];
+            foreach ($rows as $row) {
+                $objets[] = new ObjetRoom(
+                    (int)$row['idObjet'],
+                    $row['description'] ?? null,
+                    $row['modele3dPath'] ?? null,
+                    (int)$row['prix'],
+                    (int)$row['idRoom'],
+                    (float)($row['positionX'] ?? 0.0),
+                    (float)($row['positionY'] ?? 0.0),
+                    (float)($row['positionZ'] ?? 0.0),
+                    (float)($row['rotationX'] ?? 0.0),
+                    (float)($row['rotationY'] ?? 0.0),
+                    (float)($row['rotationZ'] ?? 0.0),
+                    (float)($row['scale'] ?? 1.0)
+                );
+            }
+
+            return $objets;
+        }
+
+        /**
+         * Ajoute un objet acheté à une room avec sa position 3D.
+         * 
+         * @param int $idRoom Identifiant de la room
+         * @param int $idObjet Identifiant de l'objet
+         * @param float $positionX Position X (défaut: 0)
+         * @param float $positionY Position Y (défaut: 0)
+         * @param float $positionZ Position Z (défaut: 0)
+         * @param float $rotationX Rotation X (défaut: 0)
+         * @param float $rotationY Rotation Y (défaut: 0)
+         * @param float $rotationZ Rotation Z (défaut: 0)
+         * @param float $scale Échelle (défaut: 1.0)
+         * @return bool True si l'ajout a réussi
+         */
+        public function ajouterObjetAvecPosition(
+            int $idRoom, 
+            int $idObjet, 
+            float $positionX = 0.0, 
+            float $positionY = 0.0, 
+            float $positionZ = 0.0,
+            float $rotationX = 0.0,
+            float $rotationY = 0.0,
+            float $rotationZ = 0.0,
+            float $scale = 1.0
+        ): bool {
+            $sql = "INSERT INTO POSSEDER (idRoom, idObjet, positionX, positionY, positionZ, rotationX, rotationY, rotationZ, scale) 
+                    VALUES (:idRoom, :idObjet, :positionX, :positionY, :positionZ, :rotationX, :rotationY, :rotationZ, :scale)
+                    ON DUPLICATE KEY UPDATE 
+                        positionX = :positionX, positionY = :positionY, positionZ = :positionZ,
+                        rotationX = :rotationX, rotationY = :rotationY, rotationZ = :rotationZ,
+                        scale = :scale";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+            $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+            $stmt->bindValue(':positionX', $positionX);
+            $stmt->bindValue(':positionY', $positionY);
+            $stmt->bindValue(':positionZ', $positionZ);
+            $stmt->bindValue(':rotationX', $rotationX);
+            $stmt->bindValue(':rotationY', $rotationY);
+            $stmt->bindValue(':rotationZ', $rotationZ);
+            $stmt->bindValue(':scale', $scale);
+            
+            return $stmt->execute();
+        }
+
+        /**
+         * Met à jour la position d'un objet dans une room.
+         * 
+         * @param int $idRoom Identifiant de la room
+         * @param int $idObjet Identifiant de l'objet
+         * @param float $positionX Position X
+         * @param float $positionY Position Y
+         * @param float $positionZ Position Z
+         * @param float $rotationX Rotation X
+         * @param float $rotationY Rotation Y
+         * @param float $rotationZ Rotation Z
+         * @param float $scale Échelle
+         * @return bool True si la mise à jour a réussi
+         */
+        public function updateObjetPosition(
+            int $idRoom,
+            int $idObjet,
+            float $positionX,
+            float $positionY,
+            float $positionZ,
+            float $rotationX,
+            float $rotationY,
+            float $rotationZ,
+            float $scale
+        ): bool {
+            $sql = "UPDATE POSSEDER 
+                    SET positionX = :positionX, positionY = :positionY, positionZ = :positionZ,
+                        rotationX = :rotationX, rotationY = :rotationY, rotationZ = :rotationZ,
+                        scale = :scale
+                    WHERE idRoom = :idRoom AND idObjet = :idObjet";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+            $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+            $stmt->bindValue(':positionX', $positionX);
+            $stmt->bindValue(':positionY', $positionY);
+            $stmt->bindValue(':positionZ', $positionZ);
+            $stmt->bindValue(':rotationX', $rotationX);
+            $stmt->bindValue(':rotationY', $rotationY);
+            $stmt->bindValue(':rotationZ', $rotationZ);
+            $stmt->bindValue(':scale', $scale);
+            
+            return $stmt->execute();
+        }
+
+        /**
+         * Retire un objet d'une room.
+         * 
+         * @param int $idRoom Identifiant de la room
+         * @param int $idObjet Identifiant de l'objet
+         * @return bool True si la suppression a réussi
+         */
+        public function retirerObjetDeRoom(int $idRoom, int $idObjet): bool {
+            $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idRoom = :idRoom AND idObjet = :idObjet");
+            $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+            $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
+            return $stmt->execute();
         }
 
         /**

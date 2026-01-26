@@ -207,5 +207,72 @@ class AchatDao extends Dao
         }
         return $ids;
     }
+
+    /**
+     * Récupère tous les objets achetés par un utilisateur avec leurs détails complets.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur
+     * @return Objet[] Tableau d'objets achetés
+     */
+    public function findObjetsAchetesAvecDetails(int $idUtilisateur): array
+    {
+        $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix
+                FROM OBJET o
+                INNER JOIN ACHETER a ON o.idObjet = a.idObjet
+                WHERE a.idUtilisateur = :idUtilisateur
+                ORDER BY a.dateAchat DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $objets = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $objets[] = new Objet(
+                (int)$row['idObjet'],
+                $row['description'],
+                $row['modele3dPath'],
+                (int)$row['prix'],
+                null
+            );
+        }
+        return $objets;
+    }
+
+    /**
+     * Récupère les objets achetés par un utilisateur qui ne sont pas encore dans sa room.
+     * 
+     * @param int $idUtilisateur Identifiant de l'utilisateur
+     * @param int $idRoom Identifiant de la room
+     * @return Objet[] Tableau d'objets disponibles pour placement
+     */
+    public function findObjetsAchetesNonPlaces(int $idUtilisateur, int $idRoom): array
+    {
+        $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix
+                FROM OBJET o
+                INNER JOIN ACHETER a ON o.idObjet = a.idObjet
+                WHERE a.idUtilisateur = :idUtilisateur
+                AND o.idObjet NOT IN (
+                    SELECT idObjet FROM POSSEDER WHERE idRoom = :idRoom
+                )
+                ORDER BY a.dateAchat DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
+        $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $objets = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $objets[] = new Objet(
+                (int)$row['idObjet'],
+                $row['description'],
+                $row['modele3dPath'],
+                (int)$row['prix'],
+                null
+            );
+        }
+        return $objets;
+    }
 }
 ?>
