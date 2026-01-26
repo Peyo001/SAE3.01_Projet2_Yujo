@@ -24,6 +24,18 @@
                             <textarea class="form-control" id="description" name="description" rows="5" placeholder="Décrivez le but de ce groupe..." maxlength="1000">{{ donnees.description|default('') }}</textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="confidentialite" class="form-label">Confidentialité <span class="text-danger">*</span></label>
+                            <select class="form-select" id="confidentialite" name="confidentialite" required>
+                                <option value="public" {% if donnees.confidentialite|default('public') == 'public' %}selected{% endif %}>
+                                    Public - Visible par tous
+                                </option>
+                                <option value="prive" {% if donnees.confidentialite|default('public') == 'prive' %}selected{% endif %}>
+                                    Privé - Visible uniquement par les membres
+                                </option>
+                            </select>
+                        </div>
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg">Créer le groupe</button>
                         </div>
