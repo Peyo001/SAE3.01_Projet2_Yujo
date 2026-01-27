@@ -134,7 +134,7 @@ class Controller
     }
 
     /**
-    /**
+    
      * @brief Retourne les données transmises via le protocole GET.
      *
      * @return array Données GET.
@@ -194,4 +194,34 @@ class Controller
     {
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
     }
+
+    /**
+     * @brief Vérifie que l'utilisateur est connecté.
+     * 
+     * Si l'utilisateur n'est pas connecté, le redirige vers la page de connexion
+     * et arrête l'exécution du script.
+     * 
+     * Usage:
+     * Dans chaque contrôleur au début de la méthode :
+     * public function maMethode() {
+     *     $this->requireUserConnected();
+     *     // Le reste du code...
+     * }
+     * 
+     * @return void Arrête l'exécution si l'utilisateur n'est pas connecté.
+     */
+    protected function retourPageConnexion(): int
+    {
+        // Vérifier si l'utilisateur est connecté (la session doit contenir son ID)
+        if (!isset($_SESSION['idUtilisateur']) || empty($_SESSION['idUtilisateur'])) {
+            // Rediriger vers la page de connexion
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit();
+        }
+        else {
+            // L'utilisateur est connecté, continuer l'exécution normale
+            return $_SESSION['idUtilisateur'];
+        }
+    }
+
 }

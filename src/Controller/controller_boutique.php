@@ -28,30 +28,27 @@ class ControllerBoutique extends Controller
 	}
 
 	/**
-	 * @brief Affiche la boutique avec tous les objets et le solde utilisateur.
-	 * Récupère les objets via ObjetDao.
-	 * Récupère le solde YuPoints de l'utilisateur connecté via UtilisateurDao.
-	 * Récupère les objets déjà achetés par l'utilisateur via AchatDao.
-	 * Rend la vue 'boutique.twig' avec les données nécessaires.
+	 * @brief Affiche la page de la boutique avec les objets disponibles et le solde YuPoints de l'utilisateur.
+	 * Vérifie que l'utilisateur est connecté.
 	 * 
 	 * @return void
 	 */
 	public function afficher(): void
 	{
-		$objetDao = new ObjetDao($this->getPdo());
-		$objets = $objetDao->findAll();
-
+		$objetsManager = new ObjetDao($this->getPdo());
+		$objets = $objetsManager->findAll();
 		$yuPoints = null;
-		$idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
-		$objetPossedeParID = [];
-		if ($idUtilisateur) {
-			$utilisateurDao = new UtilisateurDao($this->getPdo());
-			$utilisateur = $utilisateurDao->find((int)$idUtilisateur);
-			$yuPoints = $utilisateur ? $utilisateur->getYuPoints() : null;
-			$achatDao = new AchatDao($this->getPdo());
-			$objetPossedeParID = $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur);
-		}
+		$idUtilisateur = $this->retourPageConnexion();
 
+		$objetPossedeParID = [];
+		
+		$utilisateurDao = new UtilisateurDao($this->getPdo());
+		$utilisateur = $utilisateurDao->find((int)$idUtilisateur);
+		$yuPoints = $utilisateur ? $utilisateur->getYuPoints() : null;
+		$achatDao = new AchatDao($this->getPdo());
+		$objetPossedeParID = $achatDao->listObjetsAchetesByUtilisateur((int)$idUtilisateur);
+		
+		
 		echo $this->getTwig()->render('boutique.twig', [
 			'objets' => $objets,
 			'yuPoints' => $yuPoints,
@@ -74,11 +71,7 @@ class ControllerBoutique extends Controller
 			exit;
 		}
 
-		$idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
-		if (!$idUtilisateur) {
-			echo "Vous devez être connecté pour acheter.";
-			return;
-		}
+		$idUtilisateur = $this->retourPageConnexion();
 
 		$idObjet = isset($_POST['idObjet']) ? (int)$_POST['idObjet'] : 0;
 		if ($idObjet <= 0) {
@@ -176,7 +169,7 @@ class ControllerBoutique extends Controller
 			exit;
 		}
 
-		$idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+		$idUtilisateur = $this->retourPageConnexion();
 		if (!$idUtilisateur) {
 			echo "Vous devez être connecté pour acheter des YuPoints.";
 			return;
