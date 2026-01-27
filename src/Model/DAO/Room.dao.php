@@ -191,7 +191,8 @@ require_once __DIR__ . "/../Class/ObjetRoom.class.php";
                     $row['description'] ?? null,
                     $row['modele3dPath'] ?? null,
                     (int)$row['prix'],
-                    isset($row['idRoom']) ? (int)$row['idRoom'] : null
+                    isset($row['idRoom']) ? (int)$row['idRoom'] : null,
+                    $row['image'] ?? null
                 );
             }
 

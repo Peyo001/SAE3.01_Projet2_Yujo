@@ -215,6 +215,15 @@ function createObjet3D(objData) {
                 child.receiveShadow = true;
             }
         });
+
+        // Aligne la base de l'objet sur le sol si le bounding box passe sous y=0
+        mesh.updateMatrixWorld(true);
+        const bbox = new THREE.Box3().setFromObject(mesh);
+        if (bbox.min.y < 0) {
+            mesh.position.y -= bbox.min.y;
+            mesh.updateMatrixWorld(true);
+        }
+
         mesh.userData = { 
             idObjet: objData.idObjet, 
             description: objData.description,

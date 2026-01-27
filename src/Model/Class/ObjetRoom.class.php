@@ -50,6 +50,7 @@ class ObjetRoom extends Objet {
         ?string $modele3dPath,
         ?int $prix,
         ?int $idRoom,
+        ?string $image = null,
         float $positionX = 0.0,
         float $positionY = 0.0,
         float $positionZ = 0.0,
@@ -59,7 +60,7 @@ class ObjetRoom extends Objet {
         float $scale = 1.0,
         ?string $dateAjout = null
     ) {
-        parent::__construct($idObjet, $description, $modele3dPath, $prix, $idRoom);
+        parent::__construct($idObjet, $description, $modele3dPath, $prix, $idRoom, $image);
         $this->positionX = $positionX;
         $this->positionY = $positionY;
         $this->positionZ = $positionZ;

@@ -19,6 +19,10 @@
         private ?string $modele3dPath;
         // Prix de l'objet
         private ?int $prix;
+        // Identifiant de la room
+        private ?int $idRoom;
+        // Image de l'objet
+        private ?string $image;
     
         /**
          * Constructeur de la classe Objet.
@@ -30,12 +34,15 @@
          * @param ?string $modele3dPath Chemin vers le modèle 3D de l'objet (peut être nul si non défini).
          * @param ?int $prix Prix de l'objet (peut être nul si non défini).
          * @param ?int $idRoom Identifiant de la room dans laquelle l'objet est disponible (peut être nul si non défini).
+         * @param ?string $image Image (URL ou chemin) associée à l'objet (peut être nulle).
          */
-        public function __construct(?int $idObjet, ?string $description, ?string $modele3dPath, ?int $prix, ?int $idRoom) {
+        public function __construct(?int $idObjet, ?string $description, ?string $modele3dPath, ?int $prix, ?int $idRoom = null, ?string $image = null) {
             $this->setIdObjet($idObjet);
             $this->setDescription($description);
             $this->setModele3dPath($modele3dPath);
             $this->setPrix($prix);
+            $this->setIdRoom($idRoom);
+            $this->setImage($image);
         }
 
 
@@ -76,6 +83,24 @@
         public function getPrix(): ?int {
             return $this->prix;
         }
+
+        /**
+         * Récupère l'identifiant de la room.
+         * 
+         * @return ?int L'identifiant de la room, ou null si non défini.
+         */
+        public function getIdRoom(): ?int {
+            return $this->idRoom;
+        }
+
+        /**
+         * Récupère l'image de l'objet.
+         * 
+         * @return ?string L'image de l'objet, ou null si non définie.
+         */
+        public function getImage(): ?string {
+            return $this->image;
+        }
         // Setters
 
         /**
@@ -114,4 +139,21 @@
             $this->prix = $prix;
         }   
 
+        /**
+         * Définit l'identifiant de la room dans laquelle l'objet est disponible.
+         * 
+         * @param ?int $idRoom Identifiant de la room.
+         */
+        public function setIdRoom(?int $idRoom): void {
+            $this->idRoom = $idRoom;
+        }
+
+        /**
+         * Définit l'image de l'objet.
+         * 
+         * @param ?string $image L'image de l'objet à définir.
+         */ 
+        public function setImage(?string $image): void {
+            $this->image = $image;
+        }
     }
