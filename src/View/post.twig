@@ -9,7 +9,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     {% set auteur = (utilisateurs is defined) ? utilisateurs[post.idAuteur]|default(null) : null %}
                     <div class="d-flex align-items-center gap-2">
-                        {% set avatarAuteur = (auteur and auteur.personnalisation) ? '../public/' ~ auteur.personnalisation : null %}
+                        {% set avatarAuteur = (auteur and auteur.personnalisation) ? '/' ~ auteur.personnalisation : null %}
                         <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
                             {% if avatarAuteur %}
                                 <img src="{{ avatarAuteur }}" alt="Avatar de {{ auteur.pseudo|default('auteur') }}" style="width:100%;height:100%;object-fit:cover;">

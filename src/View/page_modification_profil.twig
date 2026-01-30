@@ -36,7 +36,7 @@
                     {% if utilisateur.personnalisation %}
                         <div class="mt-2">
                             <small class="text-muted">Photo actuelle :</small><br>
-                            <img src="../public/{{ utilisateur.personnalisation }}" alt="Photo de profil" class="img-thumbnail" style="max-width: 140px;">
+                            <img src="/{{ utilisateur.personnalisation }}" alt="Photo de profil" class="img-thumbnail" style="max-width: 140px;">
                         </div>
                     {% endif %}
                     <small class="text-muted">Formats acceptés : JPG, PNG, WEBP. Taille max 2 Mo.</small>

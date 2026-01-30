@@ -61,7 +61,7 @@
             {% for ami in amis %}
                 <div class="text-center">
                     {% set amiData = utilisateurs[ami.idUtilisateur2]|default(null) %}
-                    {% set avatarAmi = (amiData and amiData.personnalisation) ? '../public/' ~ amiData.personnalisation : null %}
+                    {% set avatarAmi = (amiData and amiData.personnalisation) ? '/' ~ amiData.personnalisation : null %}
                     <a href="index.php?controleur=utilisateur&methode=afficherProfilPublic&id={{ ami.idUtilisateur2 }}" class="text-decoration-none text-body">
                         <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white mb-1 overflow-hidden"
                              style="width:60px;height:60px;">
@@ -92,7 +92,7 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div class="d-flex align-items-center gap-2">
                                     {% set auteur = utilisateurs[post.idAuteur]|default(null) %}
-                                    {% set avatarAuteur = (auteur and auteur.personnalisation) ? '../public/' ~ auteur.personnalisation : null %}
+                                    {% set avatarAuteur = (auteur and auteur.personnalisation) ? '/' ~ auteur.personnalisation : null %}
                                     <a href="index.php?controleur=utilisateur&methode=afficherProfilPublic&id={{ post.idAuteur }}" class="d-flex align-items-center gap-2 text-decoration-none text-body">
                                         <div class="rounded-circle bg-secondary overflow-hidden" style="width:36px;height:36px;">
                                             {% if avatarAuteur %}

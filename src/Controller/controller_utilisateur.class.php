@@ -694,7 +694,8 @@ class ControllerUtilisateur extends Controller
 
             if (isset($typesAutorises[$typeMime]) && $_FILES['photo_profil']['size'] <= 2 * 1024 * 1024) {
                 $extension = $typesAutorises[$typeMime];
-                $dossierUpload = __DIR__ . '/../../public/uploads/imageProfil/';
+                // Utiliser la racine du document (compatible local et hébergé)
+                $dossierUpload = $_SERVER['DOCUMENT_ROOT'] . '/uploads/imageProfil/';
                 if (!is_dir($dossierUpload)) {
                     @mkdir($dossierUpload, 0775, true);
                 }
