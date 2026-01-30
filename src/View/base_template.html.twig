@@ -1,85 +1,57 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-        <script src="../node_modules/tarteaucitronjs/tarteaucitron.min.js"></script>
-
-        <script type="text/javascript">
-        tarteaucitron.init({
-    	  "privacyUrl": "", /* Url de la politique de confidentialité */
-          "bodyPosition": "top", /* top place le bandeau de consentement au début du code html, mieux pour l'accessibilité */
-
-    	  "hashtag": "#tarteaucitron", /* Hashtag qui permet d'ouvrir le panneau de contrôle  */
-    	  "cookieName": "tarteaucitron", /* Nom du cookie (uniquement lettres et chiffres) */
-    
-    	  "orientation": "middle", /* Position de la bannière (top - bottom - popup - banner) */
-       
-          "groupServices": true, /* Grouper les services par catégorie */
-          "showDetailsOnClick": true, /* Cliquer pour ouvrir la description */
-          "serviceDefaultState": "wait", /* Statut par défaut (true - wait - false) */
-                           
-    	  "showAlertSmall": false, /* Afficher la petite bannière en bas à droite */
-    	  "cookieslist": false, /* Afficher la liste des cookies via une mini bannière */
-           "cookieslistEmbed": false, /* Afficher la liste des cookies dans le panneau de contrôle */
-                           
-          "closePopup": true, /* Afficher un X pour fermer la bannière */
-
-          "showIcon": true, /* Afficher un cookie pour ouvrir le panneau */
-          //"iconSrc": "", /* Optionnel: URL ou image en base64 */
-          "iconPosition": "BottomRight", /* Position de l'icons: (BottomRight - BottomLeft - TopRight - TopLeft) */
-
-    	  "adblocker": false, /* Afficher un message si un Adblocker est détecté */
-                           
-          "DenyAllCta" : true, /* Afficher le bouton Tout refuser */
-          "AcceptAllCta" : true, /* Afficher le bouton Tout accepter */
-          "highPrivacy": true, /* Attendre le consentement */
-          "alwaysNeedConsent": false, /* Demander le consentement même pour les services "Privacy by design" */
-                           
-    	  "handleBrowserDNTRequest": false, /* Refuser tout par défaut si Do Not Track est activé sur le navigateur */
-
-    	  "removeCredit": false, /* Retirer le lien de crédit vers tarteaucitron.io */
-    	  "moreInfoLink": true, /* Afficher le lien En savoir plus */
-
-          "useExternalCss": false, /* Mode expert : désactiver le chargement des fichiers .css tarteaucitron */
-          "useExternalJs": false, /* Mode expert : désactiver le chargement des fichiers .js tarteaucitron */
-
-    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Optionnel: domaine principal pour partager le consentement avec des sous domaines */
-                          
-          "readmoreLink": "", /* Changer le lien En savoir plus par défaut */
-
-          "mandatory": true, /* Afficher un message pour l'utilisation de cookies obligatoires */
-          "mandatoryCta": false, /* Afficher un bouton pour les cookies obligatoires (déconseillé) */
-    
-          //"customCloserId": "", /* Optionnel a11y: ID personnalisé pour ouvrir le panel */
-          
-          "googleConsentMode": true, /* Activer le Google Consent Mode v2 pour Google ads & GA4 */
-          "bingConsentMode": true, /* Activer le Bing Consent Mode pour Clarity & Bing Ads */
-          "pianoConsentMode": true, /* Activer le Consent Mode pour Piano Analytics */
-          "pianoConsentModeEssential": false, /* Activer par défaut le mode Essential de Piano */
-          "softConsentMode": false, /* Soft consent mode (le consentement est requis pour charger les tags) */
-
-          "dataLayer": false, /* Envoyer un événement dans dataLayer avec le statut des services */
-          "serverSide": false, /* Server side seulement, les tags ne sont pas chargé côté client */
-          
-          "partnersList": true /* Afficher le détail du nombre de partenaires sur la bandeau */
-        });
-        </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    
     <link href="assets/css/theme.css" rel="stylesheet">
-    <!-- Tarte au Citron - Cookie Consent Manager -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/AmauriC/tarteaucitron.js@latest/tarteaucitron.css">
-    {% if googleAnalyticsId is defined and googleAnalyticsId %}
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);} 
-            gtag('js', new Date());
-            gtag('config', '{{ googleAnalyticsId }}');
-        </script>
-    {% endif %}
+    
+    <link rel="stylesheet" type="text/css" href="/node_modules/tarteaucitronjs/tarteaucitron.css">
+
+    <script src="/node_modules/tarteaucitronjs/tarteaucitron.min.js"></script>
+
+    <script type="text/javascript">
+        tarteaucitron.init({
+            "resourcePath": "assets/tarteaucitronjs/",
+
+            "privacyUrl": "",
+            "bodyPosition": "top",
+            "hashtag": "#tarteaucitron",
+            "cookieName": "tarteaucitron",
+            "orientation": "middle",
+            "groupServices": true,
+            "showDetailsOnClick": true,
+            "serviceDefaultState": "wait",
+            "showAlertSmall": false,
+            "cookieslist": false,
+            "closePopup": true,
+            "showIcon": true,
+            "iconPosition": "TopRight",
+            "adblocker": false,
+            "DenyAllCta" : true,
+            "AcceptAllCta" : true,
+            "highPrivacy": true,
+            "handleBrowserDNTRequest": false,
+            "removeCredit": false,
+            "moreInfoLink": true,
+            "useExternalCss": false,
+            "useExternalJs": false,
+            "mandatory": true,
+            "googleConsentMode": true,
+            "partnersList": true
+        });
+
+        /* Configuration Google Analytics */
+        {% if googleAnalyticsId is defined and googleAnalyticsId %}
+            tarteaucitron.user.gtagUa = '{{ googleAnalyticsId }}';
+            (tarteaucitron.job = tarteaucitron.job || []).push('gtag');
+        {% endif %}
+    </script>
 </head>
 <body>
 
@@ -93,22 +65,22 @@
 
 <footer class="bottom-nav fixed-bottom py-2" style="background: linear-gradient(135deg, #eb3f73 0%, #c12458 45%, #2c3696 100%);">
     <nav class="d-flex justify-content-around align-items-center">
-        <a href="index.php?controleur=groupe&methode=lister"><img src="../public/assets/icons/person_3_blanc.svg" style="width: 28px; height: 28px;" alt="Groupes"></a>
-        <a href="index.php?controleur=utilisateur&methode=afficherProfil"><img src="../public/assets/icons/person_blanc.svg" style="width: 28px; height: 28px;" alt="Profil"></a>
-        <a href="index.php?controleur=accueil&methode=afficher"><img src="../public/assets/icons/logo_yujo.png" style="width: 35px; height: 35px;" alt="Accueil"></a>
-        <a href="index.php?controleur=boutique&methode=afficher"><img src="../public/assets/icons/shop_blanc.svg" style="width: 28px; height: 28px;" alt="Boutique"></a>
-        <a href="index.php?controleur=parametre&methode=afficherParametre"><img src="../public/assets/icons/settings_blanc.svg" style="width: 28px; height: 28px;" alt="Paramètres"></a>
+        <a href="index.php?controleur=groupe&methode=lister"><img src="assets/icons/person_3_blanc.svg" style="width: 28px; height: 28px;" alt="Groupes"></a>
+        <a href="index.php?controleur=utilisateur&methode=afficherProfil"><img src="assets/icons/person_blanc.svg" style="width: 28px; height: 28px;" alt="Profil"></a>
+        <a href="index.php?controleur=accueil&methode=afficher"><img src="assets/icons/logo_yujo.png" style="width: 35px; height: 35px;" alt="Accueil"></a>
+        <a href="index.php?controleur=boutique&methode=afficher"><img src="assets/icons/shop_blanc.svg" style="width: 28px; height: 28px;" alt="Boutique"></a>
+        <a href="index.php?controleur=parametre&methode=afficherParametre"><img src="assets/icons/settings_blanc.svg" style="width: 28px; height: 28px;" alt="Paramètres"></a>
     </nav>
 </footer>
 
-<!-- jQuery for DataTables -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/datatables/jquery.dataTables.min.js"></script>
+<script src="assets/datatables/dataTables.bootstrap5.min.js"></script>
 
 {% block scripts %}{% endblock %}
 
 </body>
 </html>
- 
