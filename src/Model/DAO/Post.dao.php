@@ -144,6 +144,29 @@ class PostDao extends Dao
         }
         return $posts;
     }
+
+    /**
+     * Récupère les posts publics (visibilité = 'public').
+     *
+     * @return Post[] Tableau des objets Post publics.
+     */
+    public function findPublic(): array
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE visibilite = 'public' ORDER BY datePublication DESC");
+        $stmt->execute();
+        $posts = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = new Post(
+                (int)$row['idPost'],
+                $row['contenu'],
+                $row['typePost'],
+                $row['visibilite'] ?? 'public',
+                $row['datePublication'],
+                (int)$row['idAuteur']
+            );
+        }
+        return $posts;
+    }
     
     /**
      * Récupère tous les posts d'une room spécifique.

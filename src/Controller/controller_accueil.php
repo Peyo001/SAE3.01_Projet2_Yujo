@@ -53,9 +53,20 @@ class ControllerAccueil extends Controller
             $idsAmis[] = (int)$idUtilisateur; // inclure les posts de l'utilisateur connecté
         }
 
-        // --- Récupérer uniquement les posts des amis ---
-        $posts = $postManager->findByAuteurs($idsAmis);
-        
+        // Mode public demandé ? (index.php?controleur=accueil&methode=afficher&public=1)
+        $publicMode = isset($_GET['public']) && $_GET['public'] === '1';
+
+        if ($publicMode) {
+            // --- Récupérer les posts publics ---
+            $posts = $postManager->findPublic();
+        } else {
+            // --- Récupérer uniquement les posts des amis ---
+            $posts = $postManager->findByAuteurs($idsAmis);
+        }
+
+        // Indicateur pour la vue si aucun post d'amis n'est présent
+        $aucunPostAmi = (!$publicMode && empty($posts));
+
         // Récupérer les quiz associés aux posts de type quiz
         $quizParPost = [];
         foreach ($posts as $post) {
@@ -94,7 +105,9 @@ class ControllerAccueil extends Controller
             'utilisateurs' => $utilisateurs,
             'quizParPost' => $quizParPost,
             'reponsesParPost' => $reponsesParPost,
-            'estInscritNewsletter' => $estInscritNewsletter
+            'estInscritNewsletter' => $estInscritNewsletter,
+            'publicMode' => $publicMode,
+            'aucunPostAmi' => $aucunPostAmi
         ]);
     }
 }
