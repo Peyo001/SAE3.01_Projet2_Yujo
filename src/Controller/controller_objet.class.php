@@ -181,12 +181,12 @@
         }
 
         /**
-         * Modifie un objet existant.
-         * 
-         * Cette méthode permet de modifier un objet existant. Si l'ID de l'objet est passé dans l'URL,
-         * le formulaire de modification est affiché. Si le formulaire est soumis en `POST`, les données sont
-         * récupérées, l'objet est mis à jour dans la base de données et l'utilisateur est redirigé vers la page de l'objet.
-         * 
+         * Supprime un objet.
+         *
+         * Supprime l'objet de la base de données et nettoie ses dépendances (entrées AJOUTER, POSSEDER, ACHAT).
+         * Si `idRoom` est fourni la redirection se fait vers la room concernée ; sinon, si un utilisateur est
+         * connecté la redirection se fait vers sa liste d'objets (`listerMesObjets`), sinon vers la liste générale.
+         *
          * @return void
          */
         public function modifier() {
@@ -231,9 +231,11 @@
             // Supprimer l'objet
             $managerObjet->supprimerObjet((int)$idObjet);
 
-            // Retour à la room si fournie, sinon liste générale
-            if ($idRoom) {
-                header("Location: index.php?controleur=room&methode=afficher&id=".$idRoom);
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+            // Retour à la liste des objets de l'utilisateur connecté, sinon liste générale
+            if ($idUtilisateur) {
+                header("Location: index.php?controleur=objet&methode=listerMesObjets");
             } else {
                 header("Location: index.php?controleur=objet&methode=lister");
             }
@@ -256,13 +258,22 @@
             $achatDao = new AchatDao($this->getPdo());
             $possederDao = new PossederDAO($this->getPdo());
 
+            // Récupérer le nom/description de l'objet pour le message flash
+            $managerObjet = new ObjetDao($this->getPdo());
+            $objetEntite = $managerObjet->find($idObjet);
+            $nomObjet = $objetEntite ? $objetEntite->getDescription() : null;
+
             // Retirer l'achat pour l'utilisateur courant
             $achatDao->supprimerParObjetEtUtilisateur((int)$idObjet, (int)$_SESSION['idUtilisateur']);
             // Retirer d'éventuelles placements dans des rooms de l'utilisateur (cleanup global)
             $possederDao->supprimerParObjet((int)$idObjet);
 
-            $_SESSION['flash_success'] = "Objet retiré de vos objets.";
-            header('Location: index.php?controleur=objet&methode=lister');
+            $_SESSION['flash_success'] = $nomObjet
+                ? "L'Objet " . $nomObjet . " a été retiré de vos objets."
+                : "Objet retiré de vos objets.";
+            
+            // L'utilisateur est déjà vérifié en début de méthode, on redirige simplement vers sa liste d'objets
+            header("Location: index.php?controleur=objet&methode=listerMesObjets");
             exit;
         }
     }
