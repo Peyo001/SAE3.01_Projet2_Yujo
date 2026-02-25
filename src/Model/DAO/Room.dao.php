@@ -441,8 +441,8 @@ require_once __DIR__ . "/../Class/ObjetRoom.class.php";
         * @param int $id L'identifiant de la room à supprimer.
         * @return bool Retourne true si la suppression a réussi, sinon false.
         */
-        public function supprimerRoomByCreateur(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM ROOM WHERE idCreateur = :id");
+        public function supprimerRoom(int $id): bool {
+            $stmt = $this->conn->prepare("DELETE FROM ROOM WHERE idRoom = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();

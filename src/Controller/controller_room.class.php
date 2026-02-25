@@ -224,9 +224,16 @@
             }
 
             $managerRoom = new RoomDao($this->getPdo());
-            $managerRoom->supprimerRoom($idRoom);
+            $managerRoom->supprimerRoom((int)$idRoom);
 
-            header("Location: index.php?controleur=room&methode=lister");
+            $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+            if ($idUtilisateur) {
+                header("Location: index.php?controleur=room&methode=lister&idCreateur=" . (int)$idUtilisateur);
+            } else {
+                header("Location: index.php?controleur=room&methode=lister");
+            }
+
             exit;
         }
 
