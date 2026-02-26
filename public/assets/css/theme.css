@@ -35,7 +35,7 @@ body {
 [data-bs-theme="dark"] .card {
   background-color: #111a2b;
   border-color: #4a5a79;
-  box-shadow: 0 .6rem 1.2rem rgba(0,0,0,.5);
+  box-shadow: 0 .6rem 1.2rem rgba(0,0,0,.35);
 }
 
 [data-bs-theme="dark"] .text-dark {
