@@ -80,6 +80,43 @@
 <script src="assets/datatables/jquery.dataTables.min.js"></script>
 <script src="assets/datatables/dataTables.bootstrap5.min.js"></script>
 
+<script>
+    (function () {
+        const THEME_STORAGE_KEY = 'yujo-theme';
+
+        const getPreferredTheme = () => {
+            const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            if (storedTheme === 'light' || storedTheme === 'dark') {
+                return storedTheme;
+            }
+
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+        };
+
+        applyTheme(getPreferredTheme());
+
+        document.addEventListener('click', function (event) {
+            const toggleTrigger = event.target.closest('[data-theme-toggle]');
+
+            if (!toggleTrigger) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light';
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            applyTheme(nextTheme);
+        });
+    })();
+</script>
+
 {% block scripts %}{% endblock %}
 
 </body>
