@@ -142,7 +142,10 @@
          */
         public function creer() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                echo $this->getTwig()->render('creation_room.twig');
+                $idCreateur = $_SESSION['idUtilisateur'] ?? null;
+                echo $this->getTwig()->render('creation_room.twig', [
+                    'idCreateur' => $idCreateur
+                ]);
                 return;
             }
 
