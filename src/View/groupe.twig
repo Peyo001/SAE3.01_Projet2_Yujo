@@ -15,7 +15,7 @@
                                 <h2 class="text-primary mb-1">{{ groupe.nomGroupe }}</h2>
                                 <p class="text-muted mb-3"><small>Créé le {{ groupe.dateCreation|date("d/m/Y à H:i") }}</small></p>
                             </div>
-                            <span class="badge {% if groupe.estPrive %}bg-danger{% else %}bg-info{% endif %}">
+                            <span class="badge visibility-badge {% if groupe.estPrive %}visibility-private{% else %}visibility-public{% endif %}">
                                 {% if groupe.estPrive %}Privé{% else %}Public{% endif %}
                             </span>
                         </div>
@@ -164,4 +164,34 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <style>
+        .visibility-badge {
+            font-weight: 700;
+            border-radius: 999px;
+            padding: .4rem .7rem;
+        }
+
+        .visibility-public {
+            background-color: rgba(var(--bs-primary-rgb), .15);
+            color: var(--yujo-primary);
+        }
+
+        .visibility-private {
+            background-color: rgba(233, 30, 99, .15);
+            color: var(--yujo-accent);
+        }
+
+        [data-bs-theme="dark"] .visibility-public {
+            background-color: rgba(159, 177, 255, .2);
+            color: #c7d2ff;
+        }
+
+        [data-bs-theme="dark"] .visibility-private {
+            background-color: rgba(233, 30, 99, .28);
+            color: #ffc0d6;
+        }
+    </style>
 {% endblock %}
