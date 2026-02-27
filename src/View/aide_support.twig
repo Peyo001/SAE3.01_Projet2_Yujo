@@ -1,0 +1,95 @@
+{% extends "base_template.html.twig" %}
+
+{% block title %}Aide & Support{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold text-primary">Aide & Support</h1>
+            <p class="text-muted">Retrouve les réponses aux questions les plus fréquentes sur Yujo.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="mb-3">FAQ Yujo</h5>
+
+                    <div class="accordion" id="faqYujo">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeadingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne" aria-expanded="true" aria-controls="faqOne">
+                                    Comment modifier mon profil ?
+                                </button>
+                            </h2>
+                            <div id="faqOne" class="accordion-collapse collapse show" aria-labelledby="faqHeadingOne" data-bs-parent="#faqYujo">
+                                <div class="accordion-body">
+                                    Va dans <strong>Paramètres</strong>, puis clique sur <strong>Modifier profil</strong>. Tu peux changer ton pseudo, ton email et ta photo.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeadingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo" aria-expanded="false" aria-controls="faqTwo">
+                                    Comment changer mon mot de passe ?
+                                </button>
+                            </h2>
+                            <div id="faqTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#faqYujo">
+                                <div class="accordion-body">
+                                    Dans <strong>Paramètres</strong>, ouvre la section <strong>Mot de passe</strong> et suis les étapes de mise à jour.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeadingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree" aria-expanded="false" aria-controls="faqThree">
+                                    Comment créer une room ?
+                                </button>
+                            </h2>
+                            <div id="faqThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#faqYujo">
+                                <div class="accordion-body">
+                                    Depuis ton profil, clique sur <strong>Rooms</strong>, puis <strong>+ Nouvelle room</strong>. Donne un nom à ta room et choisis sa visibilité.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeadingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour" aria-expanded="false" aria-controls="faqFour">
+                                    Je ne vois pas mes changements, que faire ?
+                                </button>
+                            </h2>
+                            <div id="faqFour" class="accordion-collapse collapse" aria-labelledby="faqHeadingFour" data-bs-parent="#faqYujo">
+                                <div class="accordion-body">
+                                    Rafraîchis la page avec un rechargement complet (<strong>Ctrl + F5</strong>) pour vider le cache du navigateur.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeadingFive">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFive" aria-expanded="false" aria-controls="faqFive">
+                                    Comment contacter le support ?
+                                </button>
+                            </h2>
+                            <div id="faqFive" class="accordion-collapse collapse" aria-labelledby="faqHeadingFive" data-bs-parent="#faqYujo">
+                                <div class="accordion-body">
+                                    Si la FAQ ne répond pas à ton problème, envoie-nous un message à <strong>support@yujo.fr</strong> en précisant ton pseudo et le souci rencontré.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="index.php?controleur=parametre&methode=afficherParametre" class="btn btn-outline-secondary">Retour aux paramètres</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
