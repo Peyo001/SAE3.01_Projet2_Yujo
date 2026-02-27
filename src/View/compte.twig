@@ -3,18 +3,224 @@
 {% block title %}Profil de {{ utilisateur.pseudo }}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Info du compte de {{ utilisateur.pseudo }}</h1>
-        <p><strong>Nom:</strong> {{ utilisateur.nom }}</p>
-        <p><strong>Prénom:</strong> {{ utilisateur.prenom }}</p>
-        <p><strong>Date de naissance:</strong> {{ utilisateur.dateNaissance }}</p>
-        <p><strong>Genre:</strong> {{ utilisateur.genre }}</p>
-        <p><strong>Pseudo:</strong> {{ utilisateur.pseudo }}</p>
-        <p><strong>Email:</strong> {{ utilisateur.email }}</p>
-        <p><strong>Type de compte:</strong> {{ utilisateur.typeCompte }}</p>
-        <p><strong>Premium:</strong> {% if utilisateur.estPremium %}Oui{% else %}Non{% endif %}</p>
-        <p><strong>Date d'inscription:</strong> {{ utilisateur.dateInscription }}</p>
-        <p><strong>yuPoints:</strong> {{ utilisateur.yuPoints }}</p>
+    <div class="container py-4 py-md-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                {% set avatarPath = utilisateur.personnalisation ? '/' ~ utilisateur.personnalisation : null %}
+
+                {% if flash_success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ flash_success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endif %}
+                {% if flash_error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ flash_error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endif %}
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4">
+                            <div class="account-avatar rounded-circle overflow-hidden d-flex align-items-center justify-content-center fw-bold text-white">
+                                {% if avatarPath %}
+                                    <img src="{{ avatarPath }}" alt="Avatar de {{ utilisateur.pseudo }}" class="w-100 h-100 object-fit-cover">
+                                {% else %}
+                                    {{ utilisateur.pseudo|first|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="text-center text-md-start w-100">
+                                <h1 class="h3 h2-md fw-bold text-primary mb-1">Mon compte</h1>
+                                <p class="text-muted mb-3">Consultez vos informations personnelles et votre statut Yujo.</p>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                                    <span class="badge {% if utilisateur.estPremium %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if utilisateur.estPremium %}Premium actif{% else %}Compte standard{% endif %}
+                                    </span>
+                                    <span class="badge bg-primary">{{ utilisateur.typeCompte|default('Utilisateur') }}</span>
+                                    <span class="badge bg-light text-dark border">{{ utilisateur.yuPoints|default(0) }} yuPoints</span>
+                                </div>
+                                <div class="mt-3 d-flex gap-2 justify-content-center justify-content-md-start">
+                                    {% if mode_edition %}
+                                        <a href="index.php?controleur=utilisateur&methode=afficherCompte" class="btn btn-outline-primary btn-sm">Voir mes informations</a>
+                                    {% else %}
+                                        <a href="index.php?controleur=parametre&methode=modifierProfil" class="btn btn-cta btn-sm">Modifier le profil</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if mode_edition %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h2 class="h5 section-title mb-3">Modifier mes informations</h2>
+                            <form action="index.php?controleur=utilisateur&methode=modifierProfil" method="POST" enctype="multipart/form-data">
+                                <div class="row g-3">
+                                    <div class="col-12 col-md-6">
+                                        <label for="nom" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="nom" name="nom" value="{{ utilisateur.nom }}" minlength="2" maxlength="150" pattern="^[a-zA-ZÀ-ÿ\'-]+$">
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="prenom" class="form-label">Prénom</label>
+                                        <input type="text" class="form-control" id="prenom" name="prenom" value="{{ utilisateur.prenom }}" minlength="2" maxlength="150" pattern="^[a-zA-ZÀ-ÿ\'-]+$" required>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="pseudo" class="form-label">Pseudo</label>
+                                        <input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ utilisateur.pseudo }}" minlength="3" maxlength="150" pattern="^[a-zA-Z0-9_]+$">
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ utilisateur.email }}" maxlength="255">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="photo_profil" class="form-label">Photo de profil</label>
+                                        <input type="file" class="form-control" id="photo_profil" name="photo_profil" accept="image/png, image/jpeg, image/webp">
+                                        {% if utilisateur.personnalisation %}
+                                            <div class="mt-2">
+                                                <small class="text-muted">Photo actuelle :</small><br>
+                                                <img src="/{{ utilisateur.personnalisation }}" alt="Photo de profil" class="img-thumbnail" style="max-width: 140px;">
+                                            </div>
+                                        {% endif %}
+                                        <small class="text-muted">Formats acceptés : JPG, PNG, WEBP. Taille max 2 Mo.</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-cta">Enregistrer les modifications</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <h2 class="h5 section-title mb-3">Identité</h2>
+                                <dl class="account-details mb-0">
+                                    <div class="account-row">
+                                        <dt>Nom</dt>
+                                        <dd>{{ utilisateur.nom|default('Non renseigné') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Prénom</dt>
+                                        <dd>{{ utilisateur.prenom|default('Non renseigné') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Date de naissance</dt>
+                                        <dd>{{ utilisateur.dateNaissance|default('Non renseignée') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Genre</dt>
+                                        <dd>{{ utilisateur.genre|default('Non renseigné') }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <h2 class="h5 section-title mb-3">Compte & sécurité</h2>
+                                <dl class="account-details mb-0">
+                                    <div class="account-row">
+                                        <dt>Pseudo</dt>
+                                        <dd>@{{ utilisateur.pseudo|default('inconnu') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Email</dt>
+                                        <dd class="text-break">{{ utilisateur.email|default('Non renseigné') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Date d'inscription</dt>
+                                        <dd>{{ utilisateur.dateInscription|default('Non renseignée') }}</dd>
+                                    </div>
+                                    <div class="account-row">
+                                        <dt>Premium</dt>
+                                        <dd>
+                                            {% if utilisateur.estPremium %}
+                                                <span class="badge bg-success">Oui</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Non</span>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <style>
+        .account-avatar {
+            width: 84px;
+            height: 84px;
+            background: linear-gradient(135deg, var(--yujo-primary) 0%, var(--yujo-accent) 100%);
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .account-details {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .account-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: .5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .account-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .account-row dt {
+            margin: 0;
+            color: var(--yujo-muted);
+            font-weight: 600;
+            min-width: 140px;
+        }
+
+        .account-row dd {
+            margin: 0;
+            text-align: right;
+            font-weight: 500;
+            color: #1a1f2b;
+        }
+
+        [data-bs-theme="dark"] .account-row {
+            border-bottom-color: #2b3853;
+        }
+
+        [data-bs-theme="dark"] .account-row dd {
+            color: #f5f7ff;
+        }
+
+        @media (max-width: 576px) {
+            .account-row {
+                flex-direction: column;
+                gap: .25rem;
+            }
+
+            .account-row dd {
+                text-align: left;
+            }
+        }
+    </style>
 {% endblock %}

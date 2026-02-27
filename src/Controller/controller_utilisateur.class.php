@@ -337,10 +337,7 @@ class ControllerUtilisateur extends Controller
      */
     public function afficherProfil(): void
     {
-         if (!isset($_SESSION['idUtilisateur'])) {
-            header('Location: index.php?controleur=utilisateur&methode=connexion');
-            exit;
-        }
+        $this->retourPageConnexion();
         
         $manager = new UtilisateurDao($this->getPdo());
         $postDao = new PostDao($this->getPdo());
@@ -356,13 +353,11 @@ class ControllerUtilisateur extends Controller
         $posts = $postDao->findPostsByAuteur($user->getIdUtilisateur());
         $rooms = $roomDao->findByCreateur($user->getIdUtilisateur());
         $reponseDao = new ReponseDao($this->getPdo());
-        // Mapping global des utilisateurs pour afficher les pseudos dans les commentaires
         $utilisateursAll = [];
         foreach ($manager->findAll() as $u) {
             $utilisateursAll[$u->getIdUtilisateur()] = $u;
         }
         
-        // Récupérer les quiz associés aux posts de type quiz
         $quizParPost = [];
         foreach ($posts as $post) {
             if ($post->getTypePost() === 'quiz') {
@@ -373,7 +368,6 @@ class ControllerUtilisateur extends Controller
             }
         }
         
-        // Récupérer les objets possédés par l'utilisateur
         $achats = $achatDao->findByUtilisateur($user->getIdUtilisateur());
         $objetsPossedes = [];
         foreach ($achats as $achat) {
@@ -383,7 +377,6 @@ class ControllerUtilisateur extends Controller
             }
         }
 
-        // Préparer un mapping des amis -> Utilisateur pour afficher les noms
         $utilisateursAmis = [];
         foreach ($amis as $ami) {
             $idAmi = $ami->getIdUtilisateur2();
@@ -393,12 +386,10 @@ class ControllerUtilisateur extends Controller
             }
         }
 
-        // Récupérer et consommer les messages flash
         $flashSuccess = $_SESSION['flash_success'] ?? null;
         $flashError = $_SESSION['flash_error'] ?? null;
         unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
-        // Récupérer les réponses par post pour affichage des commentaires
         $reponsesParPost = [];
         foreach ($posts as $p) {
             $reponsesParPost[$p->getIdPost()] = $reponseDao->findResponsesByPost($p->getIdPost());
@@ -655,21 +646,25 @@ class ControllerUtilisateur extends Controller
     
     public function afficherCompte(): void
     {
-         if (!isset($_SESSION['idUtilisateur'])) {
-            header('Location: index.php?controleur=utilisateur&methode=connexion');
-            exit;
-        }
+        $this->retourPageConnexion();
         
         $manager = new UtilisateurDao($this->getPdo());
         $user = $manager->find($_SESSION['idUtilisateur']);
+        $flashSuccess = $_SESSION['flash_success'] ?? null;
+        unset($_SESSION['flash_success']);
         
-        echo $this->getTwig()->render('compte.twig', ['utilisateur' => $user]);
+        echo $this->getTwig()->render('compte.twig', [
+            'utilisateur' => $user,
+            'flash_success' => $flashSuccess
+        ]);
     }
 
     public function modifierProfil(): void
     {
-        if (!isset($_SESSION['idUtilisateur'])) {
-            header('Location: index.php?controleur=utilisateur&methode=connexion');
+        $this->retourPageConnexion();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?controleur=parametre&methode=modifierProfil');
             exit;
         }
         
@@ -680,11 +675,13 @@ class ControllerUtilisateur extends Controller
         $nouveauNom = $_POST['nom'] ?? $utilisateur->getNom();
         $nouveauPrenom = $_POST['prenom'] ?? $utilisateur->getPrenom();
         $nouveauPseudo = $_POST['pseudo'] ?? $utilisateur->getPseudo();
+        $nouvelEmail = $_POST['email'] ?? $utilisateur->getEmail();
 
         // Mettre à jour l'objet utilisateur
         $utilisateur->setNom($nouveauNom);
         $utilisateur->setPrenom($nouveauPrenom);
         $utilisateur->setPseudo($nouveauPseudo);
+        $utilisateur->setEmail($nouvelEmail);
 
         // Gestion de l'upload de photo de profil (fichier image < 2 Mo)
         if (isset($_FILES['photo_profil']) && $_FILES['photo_profil']['error'] === UPLOAD_ERR_OK) {
@@ -711,8 +708,8 @@ class ControllerUtilisateur extends Controller
         // Enregistrer les modifications
         $manager->modifierUtilisateur($utilisateur);
 
-        // Rediriger vers le profil après modification
-        echo $this->getTwig()->render('compte.twig', ['utilisateur' => $utilisateur]);
+        $_SESSION['flash_success'] = 'Les informations du compte ont été mises à jour.';
+        header('Location: index.php?controleur=utilisateur&methode=afficherCompte&edit=1');
         exit;
     }
 

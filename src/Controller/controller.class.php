@@ -210,7 +210,7 @@ class Controller
      * 
      * @return void Arrête l'exécution si l'utilisateur n'est pas connecté.
      */
-    protected function retourPageConnexion(): int
+    protected function retourPageConnexion(): int   
     {
         // Vérifier si l'utilisateur est connecté (la session doit contenir son ID)
         if (!isset($_SESSION['idUtilisateur']) || empty($_SESSION['idUtilisateur'])) {
