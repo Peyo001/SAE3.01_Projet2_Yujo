@@ -62,7 +62,7 @@
                 
                   <button type="button" class="btn btn-outline-secondary w-100" disabled>Déjà possédé</button>
                 {% else %}
-                  <form method="post" action="index.php?controleur=boutique&methode=acheter" class="d-grid gap-2">
+                  <form method="post" action="index.php?controleur=boutique&methode=acheter" class="d-grid gap-2" onsubmit="return confirm('Confirmer l\'achat de « {{ objet.getDescription()|e('js') }} » pour {{ objet.getPrix() }} YuPoints ?');">
                     <input type="hidden" name="idObjet" value="{{ objet.getIdObjet() }}" />
                     <button type="submit" class="btn btn-primary" {% if not peutAcheter %}disabled{% endif %}>
                       {% if peutAcheter %}Acheter{% else %}Solde insuffisant{% endif %}

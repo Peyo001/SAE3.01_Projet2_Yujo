@@ -201,6 +201,23 @@ class ControllerParametre extends Controller
     }
 
     /**
+     * @brief Affiche la page d'aide et de support (FAQ)
+     *
+     * @return void
+     */
+    public function afficherAideSupport(): void
+    {
+        $idUtilisateur = $_SESSION['idUtilisateur'] ?? null;
+
+        if (!$idUtilisateur) {
+            header('Location: index.php?controleur=utilisateur&methode=connexion');
+            exit;
+        }
+
+        echo $this->getTwig()->render('aide_support.twig');
+    }
+
+    /**
      * @brief Affiche la page d'abonnement
      * 
      * @return void

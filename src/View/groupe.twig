@@ -4,9 +4,6 @@
 
 {% block content %}
     <div class="container py-4">
-        <div class="mb-3 d-flex justify-content-between align-items-center">
-            <a href="index.php?controleur=groupe&methode=lister" class="text-decoration-none">&larr; Retour aux groupes</a>
-        </div>
 
         <div class="row g-4">
             <!-- Colonne principale: infos du groupe + messages -->
@@ -33,9 +30,11 @@
                                     <a href="index.php?controleur=groupe&methode=quitterGroupe&id={{ groupe.idGroupe }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir quitter ce groupe ?');">
                                         <i class="bi bi-box-arrow-right"></i> Quitter le groupe
                                     </a>
+                                    <a href="index.php?controleur=groupe&methode=lister" class="btn btn-outline-secondary btn-sm">Retour à la liste des groupes</a>
                                 </div>
                             {% else %}
                                 <a href="index.php?controleur=groupe&methode=rejoindre&id={{ groupe.idGroupe }}" class="btn btn-primary btn-sm">Rejoindre ce groupe</a>
+                                <a href="index.php?controleur=groupe&methode=lister" class="btn btn-outline-secondary btn-sm">Retour à la liste des groupes</a>
                             {% endif %}
                         </div>
                     </div>

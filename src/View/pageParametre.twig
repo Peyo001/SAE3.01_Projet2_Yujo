@@ -26,19 +26,7 @@
                     <div class="card-body text-center">
                         <i class="fas fa-id-card fa-3x text-primary mb-3"></i>
                         <h5 class="card-title text-dark">Modifier profil</h5>
-                        <p class="card-text text-muted small">Changez votre avatar, bio et infos personnelles.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="index.php?controleur=parametre&methode=modifierConfidentialite" class="text-decoration-none">
-                <div class="card h-100 shadow-sm hover-effect">
-                    <div class="card-body text-center">
-                        <i class="fas fa-user-shield fa-3x text-success mb-3"></i>
-                        <h5 class="card-title text-dark">Confidentialité</h5>
-                        <p class="card-text text-muted small">Gérez qui peut voir vos publications et vos données.</p>
+                        <p class="card-text text-muted small">Changez vos informations personnelles.</p>
                     </div>
                 </div>
             </a>
@@ -125,8 +113,8 @@
                         
                         <form method="post" action="index.php?controleur=newsletter&methode=inscrire">
                             <div class="mb-3">
-                                <label class="form-label fw-semibold small">Votre adresse email *</label>
-                                <input type="email" name="email" class="form-control form-control-lg" placeholder="exemple@email.com" value="{{ user.email }}" required>
+                                <label for="newsletterEmail" class="form-label fw-semibold small">Votre adresse email *</label>
+                                <input id="newsletterEmail" type="email" name="email" class="form-control form-control-lg" placeholder="exemple@email.com" value="{{ user.email }}" required>
                             </div>
                             
                             <div class="form-check mb-3">
@@ -172,7 +160,7 @@
         </div>
 
         <div class="col-md-6 col-lg-4">
-            <a href="/help" class="text-decoration-none">
+            <a href="index.php?controleur=parametre&methode=afficherAideSupport" class="text-decoration-none">
                 <div class="card h-100 shadow-sm hover-effect">
                     <div class="card-body text-center">
                         <i class="fas fa-question-circle fa-2x text-secondary mb-2"></i>
