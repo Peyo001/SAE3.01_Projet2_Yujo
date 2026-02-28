@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
 
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <link href="/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="../node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
-    <link href="assets/css/theme.css" rel="stylesheet">
+    <link href="../public/assets/css/theme.css" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="/node_modules/tarteaucitronjs/tarteaucitron.css">
+    <link rel="stylesheet" type="text/css" href="../node_modules/tarteaucitronjs/css/tarteaucitron.css">
 
-    <script src="/node_modules/tarteaucitronjs/tarteaucitron.min.js"></script>
+    <script src="../node_modules/tarteaucitronjs/tarteaucitron.min.js"></script>
 
     <script type="text/javascript">
         tarteaucitron.init({
-            "resourcePath": "assets/tarteaucitronjs/",
+            "resourcePath": "../node_modules/tarteaucitronjs/",
 
             "privacyUrl": "",
             "bodyPosition": "top",
@@ -65,20 +65,20 @@
 
 <footer class="bottom-nav fixed-bottom py-2" style="background: linear-gradient(135deg, #eb3f73 0%, #c12458 45%, #2c3696 100%);">
     <nav class="d-flex justify-content-around align-items-center">
-        <a href="index.php?controleur=groupe&methode=lister"><img src="assets/icons/person_3_blanc.svg" style="width: 28px; height: 28px;" alt="Groupes"></a>
-        <a href="index.php?controleur=utilisateur&methode=afficherProfil"><img src="assets/icons/person_blanc.svg" style="width: 28px; height: 28px;" alt="Profil"></a>
-        <a href="index.php?controleur=accueil&methode=afficher"><img src="assets/icons/logo_yujo.png" style="width: 35px; height: 35px;" alt="Accueil"></a>
-        <a href="index.php?controleur=boutique&methode=afficher"><img src="assets/icons/shop_blanc.svg" style="width: 28px; height: 28px;" alt="Boutique"></a>
-        <a href="index.php?controleur=parametre&methode=afficherParametre"><img src="assets/icons/settings_blanc.svg" style="width: 28px; height: 28px;" alt="Paramètres"></a>
+        <a href="index.php?controleur=groupe&methode=lister"><img src="../public/assets/icons/person_3_blanc.svg" style="width: 28px; height: 28px;" alt="Groupes"></a>
+        <a href="index.php?controleur=utilisateur&methode=afficherProfil"><img src="../public/assets/icons/person_blanc.svg" style="width: 28px; height: 28px;" alt="Profil"></a>
+        <a href="index.php?controleur=accueil&methode=afficher"><img src="../public/assets/icons/logo_yujo.png" style="width: 35px; height: 35px;" alt="Accueil"></a>
+        <a href="index.php?controleur=boutique&methode=afficher"><img src="../public/assets/icons/shop_blanc.svg" style="width: 28px; height: 28px;" alt="Boutique"></a>
+        <a href="index.php?controleur=parametre&methode=afficherParametre"><img src="../public/assets/icons/settings_blanc.svg" style="width: 28px; height: 28px;" alt="Paramètres"></a>
     </nav>
 </footer>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
 
-<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="assets/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/datatables/dataTables.bootstrap5.min.js"></script>
+<script src="../node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="../node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
     (function () {

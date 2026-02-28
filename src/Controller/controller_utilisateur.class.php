@@ -47,13 +47,15 @@ class ControllerUtilisateur extends Controller
      * @brief Traite les données d'inscription utilisateur.
      * 
      * Valide les données du formulaire, crée un nouvel utilisateur et l'enregistre dans la base de données.
-     * En cas de succès, redirige vers la page de connexion.
+    * En cas de succès, connecte l'utilisateur puis redirige vers la page d'accueil.
      * En cas d'erreurs de validation, réaffiche le formulaire avec les messages d'erreur.
      * 
      * @return void
      */
     public function traiterInscription(): void
     {
+        $erreurs = [];
+
         // Définition des règles de validation
         $reglesValidation = [
             'nom' => [
@@ -182,14 +184,30 @@ class ControllerUtilisateur extends Controller
             $succes = $manager->creerUtilisateur($user);
             
             if ($succes) {
-                // Redirection vers la connexion après succès
-                header('Location: index.php?controleur=accueil&methode=afficher');
+                $utilisateurCree = $manager->findByEmail($email);
+                if ($utilisateurCree !== null) {
+                    session_regenerate_id(true);
+                    $_SESSION['idUtilisateur'] = $utilisateurCree->getIdUtilisateur();
+                    $_SESSION['pseudo'] = $utilisateurCree->getPseudo();
+                    $_SESSION['typeCompte'] = $utilisateurCree->getTypeCompte();
+                }
+
+                $urlRedirection = 'index.php?controleur=accueil&methode=afficher';
+                if (!headers_sent()) {
+                    header('Location: ' . $urlRedirection);
+                } else {
+                    echo '<script>window.location.href="' . $urlRedirection . '";</script>';
+                    echo '<noscript><meta http-equiv="refresh" content="0;url=' . $urlRedirection . '"></noscript>';
+                }
                 exit;
             } else {
-                throw new Exception("Erreur lors de la création de l'utilisateur.");
                 $erreurs = ["Une erreur est survenue lors de l'inscription. Veuillez réessayer."];
+                throw new Exception("Erreur lors de la création de l'utilisateur.");
             }
         } catch (Exception $e) {
+            if (empty($erreurs)) {
+                $erreurs[] = "Inscription impossible : " . $e->getMessage();
+            }
             echo $this->getTwig()->render('inscription.twig', [
                 'menu' => 'inscription',
                 'erreurs' => $erreurs,

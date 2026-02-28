@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion Yujo</title>
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/assets/css/theme.css">
 
     <style>
         body {
@@ -14,7 +15,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: var(--yujo-font-family);
         }
 
         .container-form {
@@ -45,7 +46,7 @@
 
         .card-header h2 {
             color: #ffffff;
-            font-size: 28px;
+            font-size: var(--yujo-font-size-h2);
             font-weight: 700;
             margin: 0;
             letter-spacing: 0.5px;
@@ -63,7 +64,7 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: var(--yujo-font-size-small);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -72,7 +73,7 @@
             border: 2px solid #e9ecef;
             border-radius: 8px;
             padding: 12px 15px;
-            font-size: 15px;
+            font-size: var(--yujo-font-size-body);
             transition: all 0.3s ease;
             background-color: #f8f9fa;
         }
@@ -87,12 +88,12 @@
         .btn-login {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #e53282 0%, #ff0080 100%);
-            border: none;
+            background: var(--yujo-accent);
+            border: 1px solid var(--yujo-accent);
             border-radius: 8px;
             color: #ffffff;
             font-weight: 700;
-            font-size: 16px;
+            font-size: var(--yujo-font-size-body);
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
@@ -100,7 +101,8 @@
         }
 
         .btn-login:hover {
-            background: linear-gradient(135deg, #d41470 0%, #e60070 100%);
+            background: #d61a58;
+            border-color: #d61a58;
             box-shadow: 0 5px 20px rgba(229, 50, 130, 0.4);
             transform: translateY(-2px);
             color: #ffffff;
@@ -203,7 +205,7 @@
     </div>
 </div>
 
-<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

@@ -1,6 +1,16 @@
 /* Theme global inspiré du bloc newsletter : cartes claires, boutons arrondis, couleurs rose/bleu. */
 
 :root {
+  --yujo-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --yujo-font-size-body: 1rem;
+  --yujo-font-size-small: 0.875rem;
+  --yujo-font-size-h1: 2rem;
+  --yujo-font-size-h2: 1.75rem;
+  --yujo-font-size-h3: 1.5rem;
+  --yujo-font-size-h4: 1.25rem;
+  --yujo-font-size-h5: 1.125rem;
+  --yujo-font-size-h6: 1rem;
+  --yujo-line-height-title: 1.25;
   /* Couleur primaire foncée alignée avec l'entête/pied (#2c3696) */
   --yujo-primary: #2c3696;
   --yujo-accent: #e91e63;  /* Rose bouton newsletter */
@@ -17,8 +27,64 @@
 }
 
 body {
+  font-family: var(--yujo-font-family);
+  font-size: var(--yujo-font-size-body);
   background-color: var(--yujo-bg);
   color: #1a1f2b;
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+  font-family: var(--yujo-font-family);
+  font-weight: 700;
+  line-height: var(--yujo-line-height-title);
+  color: #1a1f2b;
+}
+
+h1, .h1 { font-size: var(--yujo-font-size-h1); }
+h2, .h2 { font-size: var(--yujo-font-size-h2); }
+h3, .h3 { font-size: var(--yujo-font-size-h3); }
+h4, .h4 { font-size: var(--yujo-font-size-h4); }
+h5, .h5 { font-size: var(--yujo-font-size-h5); }
+h6, .h6 { font-size: var(--yujo-font-size-h6); }
+
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+  font-family: var(--yujo-font-family);
+  font-weight: 700;
+  line-height: var(--yujo-line-height-title);
+}
+
+.display-1 { font-size: var(--yujo-font-size-h1); }
+.display-2 { font-size: var(--yujo-font-size-h1); }
+.display-3 { font-size: var(--yujo-font-size-h1); }
+.display-4 { font-size: var(--yujo-font-size-h2); }
+.display-5 { font-size: var(--yujo-font-size-h2); }
+.display-6 { font-size: var(--yujo-font-size-h3); }
+
+.page-title {
+  font-size: var(--yujo-font-size-h1);
+  font-weight: 700;
+  line-height: var(--yujo-line-height-title);
+}
+
+.card-title,
+.accordion-button,
+.modal-title {
+  font-size: var(--yujo-font-size-h5);
+  font-weight: 700;
+  line-height: var(--yujo-line-height-title);
+}
+
+p, li, label, .form-label, .form-control, .form-select, .form-check-label {
+  font-size: var(--yujo-font-size-body);
+}
+
+small, .small, .text-muted {
+  font-size: var(--yujo-font-size-small);
 }
 
 [data-bs-theme="dark"] body {
@@ -56,6 +122,92 @@ body {
 
 .btn {
   border-radius: var(--yujo-btn-radius);
+  font-weight: 600;
+  font-size: var(--yujo-font-size-body);
+}
+
+.btn:not(.btn-link):not(.btn-close):not(.accordion-button),
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info {
+  background-color: var(--yujo-accent) !important;
+  border-color: var(--yujo-accent) !important;
+  color: #fff !important;
+}
+
+.btn:not(.btn-link):not(.btn-close):not(.accordion-button):hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-success:hover,
+.btn-danger:hover,
+.btn-warning:hover,
+.btn-info:hover {
+  background-color: #d61a58 !important;
+  border-color: #d61a58 !important;
+  color: #fff !important;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info {
+  color: var(--yujo-accent) !important;
+  border-color: var(--yujo-accent) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-success:hover,
+.btn-outline-danger:hover,
+.btn-outline-warning:hover,
+.btn-outline-info:hover {
+  background-color: var(--yujo-accent) !important;
+  border-color: var(--yujo-accent) !important;
+  color: #fff !important;
+}
+
+form button[type="submit"],
+form input[type="submit"],
+form button[type="button"].form-action,
+form .btn[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: .625rem 1rem;
+  border-radius: var(--yujo-btn-radius);
+  border: 1px solid var(--yujo-accent);
+  background-color: var(--yujo-accent);
+  color: #fff;
+  font-family: var(--yujo-font-family);
+  font-size: var(--yujo-font-size-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+form button[type="submit"]:hover,
+form input[type="submit"]:hover,
+form button[type="button"].form-action:hover,
+form .btn[type="submit"]:hover {
+  background-color: #d61a58;
+  border-color: #d61a58;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+form button[type="submit"]:focus,
+form input[type="submit"]:focus,
+form button[type="button"].form-action:focus,
+form .btn[type="submit"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 .2rem rgba(233, 30, 99, .2);
 }
 
 .btn-primary {
@@ -158,6 +310,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: var(--yujo-font-size-h3);
   font-weight: 700;
   color: #212529;
 }
