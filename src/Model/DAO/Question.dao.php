@@ -33,7 +33,7 @@ class QuestionDAO extends Dao{
      * @return Question|null L'objet Question correspondant ou null si non trouvé.
      */
     public function findByIdQuestion(int $id): ?Question {
-        $stmt = $this->conn->prepare("SELECT * FROM QUESTION WHERE idQuestion = :id");
+        $stmt = $this->conn->prepare("SELECT * FROM question WHERE idQuestion = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -54,7 +54,7 @@ class QuestionDAO extends Dao{
      * @return Question[] Tableau d'objets Question représentant toutes les questions.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idQuestion, libelle FROM QUESTION");
+        $stmt = $this->conn->prepare("SELECT idQuestion, libelle FROM question");
         $stmt->execute();
         $questions = [];
 
@@ -72,7 +72,7 @@ class QuestionDAO extends Dao{
      * @return bool Retourne true si la mise à jour a réussi, false sinon.
      */
     public function update(Question $question): bool {
-        $stmt = $this->conn->prepare("UPDATE QUESTION SET libelle = :libelle WHERE idQuestion = :id");
+        $stmt = $this->conn->prepare("UPDATE question SET libelle = :libelle WHERE idQuestion = :id");
 
         $stmt->bindValue(':id', $question->getIdQuestion(), PDO::PARAM_INT);
         $stmt->bindValue(':libelle', $question->getLibelle(), PDO::PARAM_STR);
@@ -90,8 +90,8 @@ class QuestionDAO extends Dao{
      */
     public function findReponseByQuestion(int $idQuestion): array {
         $sql = "SELECT r.idReponsePossible, r.libelle, r.estCorrecte, l.idQuestion
-                FROM REPONSEPOSSIBLE r
-                INNER JOIN LISTER l ON l.idReponsePossible = r.idReponsePossible
+                FROM reponsepossible r
+                INNER JOIN lister l ON l.idReponsePossible = r.idReponsePossible
                 WHERE l.idQuestion = :idQuestion";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':idQuestion', $idQuestion, PDO::PARAM_INT);
@@ -116,7 +116,7 @@ class QuestionDAO extends Dao{
      */
     public function addReponseToQuestion(int $idQuestion, ReponsePossible $reponse): bool {
         // Insérer la réponse dans la table REPONSEPOSSIBLE
-        $stmt = $this->conn->prepare("INSERT INTO REPONSEPOSSIBLE (libelle, estCorrecte) VALUES (:libelle, :estCorrecte)");
+        $stmt = $this->conn->prepare("INSERT INTO reponsepossible (libelle, estCorrecte) VALUES (:libelle, :estCorrecte)");
         $stmt->bindValue(':libelle', $reponse->getLibelle(), PDO::PARAM_STR);
         $stmt->bindValue(':estCorrecte', $reponse->getEstCorrecte(), PDO::PARAM_BOOL);
 
@@ -125,7 +125,7 @@ class QuestionDAO extends Dao{
             $reponseId = (int)$this->conn->lastInsertId();
 
             // Associer la réponse à la question dans la table LISTER
-            $stmtAssoc = $this->conn->prepare("INSERT INTO LISTER (idQuestion, idReponsePossible) VALUES (:idQuestion, :idReponsePossible)");
+            $stmtAssoc = $this->conn->prepare("INSERT INTO lister (idQuestion, idReponsePossible) VALUES (:idQuestion, :idReponsePossible)");
             $stmtAssoc->bindValue(':idQuestion', $idQuestion, PDO::PARAM_INT);
             $stmtAssoc->bindValue(':idReponsePossible', $reponseId, PDO::PARAM_INT);
 
@@ -139,7 +139,7 @@ class QuestionDAO extends Dao{
      * Utilisé lorsque la réponse n'est plus liée à aucune question.
      */
     public function supprimerReponsePossible(int $idReponsePossible): bool {
-        $stmt = $this->conn->prepare("DELETE FROM REPONSEPOSSIBLE WHERE idReponsePossible = :id");
+        $stmt = $this->conn->prepare("DELETE FROM reponsepossible WHERE idReponsePossible = :id");
         $stmt->bindValue(':id', $idReponsePossible, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -153,7 +153,7 @@ class QuestionDAO extends Dao{
      * @return bool Retourne true si l'insertion a réussi, false sinon.
      */
     public function createQuestion(Question $question): bool {
-        $stmt = $this->conn->prepare("INSERT INTO QUESTION (libelle) VALUES (:libelle)");
+        $stmt = $this->conn->prepare("INSERT INTO question (libelle) VALUES (:libelle)");
         $stmt->bindValue(':libelle', $question->getLibelle(), PDO::PARAM_STR);
 
         $result = $stmt->execute();
@@ -173,7 +173,7 @@ class QuestionDAO extends Dao{
      * @return bool Retourne true si la suppression a réussi, false sinon.
      */
     public function supprimerQuestion(int $id): bool {
-        $stmt = $this->conn->prepare("DELETE FROM QUESTION WHERE idQuestion = :id");
+        $stmt = $this->conn->prepare("DELETE FROM question WHERE idQuestion = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();

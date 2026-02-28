@@ -36,7 +36,7 @@ class AjouterDao extends Dao {
      * @return Ajouter[] Tableau des objets Ajouter.
      */
     public function findByIdUtilisateur(int $idUtilisateur): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM ajouter WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -52,7 +52,7 @@ class AjouterDao extends Dao {
      * @return Ajouter[] Tableau des objets Ajouter.
      */
     public function findByIdObjet(int $idObjet): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM ajouter WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -66,7 +66,7 @@ class AjouterDao extends Dao {
      * @return Ajouter[] Tableau des objets Ajouter.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM AJOUTER");
+        $stmt = $this->conn->prepare("SELECT idObjet, idUtilisateur, dateAjout FROM ajouter");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $this->hydrateAll($rows);
@@ -79,7 +79,7 @@ class AjouterDao extends Dao {
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
     public function insererAjouter(Ajouter $ajout): bool {
-        $stmt = $this->conn->prepare("INSERT INTO AJOUTER (idUtilisateur, idObjet, dateAjout) VALUES (:idUtilisateur, :idObjet, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO ajouter (idUtilisateur, idObjet, dateAjout) VALUES (:idUtilisateur, :idObjet, :dateAjout)");
         $stmt->bindValue(':idUtilisateur', $ajout->getIdUtilisateur(), PDO::PARAM_INT);
         $stmt->bindValue(':idObjet', $ajout->getIdObjet(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $ajout->getDateAjout(), PDO::PARAM_STR);
@@ -94,7 +94,7 @@ class AjouterDao extends Dao {
      * @param int $idObjet Identifiant de l'objet.
      */
     public function supprimerAjouter(int $idUtilisateur, int $idObjet): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AJOUTER WHERE idUtilisateur = :idUtilisateur AND idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM ajouter WHERE idUtilisateur = :idUtilisateur AND idObjet = :idObjet");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
@@ -108,7 +108,7 @@ class AjouterDao extends Dao {
      * @return bool True si la suppression s'est exécutée (peut supprimer 0..n lignes).
      */
     public function supprimerParObjet(int $idObjet): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AJOUTER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM ajouter WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
     }

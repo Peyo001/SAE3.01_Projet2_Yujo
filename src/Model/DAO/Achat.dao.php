@@ -24,7 +24,7 @@ class AchatDao extends Dao
      * @return Achat|null Retourne un objet Achat si trouvé, sinon null.
      */
     public function findByIdObjet(int $idObjet): ?Achat{
-        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("SELECT * FROM acheter WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -44,7 +44,7 @@ class AchatDao extends Dao
     public function findAll(): array
     {
         $achats = [];
-        $stmt = $this->conn->query("SELECT * FROM ACHETER");
+        $stmt = $this->conn->query("SELECT * FROM acheter");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $achats = $this->hydrateAll($rows);
         return $achats;
@@ -61,7 +61,7 @@ class AchatDao extends Dao
      */
     public function findByObjetUtilisateur(int $idObjet, int $idUtilisateur): ?Achat
     {
-        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT * FROM acheter WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur LIMIT 1");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
@@ -83,7 +83,7 @@ class AchatDao extends Dao
     public function findByUtilisateur(int $idUtilisateur): array
     {
         $achats = [];
-        $stmt = $this->conn->prepare("SELECT * FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT * FROM acheter WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -116,7 +116,7 @@ class AchatDao extends Dao
      */
     public function countAchatByUtilisateur(int $idUtilisateur): int
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM acheter WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -133,7 +133,7 @@ class AchatDao extends Dao
      */
     public function insererAchat(Achat $achat): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO ACHETER (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
+        $stmt = $this->conn->prepare("INSERT INTO acheter (idObjet, dateAchat, idUtilisateur) VALUES (:idObjet, :dateAchat, :idUtilisateur)");
         $stmt->bindValue(':idObjet', $achat->getIdObjet(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAchat', $achat->getDateAchat(), PDO::PARAM_STR);
         $stmt->bindValue(':idUtilisateur', $achat->getIdUtilisateur(), PDO::PARAM_INT);
@@ -151,7 +151,7 @@ class AchatDao extends Dao
      */
     public function supprimerAchat(int $idObjet, ?int $idUtilisateur = null): bool
     {
-        $sql = "DELETE FROM ACHETER WHERE idObjet = :idObjet" . ($idUtilisateur !== null ? " AND idUtilisateur = :idUtilisateur" : "");
+        $sql = "DELETE FROM acheter WHERE idObjet = :idObjet" . ($idUtilisateur !== null ? " AND idUtilisateur = :idUtilisateur" : "");
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         if ($idUtilisateur !== null) {
@@ -168,7 +168,7 @@ class AchatDao extends Dao
      */
     public function supprimerParObjet(int $idObjet): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM acheter WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -182,7 +182,7 @@ class AchatDao extends Dao
      */
     public function supprimerParObjetEtUtilisateur(int $idObjet, int $idUtilisateur): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM ACHETER WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("DELETE FROM acheter WHERE idObjet = :idObjet AND idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
@@ -198,7 +198,7 @@ class AchatDao extends Dao
      */
     public function listObjetsAchetesByUtilisateur(int $idUtilisateur): array
     {
-        $stmt = $this->conn->prepare("SELECT idObjet FROM ACHETER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT idObjet FROM acheter WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $ids = [];
@@ -217,8 +217,8 @@ class AchatDao extends Dao
     public function findObjetsAchetesAvecDetails(int $idUtilisateur): array
     {
         $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix
-                FROM OBJET o
-                INNER JOIN ACHETER a ON o.idObjet = a.idObjet
+                FROM objet o
+                INNER JOIN acheter a ON o.idObjet = a.idObjet
                 WHERE a.idUtilisateur = :idUtilisateur
                 ORDER BY a.dateAchat DESC";
         
@@ -249,11 +249,11 @@ class AchatDao extends Dao
     public function findObjetsAchetesNonPlaces(int $idUtilisateur, int $idRoom): array
     {
         $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix
-                FROM OBJET o
-                INNER JOIN ACHETER a ON o.idObjet = a.idObjet
+                FROM objet o
+                INNER JOIN acheter a ON o.idObjet = a.idObjet
                 WHERE a.idUtilisateur = :idUtilisateur
                 AND o.idObjet NOT IN (
-                    SELECT idObjet FROM POSSEDER WHERE idRoom = :idRoom
+                    SELECT idObjet FROM posseder WHERE idRoom = :idRoom
                 )
                 ORDER BY a.dateAchat DESC";
         

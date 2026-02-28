@@ -34,7 +34,7 @@ class ListerDAO extends Dao {
      * @return Lister[] Tableau d'objets Lister.
      */
     public function findByQuestion(int $idQuestion): array {
-        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM LISTER WHERE idQuestion = :idQuestion");
+        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM lister WHERE idQuestion = :idQuestion");
         $stmt->bindValue(':idQuestion', $idQuestion, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -49,7 +49,7 @@ class ListerDAO extends Dao {
      * @return Lister[] Tableau d'objets Lister.
      */
     public function findByReponsePossible(int $idReponsePossible): array {
-        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM LISTER WHERE idReponsePossible = :idReponsePossible");
+        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM lister WHERE idReponsePossible = :idReponsePossible");
         $stmt->bindValue(':idReponsePossible', $idReponsePossible, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -63,7 +63,7 @@ class ListerDAO extends Dao {
      * @return Lister[] Tableau des objets Lister.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM LISTER");
+        $stmt = $this->conn->prepare("SELECT idReponsePossible, idQuestion FROM lister");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $this->hydrateAll($rows);
@@ -75,7 +75,7 @@ class ListerDAO extends Dao {
      * @param Lister $lister Objet Lister à insérer.
      */
     public function insererLister(Lister $lister): void {
-        $stmt = $this->conn->prepare("INSERT INTO LISTER (idReponsePossible, idQuestion) VALUES (:idReponsePossible, :idQuestion)");
+        $stmt = $this->conn->prepare("INSERT INTO lister (idReponsePossible, idQuestion) VALUES (:idReponsePossible, :idQuestion)");
         $stmt->bindValue(':idReponsePossible', $lister->getIdReponsePossible(), PDO::PARAM_INT);
         $stmt->bindValue(':idQuestion', $lister->getIdQuestion(), PDO::PARAM_INT);
         $stmt->execute();
@@ -88,7 +88,7 @@ class ListerDAO extends Dao {
      * @param int $idQuestion Identifiant de la question.
      */
     public function supprimerLister(int $idReponsePossible, int $idQuestion): void {
-        $stmt = $this->conn->prepare("DELETE FROM LISTER WHERE idReponsePossible = :idReponsePossible AND idQuestion = :idQuestion");
+        $stmt = $this->conn->prepare("DELETE FROM lister WHERE idReponsePossible = :idReponsePossible AND idQuestion = :idQuestion");
         $stmt->bindValue(':idReponsePossible', $idReponsePossible, PDO::PARAM_INT);
         $stmt->bindValue(':idQuestion', $idQuestion, PDO::PARAM_INT);
         $stmt->execute();
@@ -100,7 +100,7 @@ class ListerDAO extends Dao {
      * @return bool Retourne true si la mise à jour a réussi, sinon false.
      */
     public function mettreAJourLister(Lister $lister): bool {
-        $stmt = $this->conn->prepare("UPDATE LISTER SET idReponsePossible = :idReponsePossible WHERE idQuestion = :idQuestion");
+        $stmt = $this->conn->prepare("UPDATE lister SET idReponsePossible = :idReponsePossible WHERE idQuestion = :idQuestion");
         $stmt->bindValue(':idReponsePossible', $lister->getIdReponsePossible(), PDO::PARAM_INT);
         $stmt->bindValue(':idQuestion', $lister->getIdQuestion(), PDO::PARAM_INT);
         return $stmt->execute();

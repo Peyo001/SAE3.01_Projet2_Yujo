@@ -36,7 +36,7 @@ class ReponseDao extends Dao
      * @return Reponse|null Retourne un objet `Reponse` si trouvé, sinon null.
      */
     public function find(?int $id): ?Reponse{
-        $sql = "SELECT * FROM REPONSE WHERE idReponse = :id";
+        $sql = "SELECT * FROM reponse WHERE idReponse = :id";
         $pdoStatement = $this->conn->prepare($sql);
         $pdoStatement->bindValue(':id', $id, PDO::PARAM_INT);
         $pdoStatement->execute();
@@ -57,7 +57,7 @@ class ReponseDao extends Dao
      * @return Reponse[] Tableau d'objets `Reponse` associés au post.
      */
     public function findResponsesByPost(int $idPost): ?array{
-        $sql = "SELECT * FROM REPONSE WHERE idPost = :idPost";
+        $sql = "SELECT * FROM reponse WHERE idPost = :idPost";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Reponse::class);
@@ -74,7 +74,7 @@ class ReponseDao extends Dao
      * @return Reponse[]|null Tableau d'objets `Reponse` soumis par l'auteur, ou null si aucune réponse trouvée.
      */
     public function findByAuteur(int $idAuteur): ?array {
-        $stmt = $this->conn->prepare("SELECT * FROM REPONSE WHERE idAuteur = :idAuteur ORDER BY dateReponse DESC");
+        $stmt = $this->conn->prepare("SELECT * FROM reponse WHERE idAuteur = :idAuteur ORDER BY dateReponse DESC");
         $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
         $stmt->execute();
         
@@ -92,7 +92,7 @@ class ReponseDao extends Dao
      * @return Reponse[] Tableau contenant toutes les réponses sous forme d'objets `Reponse`.
      */
     public function findAll(): array{
-        $stmt = $this->conn->prepare("SELECT * FROM REPONSE");
+        $stmt = $this->conn->prepare("SELECT * FROM reponse");
         $stmt->execute();
         $reponses = [];
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -109,7 +109,7 @@ class ReponseDao extends Dao
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
     public function insererReponse(Reponse $response): bool {
-        $stmt = $this->conn->prepare("INSERT INTO REPONSE (dateReponse, contenu, idAuteur, idPost) VALUES (:dateReponse, :contenu, :idAuteur, :idPost)");
+        $stmt = $this->conn->prepare("INSERT INTO reponse (dateReponse, contenu, idAuteur, idPost) VALUES (:dateReponse, :contenu, :idAuteur, :idPost)");
         $stmt->bindValue(':dateReponse', $response->getDateReponse(), PDO::PARAM_STR);
         $stmt->bindValue(':contenu', $response->getContenu(), PDO::PARAM_STR);
         $stmt->bindValue(':idAuteur', $response->getIdAuteur(), PDO::PARAM_INT);
@@ -128,7 +128,7 @@ class ReponseDao extends Dao
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerReponse(int $id): bool{
-        $stmt = $this->conn->prepare("DELETE FROM REPONSE WHERE idReponse = :id");
+        $stmt = $this->conn->prepare("DELETE FROM reponse WHERE idReponse = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }

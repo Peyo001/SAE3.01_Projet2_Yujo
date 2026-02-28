@@ -38,7 +38,7 @@ class ComposerDao extends Dao{
      * @return Composer[] Tableau des objets Composer.
      */
     public function findByIdUtilisateur(int $idUtilisateur): array {
-        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM composer WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -56,7 +56,7 @@ class ComposerDao extends Dao{
      * @return Avatar|null Retourne un objet Avatar si l'avatar est trouvé, sinon null.
      */
     public function findByIdGroupe(int $idGroupe): array {
-        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM composer WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -75,14 +75,14 @@ class ComposerDao extends Dao{
      * @return Composer[] Tableau d'objets Composer représentant tous les enregistrements de la table COMPOSER.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM COMPOSER");
+        $stmt = $this->conn->prepare("SELECT idGroupe, idUtilisateur, dateAjout FROM composer");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $this->hydrateAll($rows);
     }
 
     public function insererComposer(Composer $composer): bool {
-        $stmt = $this->conn->prepare("INSERT INTO COMPOSER (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO composer (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
         $stmt->bindValue(':idGroupe', $composer->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $composer->getIdUtilisateur(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $composer->getDateAjout(), PDO::PARAM_STR);
@@ -101,7 +101,7 @@ class ComposerDao extends Dao{
      */
 
     public function supprimerComposer(int $idGroupe, int $idUtilisateur): bool {
-        $stmt = $this->conn->prepare("DELETE FROM COMPOSER WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("DELETE FROM composer WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
@@ -116,7 +116,7 @@ class ComposerDao extends Dao{
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerParIdGroupe(int $idGroupe): bool {
-        $stmt = $this->conn->prepare("DELETE FROM COMPOSER WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("DELETE FROM composer WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -133,7 +133,7 @@ class ComposerDao extends Dao{
      * @return bool Retourne true si la mise à jour a réussi, sinon false.
      */
     public function updateDateAjout(int $idGroupe, int $idUtilisateur, string $newDateAjout): bool {
-        $stmt = $this->conn->prepare("UPDATE COMPOSER SET dateAjout = :dateAjout WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("UPDATE composer SET dateAjout = :dateAjout WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':dateAjout', $newDateAjout, PDO::PARAM_STR);
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);

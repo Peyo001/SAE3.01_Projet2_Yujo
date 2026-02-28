@@ -36,7 +36,7 @@ require_once "Dao.class.php";
          * @return ReponsePossible|null Retourne un objet `ReponsePossible` si trouvé, sinon null.
          */
         public function find(int $id): ?ReponsePossible {
-            $stmt = $this->conn->prepare("SELECT idReponsePossible, libelle, estCorrecte FROM REPONSE_POSSIBLE WHERE idReponsePossible = :id");
+            $stmt = $this->conn->prepare("SELECT idReponsePossible, libelle, estCorrecte FROM reponsepossible WHERE idReponsePossible = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,7 +55,7 @@ require_once "Dao.class.php";
          * @return ReponsePossible[] Tableau des objets `ReponsePossible`.
          */
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idReponsePossible, libelle, estCorrecte FROM REPONSE_POSSIBLE");
+            $stmt = $this->conn->prepare("SELECT idReponsePossible, libelle, estCorrecte FROM reponsepossible");
             $stmt->execute();
             $reponses = [];
 
@@ -74,9 +74,9 @@ require_once "Dao.class.php";
          */
         public function findByQuestion(int $idQuestion): array {
             $sql = "SELECT rp.idReponsePossible, rp.libelle, rp.estCorrecte 
-                    FROM REPONSE_POSSIBLE rp
-                    INNER JOIN QUESTION_REPONSE qr ON rp.idReponsePossible = qr.idReponsePossible
-                    WHERE qr.idQuestion = :idQuestion";
+                    FROM reponsepossible rp
+                    INNER JOIN lister l ON rp.idReponsePossible = l.idReponsePossible
+                WHERE l.idQuestion = :idQuestion";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':idQuestion', $idQuestion, PDO::PARAM_INT);
             $stmt->execute();
@@ -95,7 +95,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la mise à jour a réussi, sinon false.
          */
         public function mettreAJourReponsePossible(ReponsePossible $reponsePossible): bool {
-            $stmt = $this->conn->prepare("UPDATE REPONSE_POSSIBLE SET libelle = :libelle, estCorrecte = :estCorrecte WHERE idReponsePossible = :idReponsePossible");
+            $stmt = $this->conn->prepare("UPDATE reponsepossible SET libelle = :libelle, estCorrecte = :estCorrecte WHERE idReponsePossible = :idReponsePossible");
             $stmt->bindValue(':libelle', $reponsePossible->getLibelle(), PDO::PARAM_STR);
             $stmt->bindValue(':estCorrecte', $reponsePossible->getEstCorrecte(), PDO::PARAM_BOOL);
             $stmt->bindValue(':idReponsePossible', $reponsePossible->getIdReponsePossible(), PDO::PARAM_INT);
@@ -112,7 +112,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si l'insertion a réussi, sinon false.
          */
         public function insererReponsePossible(ReponsePossible $reponsePossible): bool {
-            $stmt = $this->conn->prepare("INSERT INTO REPONSE_POSSIBLE (libelle, estCorrecte) VALUES (:libelle, :estCorrecte)");
+            $stmt = $this->conn->prepare("INSERT INTO reponsepossible (libelle, estCorrecte) VALUES (:libelle, :estCorrecte)");
             $stmt->bindValue(':libelle', $reponsePossible->getLibelle(), PDO::PARAM_STR);
             $stmt->bindValue(':estCorrecte', $reponsePossible->getEstCorrecte(), PDO::PARAM_BOOL);
 
@@ -132,7 +132,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la suppression a réussi, sinon false.
          */
         public function supprimerReponsePossible(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM REPONSE_POSSIBLE WHERE idReponsePossible = :id");
+            $stmt = $this->conn->prepare("DELETE FROM reponsepossible WHERE idReponsePossible = :id");
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();

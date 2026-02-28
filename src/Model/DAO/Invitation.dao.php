@@ -40,7 +40,7 @@ class InvitationDao extends Dao
     {
         $stmt = $this->conn->prepare("
             SELECT idHote, idInvite, idGroupe, dateInvitation, statut 
-            FROM INVITER 
+            FROM inviter
             WHERE idInvite = :idInvite AND statut = 'en_attente'
             ORDER BY dateInvitation DESC
         ");
@@ -61,7 +61,7 @@ class InvitationDao extends Dao
     {
         $stmt = $this->conn->prepare("
             SELECT idHote, idInvite, idGroupe, dateInvitation, statut 
-            FROM INVITER 
+            FROM inviter
             WHERE idGroupe = :idGroupe
             ORDER BY dateInvitation DESC
         ");
@@ -85,7 +85,7 @@ class InvitationDao extends Dao
     {
         $stmt = $this->conn->prepare("
             SELECT idHote, idInvite, idGroupe, dateInvitation, statut 
-            FROM INVITER 
+            FROM inviter
             WHERE idHote = :idHote AND idInvite = :idInvite AND idGroupe = :idGroupe
             ORDER BY dateInvitation DESC
             LIMIT 1
@@ -108,7 +108,7 @@ class InvitationDao extends Dao
     public function creerInvitation(Invitation $invitation): bool
     {
         $stmt = $this->conn->prepare("
-            INSERT INTO INVITER (idHote, idInvite, idGroupe, dateInvitation, statut)
+            INSERT INTO inviter (idHote, idInvite, idGroupe, dateInvitation, statut)
             VALUES (:idHote, :idInvite, :idGroupe, :dateInvitation, :statut)
         ");
         $stmt->bindValue(':idHote', $invitation->getIdHote(), PDO::PARAM_INT);
@@ -132,7 +132,7 @@ class InvitationDao extends Dao
     public function mettreAJourStatut(int $idHote, int $idInvite, int $idGroupe, string $statut): bool
     {
         $stmt = $this->conn->prepare("
-            UPDATE INVITER 
+            UPDATE inviter 
             SET statut = :statut 
             WHERE idHote = :idHote AND idInvite = :idInvite AND idGroupe = :idGroupe
         ");
@@ -156,7 +156,7 @@ class InvitationDao extends Dao
     {
         $stmt = $this->conn->prepare("
             SELECT COUNT(*) as count 
-            FROM INVITER 
+            FROM inviter 
             WHERE idGroupe = :idGroupe 
             AND idHote = :idHote
             AND idInvite = :idInvite 
@@ -182,7 +182,7 @@ class InvitationDao extends Dao
      */
     public function supprimerInvitation(int $idHote, int $idInvite, int $idGroupe, string $dateInvitation): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM INVITER WHERE idHote = :idHote AND idInvite = :idInvite AND idGroupe = :idGroupe AND dateInvitation = :dateInvitation");
+        $stmt = $this->conn->prepare("DELETE FROM inviter WHERE idHote = :idHote AND idInvite = :idInvite AND idGroupe = :idGroupe AND dateInvitation = :dateInvitation");
         $stmt->bindValue(':idHote', $idHote, PDO::PARAM_INT);
         $stmt->bindValue(':idInvite', $idInvite, PDO::PARAM_INT);
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);

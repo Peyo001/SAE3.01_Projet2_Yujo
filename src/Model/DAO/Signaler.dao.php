@@ -38,7 +38,7 @@ class SignalerDao extends Dao {
      * @return Signaler[] Tableau des objets Signaler.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM signaler");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $this->hydrateAll($rows);
@@ -53,7 +53,7 @@ class SignalerDao extends Dao {
      * @return Signaler[] Tableau des objets Signaler.
      */
     public function findByIdUtilisateur(int $idUtilisateur): array {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM signaler WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -69,7 +69,7 @@ class SignalerDao extends Dao {
      * @return Signaler[] Tableau des objets Signaler.
      */
     public function findByIdPost(int $idPost): array {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM SIGNALER WHERE idPost = :idPost");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, idSignalement, idPost, dateSignalement, statut FROM signaler WHERE idPost = :idPost");
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -85,7 +85,7 @@ class SignalerDao extends Dao {
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
     public function insererSignaler(Signaler $signaler): bool {
-        $stmt = $this->conn->prepare("INSERT INTO SIGNALER (idUtilisateur, idSignalement, idPost, dateSignalement, statut) VALUES (:idUtilisateur, :idSignalement, :idPost, :dateSignalement, :statut)");
+        $stmt = $this->conn->prepare("INSERT INTO signaler (idUtilisateur, idSignalement, idPost, dateSignalement, statut) VALUES (:idUtilisateur, :idSignalement, :idPost, :dateSignalement, :statut)");
         $stmt->bindValue(':idUtilisateur', $signaler->getIdUtilisateur(), PDO::PARAM_INT);
         $stmt->bindValue(':idSignalement', $signaler->getIdSignalement(), PDO::PARAM_INT);
         $stmt->bindValue(':idPost', $signaler->getIdPost(), PDO::PARAM_INT);
@@ -105,7 +105,7 @@ class SignalerDao extends Dao {
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerSignaler(int $idUtilisateur, int $idSignalement, int $idPost): bool {
-        $stmt = $this->conn->prepare("DELETE FROM SIGNALER WHERE idUtilisateur = :idUtilisateur AND idSignalement = :idSignalement AND idPost = :idPost");
+        $stmt = $this->conn->prepare("DELETE FROM signaler WHERE idUtilisateur = :idUtilisateur AND idSignalement = :idSignalement AND idPost = :idPost");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':idSignalement', $idSignalement, PDO::PARAM_INT);
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);

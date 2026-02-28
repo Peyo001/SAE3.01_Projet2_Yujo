@@ -25,7 +25,7 @@ class PostDao extends Dao
     {
         $stmt = $this->conn->prepare("
 
-        INSERT INTO POST (contenu, typePost, visibilite, datePublication, idAuteur)
+        INSERT INTO post (contenu, typePost, visibilite, datePublication, idAuteur)
         VALUES (:contenu, :typePost, :visibilite, :datePublication, :idAuteur)
     ");
 
@@ -57,7 +57,7 @@ class PostDao extends Dao
      */
     public function supprimerPost(int $idPost): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM POST WHERE idPost = :idPost");
+        $stmt = $this->conn->prepare("DELETE FROM post WHERE idPost = :idPost");
         $stmt->bindValue(':idPost', $idPost, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -73,7 +73,7 @@ class PostDao extends Dao
      */
     public function find(int $id): ?Post
     {
-        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idPost = :id");
+        $stmt = $this->conn->prepare("SELECT * FROM post WHERE idPost = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         
@@ -102,7 +102,7 @@ class PostDao extends Dao
      */
     public function findPostsByAuteur(int $idAuteur): array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
+        $stmt = $this->conn->prepare("SELECT * FROM post WHERE idAuteur = :idAuteur ORDER BY datePublication DESC");
         $stmt->bindValue(':idAuteur', $idAuteur, PDO::PARAM_INT);
         $stmt->execute();
         
@@ -129,7 +129,7 @@ class PostDao extends Dao
      */
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM POST");
+        $stmt = $this->conn->prepare("SELECT * FROM post");
         $stmt->execute();
         $posts = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -152,7 +152,7 @@ class PostDao extends Dao
      */
     public function findPublic(): array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM POST WHERE visibilite = 'public' ORDER BY datePublication DESC");
+        $stmt = $this->conn->prepare("SELECT * FROM post WHERE visibilite = 'public' ORDER BY datePublication DESC");
         $stmt->execute();
         $posts = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -199,7 +199,7 @@ public function findByAuteurs(array $ids): array
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
     $stmt = $this->conn->prepare(
-        "SELECT * FROM POST WHERE idAuteur IN ($placeholders) ORDER BY datePublication DESC"
+        "SELECT * FROM post WHERE idAuteur IN ($placeholders) ORDER BY datePublication DESC"
     );
 
     // Exécute avec les IDs des auteurs

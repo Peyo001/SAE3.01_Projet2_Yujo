@@ -42,7 +42,7 @@ require_once "Dao.class.php";
          * @return Objet|null Retourne un objet `Objet` si trouvé, sinon null.
          */
         public function find(int $id): ?Objet {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM OBJET WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM objet WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -61,7 +61,7 @@ require_once "Dao.class.php";
          * @return Objet[] Tableau des objets `Objet`.
          */
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM OBJET");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM objet");
             $stmt->execute();
             $objets = [];
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,9 +78,9 @@ require_once "Dao.class.php";
          * @return Objet[] Tableau d'objets `Objet` dans la room spécifiée.
          */
         public function findByRoom(int $idRoom): array {
-            $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix, o.image, p.idRoom
-                    FROM OBJET o
-                    INNER JOIN POSSEDER p ON p.idObjet = o.idObjet
+                $sql = "SELECT o.idObjet, o.description, o.modele3dPath, o.prix, o.image, p.idRoom
+                    FROM objet o
+                    INNER JOIN posseder p ON p.idObjet = o.idObjet
                     WHERE p.idRoom = :idRoom";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':idRoom', $idRoom, PDO::PARAM_INT);
@@ -100,7 +100,7 @@ require_once "Dao.class.php";
         public function findByIds(array $ids): array {
             if (empty($ids)) { return []; }
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM OBJET WHERE idObjet IN ($placeholders)");
+            $stmt = $this->conn->prepare("SELECT idObjet, description, modele3dPath, prix, image FROM objet WHERE idObjet IN ($placeholders)");
             foreach ($ids as $i => $id) {
                 $stmt->bindValue($i + 1, (int)$id, PDO::PARAM_INT);
             }
@@ -118,7 +118,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la mise à jour a réussi, sinon false.
          */
         public function mettreAJourObjet(Objet $objet): bool {
-            $stmt = $this->conn->prepare("UPDATE OBJET SET description = :description, modele3dPath = :modele3dPath, prix = :prix, image = :image WHERE idObjet = :idObjet;");
+            $stmt = $this->conn->prepare("UPDATE objet SET description = :description, modele3dPath = :modele3dPath, prix = :prix, image = :image WHERE idObjet = :idObjet;");
             $stmt->bindValue(':description', $objet->getDescription());
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath());
             $stmt->bindValue(':prix', $objet->getPrix(), PDO::PARAM_INT);
@@ -138,7 +138,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si l'insertion a réussi, sinon false.
          */
         public function insererObjet(Objet $objet): bool {
-            $stmt = $this->conn->prepare("INSERT INTO OBJET (description, modele3dPath, prix, image) VALUES (:description, :modele3dPath, :prix, :image);");
+            $stmt = $this->conn->prepare("INSERT INTO objet (description, modele3dPath, prix, image) VALUES (:description, :modele3dPath, :prix, :image);");
 
             $stmt->bindValue(':description', $objet->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':modele3dPath', $objet->getModele3dPath(), PDO::PARAM_STR);
@@ -161,7 +161,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la suppression a réussi, sinon false.
          */
         public function supprimerObjet(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM OBJET WHERE idObjet = :id");
+            $stmt = $this->conn->prepare("DELETE FROM objet WHERE idObjet = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();

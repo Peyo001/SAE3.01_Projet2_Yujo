@@ -21,7 +21,7 @@ class NewsletterDAO extends Dao
     public function inscrire(string $email): bool
     {
         // Réactive si déjà présent mais désinscrit
-        $query = "INSERT INTO NEWSLETTER (email, dateInscription, estActif) 
+        $query = "INSERT INTO newsletter (email, dateInscription, estActif) 
                   VALUES (:email, NOW(), TRUE)
                   ON DUPLICATE KEY UPDATE estActif = TRUE, dateInscription = NOW()";
         $stmt = $this->conn->prepare($query);
@@ -38,7 +38,7 @@ class NewsletterDAO extends Dao
     public function emailExiste(string $email): bool
     {
         // Ne compte que les inscriptions actives
-        $query = "SELECT COUNT(*) FROM NEWSLETTER WHERE email = :email AND estActif = TRUE";
+        $query = "SELECT COUNT(*) FROM newsletter WHERE email = :email AND estActif = TRUE";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -53,7 +53,7 @@ class NewsletterDAO extends Dao
      */
     public function desinscrire(string $email): bool
     {
-        $query = "UPDATE NEWSLETTER SET estActif = FALSE WHERE email = :email";
+        $query = "UPDATE newsletter SET estActif = FALSE WHERE email = :email";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':email', $email);
         return $stmt->execute();
@@ -66,7 +66,7 @@ class NewsletterDAO extends Dao
      */
     public function getInscritsActifs(): array
     {
-        $query = "SELECT * FROM NEWSLETTER WHERE estActif = TRUE ORDER BY dateInscription DESC";
+        $query = "SELECT * FROM newsletter WHERE estActif = TRUE ORDER BY dateInscription DESC";
         $stmt = $this->conn->query($query);
         $resultats = [];
         
@@ -89,7 +89,7 @@ class NewsletterDAO extends Dao
      */
     public function compterInscritsActifs(): int
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM NEWSLETTER WHERE estActif = TRUE");
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM newsletter WHERE estActif = TRUE");
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }

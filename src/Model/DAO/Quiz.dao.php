@@ -38,7 +38,7 @@ require_once "Dao.class.php";
          * @return Quiz|null Retourne un objet `Quiz` si trouvé, sinon null.
          */
         public function find(int $id): ?Quiz {
-            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM QUIZ WHERE idQuiz = :id");
+            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM quiz WHERE idQuiz = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -53,7 +53,7 @@ require_once "Dao.class.php";
          * Trouve un quiz par idPost (un seul quiz par post).
          */
         public function findByPost(int $idPost): ?Quiz {
-            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM QUIZ WHERE idPost = :idPost LIMIT 1");
+            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM quiz WHERE idPost = :idPost LIMIT 1");
             $stmt->bindParam(':idPost', $idPost, PDO::PARAM_INT);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -71,7 +71,7 @@ require_once "Dao.class.php";
          * @return Quiz[] Tableau des objets `Quiz`.
          */
         public function findAll(): array {
-            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM QUIZ");
+            $stmt = $this->conn->prepare("SELECT idQuiz, titre, description, choixMultiples, idQuestion, idPost FROM quiz");
             $stmt->execute();
             $quizs = [];
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -88,7 +88,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la mise à jour a réussi, sinon false.
          */
         public function mettreAJourQuiz(Quiz $quiz): bool {
-            $stmt = $this->conn->prepare("UPDATE QUIZ SET titre = :titre, description = :description, choixMultiples = :choixMultiples, idQuestion = :idQuestion, idPost = :idPost WHERE idQuiz = :idQuiz;");
+            $stmt = $this->conn->prepare("UPDATE quiz SET titre = :titre, description = :description, choixMultiples = :choixMultiples, idQuestion = :idQuestion, idPost = :idPost WHERE idQuiz = :idQuiz;");
             $stmt->bindValue(':titre', $quiz->getTitre(), PDO::PARAM_STR);
             $stmt->bindValue(':description', $quiz->getDescription(), PDO::PARAM_STR);
             $stmt->bindValue(':choixMultiples', $quiz->getChoixMultiples(), PDO::PARAM_BOOL);
@@ -108,7 +108,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si l'insertion a réussi, sinon false.
          */
         public function insererQuiz(Quiz $quiz): bool {
-            $stmt = $this->conn->prepare("INSERT INTO QUIZ (titre, description, choixMultiples, idQuestion, idPost) VALUES (:titre, :description, :choixMultiples, :idQuestion, :idPost)");
+            $stmt = $this->conn->prepare("INSERT INTO quiz (titre, description, choixMultiples, idQuestion, idPost) VALUES (:titre, :description, :choixMultiples, :idQuestion, :idPost)");
 
             $stmt->bindValue(':titre', $quiz->getTitre(), PDO::PARAM_STR);
             $stmt->bindValue(':description', $quiz->getDescription(), PDO::PARAM_STR);
@@ -132,7 +132,7 @@ require_once "Dao.class.php";
          * @return bool Retourne true si la suppression a réussi, sinon false.
          */
         public function supprimerQuiz(int $id): bool {
-            $stmt = $this->conn->prepare("DELETE FROM QUIZ WHERE idQuiz = :id");
+            $stmt = $this->conn->prepare("DELETE FROM quiz WHERE idQuiz = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
             return $stmt->execute();

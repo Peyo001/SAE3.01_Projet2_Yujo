@@ -44,7 +44,7 @@ class AvatarDao extends Dao
      */
     public function findAll(): array {
         $avatars = [];
-        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR");
+        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM avatar");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $avatars = $this->hydrateAll($rows);
@@ -60,7 +60,7 @@ class AvatarDao extends Dao
      * @return Avatar|null Retourne un objet Avatar si l'avatar est trouvé, sinon null.
      */
     public function findByIdAvatar(int $idAvatar): ?Avatar {
-        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR WHERE idAvatar = :idAvatar");
+        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM avatar WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':idAvatar', $idAvatar, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -80,7 +80,7 @@ class AvatarDao extends Dao
      */
 
     public function insererAvatar(Avatar $avatar): bool {
-        $stmt = $this->conn->prepare("INSERT INTO AVATAR (nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur) VALUES (:nom, :genre, :dateCreation, :CouleurPeau, :CouleurCheveux, :vetements, :accessoires, :idUtilisateur)");
+        $stmt = $this->conn->prepare("INSERT INTO avatar (nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur) VALUES (:nom, :genre, :dateCreation, :CouleurPeau, :CouleurCheveux, :vetements, :accessoires, :idUtilisateur)");
         $stmt->bindValue(':nom', $avatar->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':genre', $avatar->getGenre(), PDO::PARAM_STR);
         $stmt->bindValue(':dateCreation', $avatar->getDateCreation(), PDO::PARAM_STR);
@@ -106,7 +106,7 @@ class AvatarDao extends Dao
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerAvatar(int $idUtilisateur): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AVATAR WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("DELETE FROM avatar WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -120,7 +120,7 @@ class AvatarDao extends Dao
      * @return Avatar|null Retourne un objet Avatar si trouvé, sinon null.
      */
     public function findByUtilisateur(int $idUtilisateur): ?Avatar {
-        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM AVATAR WHERE idUtilisateur = :idUtilisateur LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT idAvatar, nom, genre, dateCreation, CouleurPeau, CouleurCheveux, vetements, accessoires, idUtilisateur FROM avatar WHERE idUtilisateur = :idUtilisateur LIMIT 1");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -151,7 +151,7 @@ class AvatarDao extends Dao
      * @return bool Retourne true si la mise à jour a réussi, sinon false.
      */
     public function mettreAJourAvatar(Avatar $avatar): bool {
-        $stmt = $this->conn->prepare("UPDATE AVATAR SET nom = :nom, genre = :genre, CouleurPeau = :CouleurPeau, CouleurCheveux = :CouleurCheveux, vetements = :vetements, accessoires = :accessoires WHERE idAvatar = :idAvatar");
+        $stmt = $this->conn->prepare("UPDATE avatar SET nom = :nom, genre = :genre, CouleurPeau = :CouleurPeau, CouleurCheveux = :CouleurCheveux, vetements = :vetements, accessoires = :accessoires WHERE idAvatar = :idAvatar");
         $stmt->bindValue(':nom', $avatar->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':genre', $avatar->getGenre(), PDO::PARAM_STR);
         $stmt->bindValue(':CouleurPeau', $avatar->getCouleurPeau(), PDO::PARAM_STR);

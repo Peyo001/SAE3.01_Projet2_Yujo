@@ -39,7 +39,7 @@ class AmiDao extends Dao
      */
     public function findAll(): array {
         $amis = [];
-        $stmt = $this->conn->query("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM AMI");
+        $stmt = $this->conn->query("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM ami");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $amis = $this->hydrateAll($rows);
         return $amis;
@@ -55,7 +55,7 @@ class AmiDao extends Dao
      * @return Ami|null Retourne un objet Ami si une relation d'amitié est trouvée, sinon null.
      */
     public function find(int $idUtilisateur1, int $idUtilisateur2): ?Ami {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM AMI WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur1, idUtilisateur2, dateAjout FROM ami WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
         $stmt->bindValue(':idUtilisateur1', $idUtilisateur1, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $idUtilisateur2, PDO::PARAM_INT);
         $stmt->execute();
@@ -81,7 +81,7 @@ class AmiDao extends Dao
 
     $stmt = $this->conn->prepare("
         SELECT idUtilisateur1, idUtilisateur2, dateAjout
-        FROM AMI
+        FROM ami
         WHERE idUtilisateur1 = :idUtilisateur OR idUtilisateur2 = :idUtilisateur
     ");
     $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
@@ -111,7 +111,7 @@ class AmiDao extends Dao
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
     public function insererAmi(Ami $ami): bool {
-        $stmt = $this->conn->prepare("INSERT INTO AMI (idUtilisateur1, idUtilisateur2, dateAjout) VALUES (:idUtilisateur1, :idUtilisateur2, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO ami (idUtilisateur1, idUtilisateur2, dateAjout) VALUES (:idUtilisateur1, :idUtilisateur2, :dateAjout)");
         $stmt->bindValue(':idUtilisateur1', $ami->getIdUtilisateur1(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $ami->getIdUtilisateur2(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $ami->getDateAjout(), PDO::PARAM_STR);
@@ -128,7 +128,7 @@ class AmiDao extends Dao
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerAmi(int $idUtilisateur1, int $idUtilisateur2): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AMI WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
+        $stmt = $this->conn->prepare("DELETE FROM ami WHERE idUtilisateur1 = :idUtilisateur1 AND idUtilisateur2 = :idUtilisateur2");
         $stmt->bindValue(':idUtilisateur1', $idUtilisateur1, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur2', $idUtilisateur2, PDO::PARAM_INT);
         return $stmt->execute();
@@ -143,7 +143,7 @@ class AmiDao extends Dao
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerParUtilisateur(int $idUtilisateur): bool {
-        $stmt = $this->conn->prepare("DELETE FROM AMI WHERE idUtilisateur1 = :id OR idUtilisateur2 = :id");
+        $stmt = $this->conn->prepare("DELETE FROM ami WHERE idUtilisateur1 = :id OR idUtilisateur2 = :id");
         $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
     }

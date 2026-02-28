@@ -36,7 +36,7 @@ class SignalementDao extends Dao
     public function findAll(): array
     {
         $signalements = [];
-        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT");
+        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM signalement");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $signalements = $this->hydrateAll($rows);
@@ -53,7 +53,7 @@ class SignalementDao extends Dao
      */
     public function find(int $id): ?Signalement
     {
-        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM SIGNALEMENT WHERE idSignalement = :id");
+        $stmt = $this->conn->prepare("SELECT idSignalement, raison FROM signalement WHERE idSignalement = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -73,7 +73,7 @@ class SignalementDao extends Dao
      */
     public function insererSignalement(Signalement $signalement): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO SIGNALEMENT (raison) VALUES (:raison)");
+        $stmt = $this->conn->prepare("INSERT INTO signalement (raison) VALUES (:raison)");
         $stmt->bindParam(':raison', $signalement->getRaison(), PDO::PARAM_STR);
         return $stmt->execute();
     }
@@ -90,7 +90,7 @@ class SignalementDao extends Dao
      */
     public function supprimerSignalement(int $id): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM SIGNALEMENT WHERE idSignalement = :idSignalement");
+        $stmt = $this->conn->prepare("DELETE FROM signalement WHERE idSignalement = :idSignalement");
         $stmt->bindValue(':idSignalement', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }

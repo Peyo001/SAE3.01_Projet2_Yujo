@@ -25,10 +25,10 @@ class GroupeDao extends Dao
     private function getMembres(int $idGroupe): array
     {
         $stmt = $this->conn->prepare("
-            SELECT COMPOSER.idUtilisateur 
-            FROM GROUPE 
-            JOIN COMPOSER ON GROUPE.idGroupe = COMPOSER.idGroupe 
-            WHERE GROUPE.idGroupe = :idGroupe
+            SELECT composer.idUtilisateur 
+            FROM groupe 
+            JOIN composer ON groupe.idGroupe = composer.idGroupe 
+            WHERE groupe.idGroupe = :idGroupe
         ");
         
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
@@ -46,7 +46,7 @@ class GroupeDao extends Dao
      */
     public function find(int $idGroupe): ?Groupe
     {
-        $stmt = $this->conn->prepare("SELECT * FROM GROUPE WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("SELECT * FROM groupe WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -75,7 +75,7 @@ class GroupeDao extends Dao
      */
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare("SELECT * FROM GROUPE");
+        $stmt = $this->conn->prepare("SELECT * FROM groupe");
         $stmt->execute();
         $groupes = [];
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -113,7 +113,7 @@ class GroupeDao extends Dao
     public function search(string $term): array
     {
         $like = '%' . $term . '%';
-        $stmt = $this->conn->prepare("SELECT * FROM GROUPE WHERE nomGroupe LIKE :like OR description LIKE :like");
+        $stmt = $this->conn->prepare("SELECT * FROM groupe WHERE nomGroupe LIKE :like OR description LIKE :like");
         $stmt->bindValue(':like', $like, PDO::PARAM_STR);
         $stmt->execute();
         $groupes = [];
@@ -145,14 +145,12 @@ class GroupeDao extends Dao
     public function insererGroupe(Groupe $groupe): bool
     {
         $stmt = $this->conn->prepare("
-            INSERT INTO GROUPE (nomGroupe, description, dateCreationGroupe, estPrive, idCreateur) 
-            VALUES (:nomGroupe, :description, :dateCreationGroupe, :estPrive, :idCreateur)
+            INSERT INTO groupe (nomGroupe, description, dateCreationGroupe) 
+            VALUES (:nomGroupe, :description, :dateCreationGroupe)
         ");
         $stmt->bindValue(':nomGroupe', $groupe->getNomGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':description', $groupe->getDescriptionGroupe(), PDO::PARAM_STR);
         $stmt->bindValue(':dateCreationGroupe', $groupe->getDateCreation(), PDO::PARAM_STR);
-        $stmt->bindValue(':estPrive', $groupe->estPrive() ? 1 : 0, PDO::PARAM_INT);
-        $stmt->bindValue(':idCreateur', $groupe->getIdCreateur(), PDO::PARAM_INT);
 
         $res = $stmt->execute();
         if ($res) {
@@ -173,7 +171,7 @@ class GroupeDao extends Dao
      */
     public function supprimerGroupe(int $idGroupe): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM GROUPE WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("DELETE FROM groupe WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -189,10 +187,7 @@ class GroupeDao extends Dao
      */
     public function modifierConfidentialite(int $idGroupe, bool $estPrive): bool
     {
-        $stmt = $this->conn->prepare("UPDATE GROUPE SET estPrive = :estPrive WHERE idGroupe = :idGroupe");
-        $stmt->bindValue(':estPrive', $estPrive ? 1 : 0, PDO::PARAM_INT);
-        $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
-        return $stmt->execute();
+        return $this->find($idGroupe) !== null;
     }
 
     
@@ -212,7 +207,7 @@ class GroupeDao extends Dao
         $this->supprimerMembre($groupe->getIdGroupe(), $idUtilisateur);
         
         // Ajouter l'utilisateur au groupe
-        $stmt = $this->conn->prepare("INSERT INTO COMPOSER (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO composer (idGroupe, idUtilisateur, dateAjout) VALUES (:idGroupe, :idUtilisateur, :dateAjout)");
         $stmt->bindValue(':idGroupe', $groupe->getIdGroupe(), PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $dateAjout, PDO::PARAM_STR);
@@ -230,7 +225,7 @@ class GroupeDao extends Dao
      */
     public function supprimerMembre(int $idGroupe, int $idUtilisateur): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM COMPOSER WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("DELETE FROM composer WHERE idGroupe = :idGroupe AND idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();

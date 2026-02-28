@@ -40,7 +40,7 @@ class MessageDAO extends Dao{
      * @return Message|null L'objet Message correspondant ou null si non trouvé.
      */
     public function findByIdMessage(int $id): ?Message {
-        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idMessage = :id");
+        $stmt = $this->conn->prepare("SELECT * FROM message WHERE idMessage = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch();
@@ -60,7 +60,7 @@ class MessageDAO extends Dao{
      * @return array Tableau d'objets Message.
      */
     public function findByIdGroupe(int $idGroupe): array {
-        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idGroupe = :idGroupe");
+        $stmt = $this->conn->prepare("SELECT * FROM message WHERE idGroupe = :idGroupe");
         $stmt->bindValue(':idGroupe', $idGroupe, PDO::PARAM_INT);
         $stmt->execute();
         $messages = [];
@@ -77,7 +77,7 @@ class MessageDAO extends Dao{
      * @return array Tableau d'objets Message.
      */
     public function findByUtilisateur(int $idUtilisateur): array {
-        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("SELECT * FROM message WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll();
@@ -92,7 +92,7 @@ class MessageDAO extends Dao{
      * @return array Tableau d'objets Message.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT * FROM MESSAGE");
+        $stmt = $this->conn->prepare("SELECT * FROM message");
         $stmt->execute();
         $rows = $stmt->fetchAll();
         $messages = $this->hydrateAll($rows);
@@ -111,7 +111,7 @@ class MessageDAO extends Dao{
      */
     public function insererMessage(Message $message): void {
         if ($message->getIdMessage() === null) {
-            $stmt = $this->conn->prepare("INSERT INTO MESSAGE (contenu, dateEnvoi, idGroupe, idUtilisateur) VALUES (:contenu, :dateEnvoi, :idGroupe, :idUtilisateur)");
+            $stmt = $this->conn->prepare("INSERT INTO message (contenu, dateEnvoi, idGroupe, idUtilisateur) VALUES (:contenu, :dateEnvoi, :idGroupe, :idUtilisateur)");
             $stmt->execute([
                 'contenu' => $message->getContenu(),
                 'dateEnvoi' => $message->getDateEnvoi(),
@@ -120,7 +120,7 @@ class MessageDAO extends Dao{
             ]);
             $message->setIdMessage((int)$this->conn->lastInsertId());
         } else {
-            $stmt = $this->conn->prepare("UPDATE MESSAGE SET contenu = :contenu, dateEnvoi = :dateEnvoi, idGroupe = :idGroupe, idUtilisateur = :idUtilisateur WHERE idMessage = :idMessage");
+            $stmt = $this->conn->prepare("UPDATE message SET contenu = :contenu, dateEnvoi = :dateEnvoi, idGroupe = :idGroupe, idUtilisateur = :idUtilisateur WHERE idMessage = :idMessage");
             $stmt->execute([
                 'contenu' => $message->getContenu(),
                 'dateEnvoi' => $message->getDateEnvoi(),
@@ -138,7 +138,7 @@ class MessageDAO extends Dao{
      * @return void
      */
     public function supprimerMessage(int $idUtilisateur): void {
-        $stmt = $this->conn->prepare("DELETE FROM MESSAGE WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("DELETE FROM message WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':idUtilisateur', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();
     }

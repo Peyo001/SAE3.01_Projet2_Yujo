@@ -47,7 +47,7 @@ class UtilisateurDao extends Dao
      */
     public function find(int $id): ?Utilisateur
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE idUtilisateur = :id");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM utilisateur WHERE idUtilisateur = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -67,7 +67,7 @@ class UtilisateurDao extends Dao
      */
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints,personnalisation FROM UTILISATEUR");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur,nom,prenom,genre,dateNaissance,pseudo,email,motDePasse,typeCompte,estPremium,dateInscription,yuPoints,personnalisation FROM utilisateur");
         $stmt->execute();
         $users = [];
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -85,7 +85,7 @@ class UtilisateurDao extends Dao
      */
     public function findByEmail(string $email): ?Utilisateur
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE email = :email");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM utilisateur WHERE email = :email");
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -104,7 +104,7 @@ class UtilisateurDao extends Dao
      */
     public function findByPseudo(string $pseudo): ?Utilisateur
     {
-        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM UTILISATEUR WHERE pseudo = :pseudo");
+        $stmt = $this->conn->prepare("SELECT idUtilisateur, nom, prenom, genre, dateNaissance, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation FROM utilisateur WHERE pseudo = :pseudo");
         $stmt->bindValue(':pseudo', $pseudo, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -125,7 +125,7 @@ class UtilisateurDao extends Dao
      */
     public function creerUtilisateur(Utilisateur $user): bool
     {
-        $stmt = $this->conn->prepare("INSERT INTO UTILISATEUR (nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation) VALUES (:nom, :prenom, :dateNaissance, :genre, :pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints, :personnalisation)");
+        $stmt = $this->conn->prepare("INSERT INTO utilisateur (nom, prenom, dateNaissance, genre, pseudo, email, motDePasse, typeCompte, estPremium, dateInscription, yuPoints, personnalisation) VALUES (:nom, :prenom, :dateNaissance, :genre, :pseudo, :email, :motDePasse, :typeCompte, :estPremium, :dateInscription, :yuPoints, :personnalisation)");
         $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':prenom', $user->getPrenom(), PDO::PARAM_STR);
         $stmt->bindValue(':dateNaissance', $user->getDateNaissance(), PDO::PARAM_STR);
@@ -151,7 +151,7 @@ class UtilisateurDao extends Dao
      */
     public function supprimerUtilisateur(int $id): bool
     {
-        $stmt = $this->conn->prepare("DELETE FROM UTILISATEUR WHERE idUtilisateur = :id");
+        $stmt = $this->conn->prepare("DELETE FROM utilisateur WHERE idUtilisateur = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -167,7 +167,7 @@ class UtilisateurDao extends Dao
 
     public function modifierUtilisateur(Utilisateur $user): bool
     {
-        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET nom = :nom, prenom = :prenom, dateNaissance = :dateNaissance, genre = :genre, pseudo = :pseudo, email = :email, motDePasse = :motDePasse, typeCompte = :typeCompte, estPremium = :estPremium, dateInscription = :dateInscription, yuPoints = :yuPoints, personnalisation = :personnalisation WHERE idUtilisateur = :idUtilisateur");
+        $stmt = $this->conn->prepare("UPDATE utilisateur SET nom = :nom, prenom = :prenom, dateNaissance = :dateNaissance, genre = :genre, pseudo = :pseudo, email = :email, motDePasse = :motDePasse, typeCompte = :typeCompte, estPremium = :estPremium, dateInscription = :dateInscription, yuPoints = :yuPoints, personnalisation = :personnalisation WHERE idUtilisateur = :idUtilisateur");
         $stmt->bindValue(':nom', $user->getNom(), PDO::PARAM_STR);
         $stmt->bindValue(':prenom', $user->getPrenom(), PDO::PARAM_STR);
         $stmt->bindValue(':dateNaissance', $user->getDateNaissance(), PDO::PARAM_STR);
@@ -195,7 +195,7 @@ class UtilisateurDao extends Dao
      */
     public function incrementerYuPoints(int $idUtilisateur, int $delta): bool
     {
-        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET yuPoints = yuPoints + :delta WHERE idUtilisateur = :id");
+        $stmt = $this->conn->prepare("UPDATE utilisateur SET yuPoints = yuPoints + :delta WHERE idUtilisateur = :id");
         $stmt->bindValue(':delta', $delta, PDO::PARAM_INT);
         $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
         return $stmt->execute();
@@ -213,7 +213,7 @@ class UtilisateurDao extends Dao
      */
     public function decrementerYuPoints(int $idUtilisateur, int $montant): bool
     {
-        $stmt = $this->conn->prepare("UPDATE UTILISATEUR SET yuPoints = yuPoints - :montant WHERE idUtilisateur = :id AND yuPoints >= :montant");
+        $stmt = $this->conn->prepare("UPDATE utilisateur SET yuPoints = yuPoints - :montant WHERE idUtilisateur = :id AND yuPoints >= :montant");
         $stmt->bindValue(':montant', $montant, PDO::PARAM_INT);
         $stmt->bindValue(':id', $idUtilisateur, PDO::PARAM_INT);
         $stmt->execute();

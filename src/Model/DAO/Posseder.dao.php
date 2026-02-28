@@ -33,7 +33,7 @@ class PossederDAO extends Dao {
      * @return Posseder[] Tableau d'objets Posseder.
      */
     public function findByRoom(int $idRoom): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM POSSEDER WHERE idRoom = :idRoom");
+        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM posseder WHERE idRoom = :idRoom");
         $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -48,7 +48,7 @@ class PossederDAO extends Dao {
      * @return Posseder[] Tableau d'objets Posseder.
      */
     public function findByIdObjet(int $idObjet): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM POSSEDER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM posseder WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -62,7 +62,7 @@ class PossederDAO extends Dao {
      * @return Posseder[] Tableau des objets Posseder.
      */
     public function findAll(): array {
-        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM POSSEDER");
+        $stmt = $this->conn->prepare("SELECT idObjet, idRoom, dateAjout FROM posseder");
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $this->hydrateAll($rows);
@@ -75,7 +75,7 @@ class PossederDAO extends Dao {
      * @return bool Retourne true si l'insertion a réussi, sinon false.
      */
     public function insererPosseder(Posseder $posseder): bool {
-        $stmt = $this->conn->prepare("INSERT INTO POSSEDER (idObjet, idRoom, dateAjout) VALUES (:idObjet, :idRoom, :dateAjout)");
+        $stmt = $this->conn->prepare("INSERT INTO posseder (idObjet, idRoom, dateAjout) VALUES (:idObjet, :idRoom, :dateAjout)");
         $stmt->bindValue(':idObjet', $posseder->getIdObjet(), PDO::PARAM_INT);
         $stmt->bindValue(':idRoom', $posseder->getIdRoom(), PDO::PARAM_INT);
         $stmt->bindValue(':dateAjout', $posseder->getDateAjout(), PDO::PARAM_STR);
@@ -90,7 +90,7 @@ class PossederDAO extends Dao {
      * @return bool Retourne true si la suppression a réussi, sinon false.
      */
     public function supprimerPosseder(int $idRoom, int $idObjet): bool {
-        $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idRoom = :idRoom AND idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM posseder WHERE idRoom = :idRoom AND idObjet = :idObjet");
         $stmt->bindValue(':idRoom', $idRoom, PDO::PARAM_INT);
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
@@ -103,7 +103,7 @@ class PossederDAO extends Dao {
      * @return bool Retourne true si la mise à jour a réussi, sinon false.
      */
     public function updatePosseder(Posseder $posseder): bool {
-        $stmt = $this->conn->prepare("UPDATE POSSEDER SET dateAjout = :dateAjout WHERE idRoom = :idRoom AND idObjet = :idObjet");
+        $stmt = $this->conn->prepare("UPDATE posseder SET dateAjout = :dateAjout WHERE idRoom = :idRoom AND idObjet = :idObjet");
         $stmt->bindValue(':dateAjout', $posseder->getDateAjout(), PDO::PARAM_STR);
         $stmt->bindValue(':idRoom', $posseder->getIdRoom(), PDO::PARAM_INT);
         $stmt->bindValue(':idObjet', $posseder->getIdObjet(), PDO::PARAM_INT);
@@ -117,7 +117,7 @@ class PossederDAO extends Dao {
      * @return bool True si la suppression s'est exécutée (peut supprimer 0..n lignes).
      */
     public function supprimerParObjet(int $idObjet): bool {
-        $stmt = $this->conn->prepare("DELETE FROM POSSEDER WHERE idObjet = :idObjet");
+        $stmt = $this->conn->prepare("DELETE FROM posseder WHERE idObjet = :idObjet");
         $stmt->bindValue(':idObjet', $idObjet, PDO::PARAM_INT);
         return $stmt->execute();
     }
